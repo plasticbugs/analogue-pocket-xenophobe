@@ -91,11 +91,11 @@ module mcr68_video (
 
     // ---------------- memories ----------------
     // vram 4K x 16: first 2K words = tilemap, rest = CPU scratch (0x71000)
-    logic [15:0] vram [0:4095] /*verilator public_flat_rd*/;
+    logic [1:0][7:0] vram [0:4095] /*verilator public_flat_rd*/;
     logic [15:0] vram_rq;
     always_ff @(posedge clk) begin
-        if (vram_we[0]) vram[vram_addr][7:0]  <= vram_din[7:0];
-        if (vram_we[1]) vram[vram_addr][15:8] <= vram_din[15:8];
+        if (vram_we[0]) vram[vram_addr][0] <= vram_din[7:0];
+        if (vram_we[1]) vram[vram_addr][1] <= vram_din[15:8];
         vram_q <= vram[vram_addr];
     end
 
@@ -103,15 +103,15 @@ module mcr68_video (
     always_ff @(posedge clk) vram_rq <= vram[{1'b0, vram_raddr}];
 
     // sprite ram 4K x 16: first 2K words = 512 sprite entries, rest scratch
-    logic [15:0] sprram [0:4095] /*verilator public_flat_rd*/;
+    logic [1:0][7:0] sprram [0:4095] /*verilator public_flat_rd*/;
     logic [15:0] sprram_rq;
     logic [10:0] sprram_raddr;
     always_ff @(posedge clk) begin
-        if (sprram_we[0]) sprram[sprram_addr][7:0]  <= sprram_din[7:0];
-        if (sprram_we[1]) sprram[sprram_addr][15:8] <= sprram_din[15:8];
+        if (sprram_we[0]) sprram[sprram_addr][0] <= sprram_din[7:0];
+        if (sprram_we[1]) sprram[sprram_addr][1] <= sprram_din[15:8];
         sprram_q  <= sprram[sprram_addr];
-        sprram_rq <= sprram[{1'b0, sprram_raddr}];
     end
+    always_ff @(posedge clk) sprram_rq <= sprram[{1'b0, sprram_raddr}];
 
     // palette 64 x 9
     logic [8:0] palette [0:63] /*verilator public_flat_rd*/;
@@ -125,13 +125,24 @@ module mcr68_video (
     logic [15:0] bg_q0, bg_q1;
     logic [13:0] bg_raddr;            // {code, row} - both halves read in sequence
     logic        bg_rhalf;
+    // single muxed read port (2 conditional reads = 3 ports = no BRAM
+    // inference in 18.1); the raw read demuxes into q0/q1 one cycle later
+    logic [15:0] bg_rdata;
+    logic        bg_rhalf_q;
+    // loader streams bytes sequentially: buffer the even byte, write full
+    // words on the odd byte (no partial selects -> clean BRAM inference)
+    logic [7:0] gl_evenb;
+    always_ff @(posedge clk)
+        if (gfx_load_we && !gfx_load_addr[0]) gl_evenb <= gfx_load_data;
+    wire gl_bg_wr = gfx_load_we && gfx_load_addr[0] && gfx_load_addr[18:16] == 3'b000;
     always_ff @(posedge clk) begin
-        if (gfx_load_we && gfx_load_addr[18:16] == 3'b000) begin
-            if (gfx_load_addr[0]) bg_rom[gfx_load_addr[15:1]][7:0]  <= ~gfx_load_data;
-            else                  bg_rom[gfx_load_addr[15:1]][15:8] <= ~gfx_load_data;
-        end
-        if (bg_rhalf) bg_q1 <= bg_rom[{1'b1, bg_raddr}];
-        else          bg_q0 <= bg_rom[{1'b0, bg_raddr}];
+        if (gl_bg_wr) bg_rom[gfx_load_addr[15:1]] <= {~gl_evenb, ~gfx_load_data};
+        bg_rdata <= bg_rom[{bg_rhalf, bg_raddr}];
+    end
+    always_ff @(posedge clk) begin
+        bg_rhalf_q <= bg_rhalf;
+        if (bg_rhalf_q) bg_q1 <= bg_rdata;
+        else            bg_q0 <= bg_rdata;
     end
 
     // sprite ROM: 4 banks x 32K x 16 = 256KB. Per bank, sprite row = 2 words.
@@ -143,27 +154,23 @@ module mcr68_video (
     logic [15:0] spr_q [0:3];
     logic [14:0] spr_raddr;
     wire  [1:0]  gl_bank = 2'(gfx_load_addr[18:16] - 3'd1); // sprites start at 0x10000
-    wire         gl_spr  = gfx_load_we && gfx_load_addr[18:16] != 3'b000;
+    wire         gl_spr  = gfx_load_we && gfx_load_addr[0]
+                         && gfx_load_addr[18:16] != 3'b000;   // full word on odd byte
+    wire [15:0] gl_word = {gl_evenb, gfx_load_data};
     always_ff @(posedge clk) begin
-        if (gl_spr && gl_bank == 2'd0) begin
-            if (gfx_load_addr[0]) spr_rom0[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  spr_rom0[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
-        end
-        if (gl_spr && gl_bank == 2'd1) begin
-            if (gfx_load_addr[0]) spr_rom1[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  spr_rom1[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
-        end
-        if (gl_spr && gl_bank == 2'd2) begin
-            if (gfx_load_addr[0]) spr_rom2[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  spr_rom2[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
-        end
-        if (gl_spr && gl_bank == 2'd3) begin
-            if (gfx_load_addr[0]) spr_rom3[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  spr_rom3[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
-        end
+        if (gl_spr && gl_bank == 2'd0) spr_rom0[gfx_load_addr[15:1]] <= gl_word;
         spr_q[0] <= spr_rom0[spr_raddr];
+    end
+    always_ff @(posedge clk) begin
+        if (gl_spr && gl_bank == 2'd1) spr_rom1[gfx_load_addr[15:1]] <= gl_word;
         spr_q[1] <= spr_rom1[spr_raddr];
+    end
+    always_ff @(posedge clk) begin
+        if (gl_spr && gl_bank == 2'd2) spr_rom2[gfx_load_addr[15:1]] <= gl_word;
         spr_q[2] <= spr_rom2[spr_raddr];
+    end
+    always_ff @(posedge clk) begin
+        if (gl_spr && gl_bank == 2'd3) spr_rom3[gfx_load_addr[15:1]] <= gl_word;
         spr_q[3] <= spr_rom3[spr_raddr];
     end
 
@@ -190,7 +197,7 @@ module mcr68_video (
     // latch both, then fetch both ROM halves, then emit 16 pixels.
     // 4 + 3 + 16 = 23 clks per cell, inside the 32-clk (16-dot) budget.
     typedef enum logic [3:0] {BG_IDLE, BG_VR0, BG_VR1, BG_T0, BG_T1,
-                              BG_F0, BG_F1, BG_F2, BG_EMIT} bg_st_e;
+                              BG_F0, BG_F1, BG_F2, BG_F3, BG_EMIT} bg_st_e;
     bg_st_e bg_st;
     logic [4:0]  bg_cell;
     logic [15:0] bg_d0, bg_d1;
@@ -232,8 +239,9 @@ module mcr68_video (
                 bg_st <= BG_F0;
             end
             BG_F0: bg_st <= BG_F1;   // rom addr half0 issued below (code valid now)
-            BG_F1: bg_st <= BG_F2;   // rom addr half1; q0 latches this cycle
-            BG_F2: begin             // q1 latches this cycle
+            BG_F1: bg_st <= BG_F2;   // rdata <- half0; rom addr half1
+            BG_F2: bg_st <= BG_F3;   // q0 <- half0; rdata <- half1
+            BG_F3: begin             // q1 <- half1
                 bg_st <= BG_EMIT;
                 bg_px <= '0;
             end
@@ -279,11 +287,12 @@ module mcr68_video (
     //   [7:0]  lo class {state[1:0], color[1:0], pen[3:0]}
     // state: 0 empty, 1 normal, 2 masked8 (pen 8: blocks later sprites of the
     // same class; visible only where the bg pen is 0, else bg shows).
-    // Data: {hi[7:0], lo[7:0]} per pixel, each {valid, ~unused, color2, pen4};
-    // written only on claim (byte lanes per class), self-cleared by the
-    // display port between pixel reads. Claim bits live in registers and
-    // reset in a single cycle at line start.
-    logic [15:0] sp_lbuf [0:1023];
+    // Two 8-bit buffers (lo/hi class), each {valid, x, color2, pen4}: written
+    // only on claim (port A), read + self-cleared by the display port (port
+    // B). Exact Intel true-dual-port template so 18.1 infers M10K. Claim
+    // bits live in registers and reset in a single cycle at line start.
+    logic [7:0] sp_lbuf_lo [0:1023];
+    logic [7:0] sp_lbuf_hi [0:1023];
     logic [511:0] sp_claim_lo, sp_claim_hi;
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
@@ -446,24 +455,33 @@ module mcr68_video (
             else        sp_claim_lo[sp_xs[8:0]] <= 1'b1;
         end
     end
+    // port A (render write)
+    wire [9:0] sp_wr_addr = {sp_wrbuf, sp_xs[8:0]};
+    wire [7:0] sp_wr_data = {2'd1, sp_color, sp_pval};
     always_ff @(posedge clk) begin
-        if (sp_blend_go && sp_pval != 4'd8) begin
-            if (sp_pri) sp_lbuf[{sp_wrbuf, sp_xs[8:0]}][15:8] <= {2'd1, sp_color, sp_pval};
-            else        sp_lbuf[{sp_wrbuf, sp_xs[8:0]}][7:0]  <= {2'd1, sp_color, sp_pval};
-        end
+        if (sp_blend_go && sp_pval != 4'd8 && !sp_pri)
+            sp_lbuf_lo[sp_wr_addr] <= sp_wr_data;
+    end
+    always_ff @(posedge clk) begin
+        if (sp_blend_go && sp_pval != 4'd8 && sp_pri)
+            sp_lbuf_hi[sp_wr_addr] <= sp_wr_data;
     end
 
-    // Sprite buffer port B: read {sel, hcnt} on ce_pix, clear the entry just
-    // consumed on the off cycle. One address/one write -> clean dual-port BRAM.
-    logic [15:0] sp_lbuf_bq;
+    // port B (display read; clears the just-consumed entry on off cycles)
+    logic [7:0]  sp_bq_lo, sp_bq_hi;
+    wire [15:0] sp_lbuf_bq = {sp_bq_hi, sp_bq_lo};
     logic [9:0]  sp_rd_addr_q;
+    wire [9:0]  sp_rd_addr = ce_pix ? {lbuf_sel, hcnt[8:0]} : sp_rd_addr_q;
     always_ff @(posedge clk) begin
-        if (ce_pix) begin
-            sp_lbuf_bq   <= sp_lbuf[{lbuf_sel, hcnt[8:0]}];
-            sp_rd_addr_q <= {lbuf_sel, hcnt[8:0]};
-        end else begin
-            sp_lbuf[sp_rd_addr_q] <= '0;
-        end
+        if (ce_pix) sp_rd_addr_q <= {lbuf_sel, hcnt[8:0]};
+    end
+    always_ff @(posedge clk) begin
+        if (!ce_pix) sp_lbuf_lo[sp_rd_addr] <= 8'h0;
+        if (ce_pix)  sp_bq_lo <= sp_lbuf_lo[sp_rd_addr];
+    end
+    always_ff @(posedge clk) begin
+        if (!ce_pix) sp_lbuf_hi[sp_rd_addr] <= 8'h0;
+        if (ce_pix)  sp_bq_hi <= sp_lbuf_hi[sp_rd_addr];
     end
 
     // ---------------- compositor ----------------

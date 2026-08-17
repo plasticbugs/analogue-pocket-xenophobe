@@ -27,6 +27,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*3:0*/ tb_video__DOT__video__DOT____VlemCall_0__bg_pen;
         CData/*0:0*/ tb_video__DOT__video__DOT__field;
         CData/*0:0*/ tb_video__DOT__video__DOT__bg_rhalf;
+        CData/*0:0*/ tb_video__DOT__video__DOT__bg_rhalf_q;
         CData/*0:0*/ tb_video__DOT__video__DOT__lbuf_sel;
         CData/*0:0*/ tb_video__DOT__video__DOT__bg_wrbuf;
         CData/*0:0*/ tb_video__DOT__video__DOT__sp_wrbuf;
@@ -44,6 +45,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*0:0*/ tb_video__DOT__video__DOT__yt_hit;
         CData/*3:0*/ tb_video__DOT__video__DOT__sp_pen_v;
         CData/*0:0*/ tb_video__DOT__video__DOT__sp_blend_go;
+        CData/*7:0*/ tb_video__DOT__video__DOT__sp_wr_data;
+        CData/*7:0*/ tb_video__DOT__video__DOT__sp_bq_lo;
+        CData/*7:0*/ tb_video__DOT__video__DOT__sp_bq_hi;
         CData/*0:0*/ tb_video__DOT__video__DOT__de_d;
         CData/*0:0*/ tb_video__DOT__video__DOT__hs_d;
         CData/*0:0*/ tb_video__DOT__video__DOT__vs_d;
@@ -65,6 +69,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         SData/*15:0*/ tb_video__DOT__video__DOT__bg_q0;
         SData/*15:0*/ tb_video__DOT__video__DOT__bg_q1;
         SData/*13:0*/ tb_video__DOT__video__DOT__bg_raddr;
+        SData/*15:0*/ tb_video__DOT__video__DOT__bg_rdata;
         SData/*14:0*/ tb_video__DOT__video__DOT__spr_raddr;
         SData/*15:0*/ tb_video__DOT__video__DOT__bg_d0;
         SData/*15:0*/ tb_video__DOT__video__DOT__bg_d1;
@@ -73,15 +78,17 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         SData/*8:0*/ tb_video__DOT__video__DOT__sp_line;
         SData/*10:0*/ tb_video__DOT__video__DOT__sp_code;
         SData/*10:0*/ tb_video__DOT__video__DOT__sp_xs;
+        SData/*9:0*/ tb_video__DOT__video__DOT__sp_wr_addr;
         SData/*15:0*/ tb_video__DOT__video__DOT__sp_lbuf_bq;
+    };
+    struct {
         SData/*9:0*/ tb_video__DOT__video__DOT__sp_rd_addr_q;
+        SData/*9:0*/ tb_video__DOT__video__DOT__sp_rd_addr;
         SData/*8:0*/ tb_video__DOT__video__DOT__rgb9;
         VlWide<16>/*511:0*/ tb_video__DOT__video__DOT__sp_claim_lo;
         VlWide<16>/*511:0*/ tb_video__DOT__video__DOT__sp_claim_hi;
         IData/*31:0*/ __VactIterCount;
         VlUnpacked<SData/*15:0*/, 4096> tb_video__DOT__video__DOT__vram;
-    };
-    struct {
         VlUnpacked<SData/*15:0*/, 4096> tb_video__DOT__video__DOT__sprram;
         VlUnpacked<SData/*8:0*/, 64> tb_video__DOT__video__DOT__palette;
         VlUnpacked<SData/*15:0*/, 32768> tb_video__DOT__video__DOT__bg_rom;
@@ -91,7 +98,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         VlUnpacked<SData/*15:0*/, 32768> tb_video__DOT__video__DOT__spr_rom3;
         VlUnpacked<SData/*15:0*/, 4> tb_video__DOT__video__DOT__spr_q;
         VlUnpacked<CData/*6:0*/, 1024> tb_video__DOT__video__DOT__bg_lbuf;
-        VlUnpacked<SData/*15:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf;
+        VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_lo;
+        VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_hi;
         VlUnpacked<VlUnpacked<SData/*15:0*/, 2>, 4> tb_video__DOT__video__DOT__sp_row;
         VlUnpacked<QData/*63:0*/, 1> __VstlTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VactTriggered;

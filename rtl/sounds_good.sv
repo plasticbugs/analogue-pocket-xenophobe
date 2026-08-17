@@ -61,12 +61,12 @@ module sounds_good (
     wire sel_ram = bus_cycle & ~iack & (a[18:16] == 3'b111);
 
     // ---- RAM 4KB (2K x 16) ----
-    logic [15:0] ram [0:2047];
+    logic [1:0][7:0] ram [0:2047];
     logic [15:0] ram_q;
     always_ff @(posedge clk) begin
         if (sel_ram & ~rw_n) begin
-            if (~uds_n) ram[a[11:1]][15:8] <= cpu_dout[15:8];
-            if (~lds_n) ram[a[11:1]][7:0]  <= cpu_dout[7:0];
+            if (~uds_n) ram[a[11:1]][1] <= cpu_dout[15:8];
+            if (~lds_n) ram[a[11:1]][0] <= cpu_dout[7:0];
         end
         ram_q <= ram[a[11:1]];
     end

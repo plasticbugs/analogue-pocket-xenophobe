@@ -105,12 +105,12 @@ module mcr68_main (
     wire sel_dsw  = bus_cycle & ~iack & (a[19:16] == 4'hF);
 
     // ---- work RAM 8K x 16 ----
-    logic [15:0] ram [0:8191];
+    logic [1:0][7:0] ram [0:8191];
     logic [15:0] ram_q;
     always_ff @(posedge clk) begin
         if (sel_ram & ~rw_n) begin
-            if (~uds_n) ram[a[13:1]][15:8] <= cpu_dout[15:8];
-            if (~lds_n) ram[a[13:1]][7:0]  <= cpu_dout[7:0];
+            if (~uds_n) ram[a[13:1]][1] <= cpu_dout[15:8];
+            if (~lds_n) ram[a[13:1]][0] <= cpu_dout[7:0];
         end
         ram_q <= ram[a[13:1]];
     end
