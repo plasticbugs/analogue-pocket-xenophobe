@@ -178,8 +178,10 @@ module mcr68_video (
     logic [6:0] bg_disp_q;
 
     // bg state machine: for cell 0..31 of next line: read vram w0, w1,
-    // bg half0, half1, emit 16 pixels
-    typedef enum logic [2:0] {BG_IDLE, BG_VR0, BG_VR1, BG_T0, BG_T1, BG_EMIT} bg_st_e;
+    // latch both, then fetch both ROM halves, then emit 16 pixels.
+    // 4 + 3 + 16 = 23 clks per cell, inside the 32-clk (16-dot) budget.
+    typedef enum logic [3:0] {BG_IDLE, BG_VR0, BG_VR1, BG_T0, BG_T1,
+                              BG_F0, BG_F1, BG_F2, BG_EMIT} bg_st_e;
     bg_st_e bg_st;
     logic [4:0]  bg_cell;
     logic [15:0] bg_d0, bg_d1;
@@ -196,7 +198,8 @@ module mcr68_video (
 
     always_ff @(posedge clk) begin
         case (bg_st)
-            BG_IDLE: if (ce_pix && hcnt == H_VIS && !vblank) begin
+            BG_IDLE: if (ce_pix && hcnt == H_VIS
+                         && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 bg_next_y <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 bg_cell <= '0;
                 bg_st <= BG_VR0;
@@ -216,11 +219,15 @@ module mcr68_video (
             end
             BG_T1: begin
                 bg_d1 <= vram_rq;
+                bg_st <= BG_F0;
+            end
+            BG_F0: bg_st <= BG_F1;   // rom addr half0 issued below (code valid now)
+            BG_F1: bg_st <= BG_F2;   // rom addr half1; q0 latches this cycle
+            BG_F2: begin             // q1 latches this cycle
                 bg_st <= BG_EMIT;
                 bg_px <= '0;
             end
-            BG_EMIT: begin
-                // wait one cycle for ROM reads issued below, then emit
+            BG_EMIT: begin           // q0 and q1 both valid for the whole emit
                 bg_px <= bg_px + 1'd1;
                 if (bg_px == 4'd15) begin
                     if (bg_cell == 5'd31) bg_st <= BG_IDLE;
@@ -231,14 +238,11 @@ module mcr68_video (
         endcase
     end
 
-    // ROM fetch for bg: issue both halves while in T0/T1, data valid in EMIT
+    // ROM fetch: half0 addressed during F0, half1 during F1
     always_ff @(posedge clk) begin
-        if (bg_st == BG_T0) begin bg_raddr <= {bg_code[10:0], bg_row}; bg_rhalf <= 1'b0; end
-        if (bg_st == BG_T1) bg_rhalf <= 1'b1;
-        if (bg_st == BG_EMIT && bg_rhalf) bg_rhalf <= 1'b0;
+        if (bg_st == BG_F0) begin bg_raddr <= {bg_code[10:0], bg_row}; bg_rhalf <= 1'b0; end
+        if (bg_st == BG_F1) bg_rhalf <= 1'b1;
     end
-    // dedicated second read: run half0 in T1, half1 in first EMIT cycle
-    // (bg_q0/bg_q1 stable by px>=2; emit starts writing at px>=2 below)
 
     // Pixel extraction done combinationally from the two ROM words:
     // pixel c (0..7): bits (15-2c, 14-2c) of each half; half1 = hi bits.
@@ -250,7 +254,7 @@ module mcr68_video (
     endfunction
 
     always_ff @(posedge clk) begin
-        if (bg_st == BG_EMIT && bg_px >= 4'd2)
+        if (bg_st == BG_EMIT)
             bg_lbuf[~lbuf_sel][{bg_cell, bg_px[3:1] ^ {3{bg_flipx}}, bg_px[0]}]
                 <= {bg_pri, bg_color, bg_pen(bg_q0, bg_q1, bg_px[3:1] ^ {3{bg_flipx}})};
     end
@@ -302,7 +306,8 @@ module mcr68_video (
 
     always_ff @(posedge clk) begin
         case (sp_st)
-            SP_IDLE: if (ce_pix && hcnt == H_VIS && !vblank) begin
+            SP_IDLE: if (ce_pix && hcnt == H_VIS
+                         && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 sp_line <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 sp_clr_addr <= '0;
                 sp_st <= SP_CLR;

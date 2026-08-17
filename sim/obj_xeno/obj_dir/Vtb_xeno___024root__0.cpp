@@ -1615,7 +1615,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag = 0;
     CData/*2:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag_read;
     __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag_read = 0;
-    CData/*2:0*/ __Vdly__tb_xeno__DOT__video__DOT__bg_st;
+    CData/*3:0*/ __Vdly__tb_xeno__DOT__video__DOT__bg_st;
     __Vdly__tb_xeno__DOT__video__DOT__bg_st = 0;
     CData/*3:0*/ __Vdly__tb_xeno__DOT__video__DOT__bg_px;
     __Vdly__tb_xeno__DOT__video__DOT__bg_px = 0;
@@ -1623,8 +1623,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __Vdly__tb_xeno__DOT__video__DOT__bg_cell = 0;
     SData/*10:0*/ __Vdly__tb_xeno__DOT__video__DOT__vram_raddr;
     __Vdly__tb_xeno__DOT__video__DOT__vram_raddr = 0;
-    CData/*0:0*/ __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf;
-    __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = 0;
     CData/*3:0*/ __Vdly__tb_xeno__DOT__video__DOT__sp_st;
     __Vdly__tb_xeno__DOT__video__DOT__sp_st = 0;
     CData/*5:0*/ __Vdly__tb_xeno__DOT__video__DOT__sp_px;
@@ -1850,7 +1848,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     CData/*0:0*/ __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1;
     __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1 = 0;
     // Body
-    __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf;
     vlSelfRef.__Vdly__tb_xeno__DOT__ce_div = vlSelfRef.tb_xeno__DOT__ce_div;
     __Vdly__dbg_palw = vlSelfRef.dbg_palw;
     __Vdly__dbg_vramw = vlSelfRef.dbg_vramw;
@@ -1926,16 +1923,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v3 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ram__v0 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ram__v1 = 0U;
-    if ((3U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
-        __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = 0U;
-    }
-    if ((4U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
-        __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = 1U;
-    }
-    if (((5U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st)) 
-         & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf))) {
-        __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = 0U;
-    }
     vlSelfRef.__Vdly__tb_xeno__DOT__ce_div = (1U & 
                                               (~ (IData)(vlSelfRef.tb_xeno__DOT__ce_div)));
     vlSelfRef.tb_xeno__DOT__st_cnt = (0x00ffffffU & 
@@ -1973,8 +1960,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
             __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1 = 1U;
         }
     }
-    if (((5U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st)) 
-         & (2U <= (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px)))) {
+    if ((8U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
         __Vfunc_tb_xeno__DOT__video__DOT__bg_pen__5__c 
             = (7U & (((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px) 
                       >> 1U) ^ (- (IData)((1U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1) 
@@ -2662,18 +2648,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__video__DOT__bg_q0 = vlSelfRef.tb_xeno__DOT__video__DOT__bg_rom
             [vlSelfRef.tb_xeno__DOT__video__DOT__bg_raddr];
     }
-    if ((3U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
-        vlSelfRef.tb_xeno__DOT__video__DOT__bg_raddr 
-            = ((((4U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1) 
-                        >> 4U)) | (3U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1))) 
-                << 0x0000000bU) | ((0x000007f8U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d0) 
-                                                   << 3U)) 
-                                   | (7U & ((8U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1))
-                                             ? (~ ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_next_y) 
-                                                   >> 1U))
-                                             : ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_next_y) 
-                                                >> 1U)))));
-    }
     if ((8U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_st))) {
         if ((4U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_st))) {
             __Vdly__tb_xeno__DOT__video__DOT__sp_st = 0U;
@@ -2866,7 +2840,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                                               | (3U 
                                                  & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__rgb9) 
                                                     >> 4U))));
-    vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf = __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf;
     vlSelfRef.tb_xeno__DOT__video__DOT__sp_st = __Vdly__tb_xeno__DOT__video__DOT__sp_st;
     vlSelfRef.tb_xeno__DOT__video__DOT__sp_idx = __Vdly__tb_xeno__DOT__video__DOT__sp_idx;
     vlSelfRef.tb_xeno__DOT__video__DOT__sp_fetch_cnt 
@@ -2899,6 +2872,22 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     if (__VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1) {
         vlSelfRef.tb_xeno__DOT__video__DOT__sp_lbuf[__VdlyDim1__tb_xeno__DOT__video__DOT__sp_lbuf__v1][__VdlyDim0__tb_xeno__DOT__video__DOT__sp_lbuf__v1] 
             = __VdlyVal__tb_xeno__DOT__video__DOT__sp_lbuf__v1;
+    }
+    if ((5U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+        vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf = 0U;
+        vlSelfRef.tb_xeno__DOT__video__DOT__bg_raddr 
+            = ((((4U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1) 
+                        >> 4U)) | (3U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1))) 
+                << 0x0000000bU) | ((0x000007f8U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d0) 
+                                                   << 3U)) 
+                                   | (7U & ((8U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1))
+                                             ? (~ ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_next_y) 
+                                                   >> 1U))
+                                             : ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_next_y) 
+                                                >> 1U)))));
+    }
+    if ((6U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+        vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf = 1U;
     }
     vlSelfRef.__VdfgRegularize_hebeb780c_0_14 = (0x0000001fU 
                                                  & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_line) 
@@ -2966,10 +2955,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                | ((SData)((IData)(__VdlyVal__tb_xeno__DOT__video__DOT__sprram__v1)) 
                   << 8U));
     }
-    if ((4U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
-        if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+    if ((8U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+        if ((4U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+            __Vdly__tb_xeno__DOT__video__DOT__bg_st = 0U;
+        } else if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
             __Vdly__tb_xeno__DOT__video__DOT__bg_st = 0U;
         } else if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+            __Vdly__tb_xeno__DOT__video__DOT__bg_st = 0U;
+        } else {
             __Vdly__tb_xeno__DOT__video__DOT__bg_px 
                 = (0x0000000fU & ((IData)(1U) + (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px)));
             if ((0x0fU == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px))) {
@@ -2982,11 +2975,21 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                     __Vdly__tb_xeno__DOT__video__DOT__bg_st = 1U;
                 }
             }
+        }
+    } else if ((4U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+        if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+            if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+                __Vdly__tb_xeno__DOT__video__DOT__bg_st = 8U;
+                __Vdly__tb_xeno__DOT__video__DOT__bg_px = 0U;
+            } else {
+                __Vdly__tb_xeno__DOT__video__DOT__bg_st = 7U;
+            }
+        } else if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
+            __Vdly__tb_xeno__DOT__video__DOT__bg_st = 6U;
         } else {
             vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1 
                 = vlSelfRef.tb_xeno__DOT__video__DOT__vram_rq;
             __Vdly__tb_xeno__DOT__video__DOT__bg_st = 5U;
-            __Vdly__tb_xeno__DOT__video__DOT__bg_px = 0U;
         }
     } else if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {
         if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_st))) {

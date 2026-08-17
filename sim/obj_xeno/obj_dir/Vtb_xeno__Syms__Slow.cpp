@@ -11,7 +11,7 @@ Vtb_xeno__Syms::Vtb_xeno__Syms(VerilatedContext* contextp, const char* namep, Vt
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(2940);
+    Verilated::stackCheck(2938);
     // Setup sub module instances
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-9);
