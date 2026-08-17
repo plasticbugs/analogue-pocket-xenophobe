@@ -371,14 +371,15 @@ module mcr68_video (
                 if (sp_fetch_cnt == 0) sp_x <= sprram_rq[7:0]; // rq = word3
                 if (sp_fetch_cnt == 0 && sp_code[8:0] == 0) sp_next(1'b0);
                 else begin
-                    // 2 sequential word reads shared by all 4 banks
+                    // 2 sequential word reads shared by all 4 banks.
+                    // Registered BRAM: issue at cnt 0/1, data valid at 2/3.
                     spr_raddr <= {sp_code[8:0], sp_rowsel, sp_fetch_cnt[0]};
                     sp_fetch_cnt <= sp_fetch_cnt + 1'd1;
-                    if (sp_fetch_cnt >= 3'd1) begin
+                    if (sp_fetch_cnt >= 3'd2) begin
                         for (int i = 0; i < 4; i++)
-                            sp_row[i][sp_fetch_cnt - 1] <= spr_q[i];
+                            sp_row[i][sp_fetch_cnt - 2] <= spr_q[i];
                     end
-                    if (sp_fetch_cnt == 3'd2) begin
+                    if (sp_fetch_cnt == 3'd3) begin
                         sp_px <= '0;
                         sp_st <= SP_BLEND;
                     end

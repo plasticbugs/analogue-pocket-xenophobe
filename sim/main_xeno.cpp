@@ -116,11 +116,12 @@ int main(int argc, char** argv) {
             if (frame >= 480 && frame < 490) in0 &= ~0x1000;   // P1 BUTTON1
             if (frame >= 560 && frame < 570) in0 &= ~0x1000;   // confirm character
             tb->in0 = in0;
-            if (frame == 178 || frame == 1100 || frame == 1101) {
+            if (frame == 178 || frame == 1100 || frame == 1101 || frame == 1299) {
                 // state dump in MAME statedump.lua format for model diffing;
                 // two consecutive dumps bracket the displayed frame between
                 FILE* f = fopen(frame == 178 ? "sim_state178.txt" :
-                                frame == 1100 ? "sim_state.txt" : "sim_state2.txt", "w");
+                                frame == 1100 ? "sim_state.txt" :
+                                frame == 1101 ? "sim_state2.txt" : "sim_state3.txt", "w");
                 auto& vr = tb->rootp->tb_xeno__DOT__video__DOT__vram;
                 auto& sr = tb->rootp->tb_xeno__DOT__video__DOT__sprram;
                 auto& pl = tb->rootp->tb_xeno__DOT__video__DOT__palette;
