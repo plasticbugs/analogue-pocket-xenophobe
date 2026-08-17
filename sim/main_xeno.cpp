@@ -1,5 +1,6 @@
 // Full-machine harness: run N frames, dump selected frames as PPM.
 #include "Vtb_xeno.h"
+#include "Vtb_xeno___024root.h"
 #include "verilated.h"
 #include <cstdio>
 #include <cstdint>
@@ -12,7 +13,7 @@ int main(int argc, char** argv) {
     auto* tb = new Vtb_xeno;
 
     int frames_to_run = 240;                 // 60 Hz display frames (4s)
-    std::set<int> dump = {600, 900, 1100, 1200, 1300, 1400, 1500, 1650};
+    std::set<int> dump = {180, 600, 900, 1100, 1200, 1300, 1400, 1500, 1650};
     if (argc > 1) frames_to_run = atoi(argv[1]);
 
     tb->in0 = 0xffff;                        // nothing pressed (active low)
@@ -55,6 +56,14 @@ int main(int argc, char** argv) {
         last_as = tb->dbg_as;
         if (tb->dbg_irq493 && !last_493) n493++;
         last_493 = tb->dbg_irq493;
+        static int last_palwe = 0; static int pal_logged = 0;
+        if (tb->dbg_pal_we && !last_palwe && pal_logged < 96) {
+            printf("PAL[%02d] = %04x  (R=%d B=%d G=%d)\n", tb->dbg_pal_addr,
+                   tb->dbg_pal_data, (tb->dbg_pal_data >> 6) & 7,
+                   (tb->dbg_pal_data >> 3) & 7, tb->dbg_pal_data & 7);
+            pal_logged++;
+        }
+        last_palwe = tb->dbg_pal_we;
         static int last_kick = 0; static int64_t kick_t[8]; static int kick_n = 0;
         if (tb->dbg_wdt_kick && !last_kick) { kick_t[kick_n++ & 7] = t; }
         last_kick = tb->dbg_wdt_kick;
@@ -107,6 +116,24 @@ int main(int argc, char** argv) {
             if (frame >= 480 && frame < 490) in0 &= ~0x1000;   // P1 BUTTON1
             if (frame >= 560 && frame < 570) in0 &= ~0x1000;   // confirm character
             tb->in0 = in0;
+            if (frame == 178) {
+                // decode the tilemap+palette state for forensics
+                FILE* f = fopen("vram_dump.txt", "w");
+                auto& vram = tb->rootp->tb_xeno__DOT__video__DOT__vram;
+                auto& pal  = tb->rootp->tb_xeno__DOT__video__DOT__palette;
+                for (int i = 0; i < 64; i++)
+                    fprintf(f, "pal %02d = %03x\n", i, pal[i]);
+                for (int row = 0; row < 30; row++) {
+                    for (int col = 0; col < 32; col++) {
+                        int d = (vram[(row*32+col)*2] & 0xff)
+                              | ((vram[(row*32+col)*2+1] & 0xff) << 8);
+                        fprintf(f, "%04x ", d);
+                    }
+                    fprintf(f, "\n");
+                }
+                fclose(f);
+                printf("wrote vram_dump.txt\n");
+            }
             if (dump.count(frame)) {
                 char name[64];
                 snprintf(name, sizeof name, "frame_%03d.ppm", frame);
@@ -118,8 +145,9 @@ int main(int argc, char** argv) {
             }
             frame++; y = 0; x = 0;
             if (frame % 30 == 0) {
-                printf("  ...frame %d n493=%d niack=%d palw=%u vramw=%u ptm=%d\n",
-                       frame, n493, niack, tb->dbg_palw, tb->dbg_vramw, tb->dbg_ptm_irq);
+                printf("  ...frame %d n493=%d niack=%d palw=%u vramw=%u sprw=%u hit=%u blend=%u\n",
+                       frame, n493, niack, tb->dbg_palw, tb->dbg_vramw,
+                       tb->dbg_sprw, tb->dbg_sphit, tb->dbg_spblend);
                 fflush(stdout);
             }
         }

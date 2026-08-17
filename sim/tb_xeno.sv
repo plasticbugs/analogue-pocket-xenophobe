@@ -17,8 +17,27 @@ module tb_xeno (
     output logic [15:0] dbg_palw, dbg_vramw,
     output logic dbg_phi1,
     output logic dbg_wdt_kick,
-    output logic dbg_vsync30
+    output logic dbg_vsync30,
+    output logic [15:0] dbg_sprw,     // CPU writes to sprite ram (entry area)
+    output logic [15:0] dbg_sphit,    // sprite scan line-hits
+    output logic [15:0] dbg_spblend,  // sprite pixels blended
+    output logic dbg_pal_we,
+    output logic [5:0] dbg_pal_addr,
+    output logic [15:0] dbg_pal_data
 );
+    assign dbg_pal_we   = pal_we;
+    assign dbg_pal_addr = pal_addr;
+    assign dbg_pal_data = main_board.cpu_dout;
+    always_ff @(posedge clk) begin
+        if (reset) begin dbg_sprw <= '0; dbg_sphit <= '0; dbg_spblend <= '0; end
+        else begin
+            if (|sprram_we && sprram_addr < 12'd2048 && sprram_din[7:0] != 0)
+                dbg_sprw <= dbg_sprw + 1'd1;
+            if (video.sp_st == 4'd4) dbg_sphit <= dbg_sphit + 1'd1;      // SP_RD_FLAGS
+            if (video.sp_st == 4'd8 && video.sp_pval != 0
+                && video.sp_xpos < 10'd512) dbg_spblend <= dbg_spblend + 1'd1;  // SP_BLEND
+        end
+    end
     assign dbg_phi1 = phi1;
     assign dbg_wdt_kick = main_board.sel_wdt & ~main_board.rw_n;
     assign dbg_vsync30 = vsync30;

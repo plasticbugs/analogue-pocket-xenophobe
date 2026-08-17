@@ -18,6 +18,7 @@
 
 
 #include "verilated.h"
+#include "verilated_dpi.h"
 
 #include "Vtb_xeno__Syms.h"
 #include "Vtb_xeno.h"

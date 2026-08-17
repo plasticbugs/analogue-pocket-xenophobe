@@ -17,6 +17,8 @@
 #include "Vtb_xeno___024root.h"
 #include "Vtb_xeno___024unit.h"
 
+// DPI TYPES for DPI Export callbacks (Internal use)
+
 // SYMS CLASS (contains all model state)
 class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno__Syms final : public VerilatedSyms {
   public:
@@ -27,6 +29,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno__Syms final : public VerilatedSyms {
 
     // MODULE INSTANCE STATE
     Vtb_xeno___024root             TOP;
+
+    // SCOPE NAMES
+    VerilatedScope* __Vscopep_tb_xeno__video;
 
     // CONSTRUCTORS
     Vtb_xeno__Syms(VerilatedContext* contextp, const char* namep, Vtb_xeno* modelp);

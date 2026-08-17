@@ -4,7 +4,7 @@
 Layout (must match rtl rom_loader):
   0x00000 +256K  main 68k program (3c/3b + 2c/2b byte-interleaved, even bytes from 3c/2c)
   0x40000 +256K  sound 68k program (u7/u17 + u8/u18, even bytes from u7/u8)
-  0x80000 +64K   bg tiles (12d + 11d)
+  0x80000 +64K   bg tiles (11d + 12d, raw dump; loader inverts per ROMREGION_INVERT)
   0x90000 +256K  sprites (7j + 8j + 9j + 10j)
 
 Usage: make_rom.py <romset_dir> [out_file]
@@ -40,7 +40,7 @@ def main():
 
     image = (ilv('xeno_pro.3c', 'xeno_pro.3b') + ilv('xeno_pro.2c', 'xeno_pro.2b')
              + ilv('xeno_snd.u7', 'xeno_snd.u17') + ilv('xeno_snd.u8', 'xeno_snd.u18')
-             + roms['xeno_bg.12d'] + roms['xeno_bg.11d']
+             + roms['xeno_bg.11d'] + roms['xeno_bg.12d']
              + roms['xeno_fg.7j'] + roms['xeno_fg.8j']
              + roms['xeno_fg.9j'] + roms['xeno_fg.10j'])
     assert len(image) == 0xD0000, hex(len(image))

@@ -25,12 +25,18 @@ Vtb_xeno::Vtb_xeno(VerilatedContext* _vcontextp__, const char* _vcname__)
     , dbg_phi1{vlSymsp->TOP.dbg_phi1}
     , dbg_wdt_kick{vlSymsp->TOP.dbg_wdt_kick}
     , dbg_vsync30{vlSymsp->TOP.dbg_vsync30}
+    , dbg_pal_we{vlSymsp->TOP.dbg_pal_we}
+    , dbg_pal_addr{vlSymsp->TOP.dbg_pal_addr}
     , in0{vlSymsp->TOP.in0}
     , in1{vlSymsp->TOP.in1}
     , dsw{vlSymsp->TOP.dsw}
     , ctrl{vlSymsp->TOP.ctrl}
     , dbg_palw{vlSymsp->TOP.dbg_palw}
     , dbg_vramw{vlSymsp->TOP.dbg_vramw}
+    , dbg_sprw{vlSymsp->TOP.dbg_sprw}
+    , dbg_sphit{vlSymsp->TOP.dbg_sphit}
+    , dbg_spblend{vlSymsp->TOP.dbg_spblend}
+    , dbg_pal_data{vlSymsp->TOP.dbg_pal_data}
     , dbg_addr{vlSymsp->TOP.dbg_addr}
     , __PVT____024unit{vlSymsp->TOP.__PVT____024unit}
     , rootp{&(vlSymsp->TOP)}

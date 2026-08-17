@@ -9,6 +9,7 @@
 #define VERILATED_VTB_XENO_H_  // guard
 
 #include "verilated.h"
+#include "svdpi.h"
 
 class Vtb_xeno__Syms;
 class Vtb_xeno___024root;
@@ -46,12 +47,18 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno VL_NOT_FINAL : public VerilatedModel
     VL_OUT8(&dbg_phi1,0,0);
     VL_OUT8(&dbg_wdt_kick,0,0);
     VL_OUT8(&dbg_vsync30,0,0);
+    VL_OUT8(&dbg_pal_we,0,0);
+    VL_OUT8(&dbg_pal_addr,5,0);
     VL_IN16(&in0,15,0);
     VL_IN16(&in1,15,0);
     VL_IN16(&dsw,15,0);
     VL_OUT16(&ctrl,15,0);
     VL_OUT16(&dbg_palw,15,0);
     VL_OUT16(&dbg_vramw,15,0);
+    VL_OUT16(&dbg_sprw,15,0);
+    VL_OUT16(&dbg_sphit,15,0);
+    VL_OUT16(&dbg_spblend,15,0);
+    VL_OUT16(&dbg_pal_data,15,0);
     VL_OUT(&dbg_addr,23,0);
 
     // CELLS

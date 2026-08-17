@@ -5,6 +5,9 @@ Vtb_xeno__Syms__Slow.o: \
   /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilatedos.h \
   /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_types.h \
   /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_funcs.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_dpi.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_sym_props.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/vltstd/svdpi.h \
   /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno__Syms.h \
   /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno.h \
   /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno___024unit.h \

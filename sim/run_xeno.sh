@@ -12,10 +12,11 @@ def words(path, out):
             f.write(f'{d[i]:02x}{d[i+1]:02x}\n')
 R = '../../romset/'
 words('../../build/xeno_main.bin', 'xeno_main.hex')
-bg = open(R+'xeno_bg.12d','rb').read() + open(R+'xeno_bg.11d','rb').read()
+# region order 11d then 12d, data inverted (ROMREGION_INVERT)
+bg = open(R+'xeno_bg.11d','rb').read() + open(R+'xeno_bg.12d','rb').read()
 with open('bg_rom.hex','w') as f:
     for i in range(0, len(bg), 2):
-        f.write(f'{bg[i]:02x}{bg[i+1]:02x}\n')
+        f.write(f'{bg[i]^0xff:02x}{bg[i+1]^0xff:02x}\n')
 for n, name in enumerate(('7j','8j','9j','10j')):
     d = open(R+f'xeno_fg.{name}','rb').read()
     with open(f'spr_rom{n}.hex','w') as f:

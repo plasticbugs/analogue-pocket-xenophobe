@@ -1331,8 +1331,8 @@ void Vtb_xeno___024root___eval_nba(Vtb_xeno___024root* vlSelf) {
             vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_stb 
                 = ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_cs_q)) 
                    & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ptm));
-            vlSelfRef.tb_xeno__DOT__pal_we = (__Vinline_0__nba_comb__TOP__0___VdfgRegularize_hebeb780c_0_1 
-                                              & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal));
+            vlSelfRef.dbg_pal_we = (__Vinline_0__nba_comb__TOP__0___VdfgRegularize_hebeb780c_0_1 
+                                    & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal));
             vlSelfRef.tb_xeno__DOT__vram_we = ((- (IData)(
                                                           (__Vinline_0__nba_comb__TOP__0___VdfgRegularize_hebeb780c_0_1 
                                                            & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram)))) 

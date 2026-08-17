@@ -88,7 +88,7 @@ module mcr68_video (
 
     // ---------------- memories ----------------
     // vram 4K x 16: first 2K words = tilemap, rest = CPU scratch (0x71000)
-    logic [15:0] vram [0:4095];
+    logic [15:0] vram [0:4095] /*verilator public_flat_rd*/;
     logic [15:0] vram_rq;
     always_ff @(posedge clk) begin
         if (vram_we[0]) vram[vram_addr][7:0]  <= vram_din[7:0];
@@ -111,18 +111,21 @@ module mcr68_video (
     end
 
     // palette 64 x 9
-    logic [8:0] palette [0:63];
+    logic [8:0] palette [0:63] /*verilator public_flat_rd*/;
     always_ff @(posedge clk) if (pal_we) palette[pal_addr] <= pal_din;
 
     // bg tile ROM: 32K x 16 = 64KB. word addr {half, code[10:0], row[2:0]}
+    // Region order is 11d (pen bits 1:0) then 12d (pen bits 3:2), and the
+    // data is INVERTED (MAME ROMREGION_INVERT; the merged .rom asset stores
+    // the raw dump, so the loader inverts here). Sim hex is pre-inverted.
     logic [15:0] bg_rom [0:32767];
     logic [15:0] bg_q0, bg_q1;
     logic [13:0] bg_raddr;            // {code, row} - both halves read in sequence
     logic        bg_rhalf;
     always_ff @(posedge clk) begin
         if (gfx_load_we && gfx_load_addr[17:16] == 2'b00) begin
-            if (gfx_load_addr[0]) bg_rom[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  bg_rom[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
+            if (gfx_load_addr[0]) bg_rom[gfx_load_addr[15:1]][7:0]  <= ~gfx_load_data;
+            else                  bg_rom[gfx_load_addr[15:1]][15:8] <= ~gfx_load_data;
         end
         if (bg_rhalf) bg_q1 <= bg_rom[{1'b1, bg_raddr}];
         else          bg_q0 <= bg_rom[{1'b0, bg_raddr}];
