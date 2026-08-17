@@ -74,3 +74,21 @@ set_clock_groups -asynchronous \
           dram_clk } \
  -group { ic|pocket_audio_mixer|audio_pll|mf_audio_pll_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk } \
  -group { ic|pocket_audio_mixer|audio_pll|mf_audio_pll_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk }
+
+# ==============================================================================
+# fx68k multicycle: both 68000s advance only on enPhi1/enPhi2 clock enables.
+# The fractional enable generators (K=25310 and 26214 < 2^15) can never fire
+# on consecutive clk_sys cycles, so every fx68k-internal register-to-register
+# path has at least two clock periods to settle.
+# ==============================================================================
+set_multicycle_path -setup 2 -from [get_registers {*|fx68k:cpu|*}] -to [get_registers {*|fx68k:cpu|*}]
+set_multicycle_path -hold 1 -from [get_registers {*|fx68k:cpu|*}] -to [get_registers {*|fx68k:cpu|*}]
+
+# The burst capture registers (bdata) take read data two controller cycles
+# after each READ command, same CL2 relationship as the byte-port 'data'
+# register; scope by register name since the clock-scoped exception above
+# does not match these paths.
+set_multicycle_path -setup -end 2 -from [get_ports {dram_dq[*]}] -to [get_registers {*|sdram16:sdram16|bdata*}]
+set_multicycle_path -hold -end 1 -from [get_ports {dram_dq[*]}] -to [get_registers {*|sdram16:sdram16|bdata*}]
+set_multicycle_path -setup -end 2 -from [get_ports {dram_dq[*]}] -to [get_registers {*|sdram16:sdram16|data*}]
+set_multicycle_path -hold -end 1 -from [get_ports {dram_dq[*]}] -to [get_registers {*|sdram16:sdram16|data*}]
