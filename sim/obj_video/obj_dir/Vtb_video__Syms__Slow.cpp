@@ -11,7 +11,7 @@ Vtb_video__Syms::Vtb_video__Syms(VerilatedContext* contextp, const char* namep, 
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(470);
+    Verilated::stackCheck(958);
     // Setup sub module instances
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-9);

@@ -269,7 +269,7 @@ module mcr68_video (
     // the display requires claim AND a visible state.
     logic [7:0] sp_lbuf_lo [0:1023];
     logic [7:0] sp_lbuf_hi [0:1023];
-    logic [511:0] sp_claim_lo [0:1], sp_claim_hi [0:1];
+    logic [511:0] sp_claim_lo0, sp_claim_lo1, sp_claim_hi0, sp_claim_hi1;
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
@@ -427,16 +427,22 @@ module mcr68_video (
     // First-wins per class (MAME drawgfx PIXEL_OP_..._PRIORITY, validated
     // 0.000% on ten MAME states): a pixel once claimed is never rewritten.
     // Pen 8 claims invisibly (claim bit set, no data write -> renders as bg).
-    wire sp_claimed = sp_pri ? sp_claim_hi[sp_wrbuf][sp_xs[8:0]]
-                             : sp_claim_lo[sp_wrbuf][sp_xs[8:0]];
+    wire [511:0] claim_lo_w = sp_wrbuf ? sp_claim_lo1 : sp_claim_lo0;
+    wire [511:0] claim_hi_w = sp_wrbuf ? sp_claim_hi1 : sp_claim_hi0;
+    wire sp_claimed = sp_pri ? claim_hi_w[sp_xs[8:0]] : claim_lo_w[sp_xs[8:0]];
     wire sp_blend_go = (sp_st == SP_BLEND) && sp_pval != 0 && sp_xok && !sp_claimed;
     always_ff @(posedge clk) begin
         if (sp_st == SP_CLR) begin
-            sp_claim_lo[sp_wrbuf] <= '0;
-            sp_claim_hi[sp_wrbuf] <= '0;
+            if (sp_wrbuf) begin sp_claim_lo1 <= '0; sp_claim_hi1 <= '0; end
+            else          begin sp_claim_lo0 <= '0; sp_claim_hi0 <= '0; end
         end else if (sp_blend_go) begin
-            if (sp_pri) sp_claim_hi[sp_wrbuf][sp_xs[8:0]] <= 1'b1;
-            else        sp_claim_lo[sp_wrbuf][sp_xs[8:0]] <= 1'b1;
+            if (sp_pri) begin
+                if (sp_wrbuf) sp_claim_hi1[sp_xs[8:0]] <= 1'b1;
+                else          sp_claim_hi0[sp_xs[8:0]] <= 1'b1;
+            end else begin
+                if (sp_wrbuf) sp_claim_lo1[sp_xs[8:0]] <= 1'b1;
+                else          sp_claim_lo0[sp_xs[8:0]] <= 1'b1;
+            end
         end
     end
     // port A (render write; every claim writes, pen 8 writes state 2)
@@ -460,8 +466,8 @@ module mcr68_video (
         if (ce_pix) begin
             sp_bq_lo <= sp_lbuf_lo[{lbuf_sel, hcnt[8:0]}];
             sp_bq_hi <= sp_lbuf_hi[{lbuf_sel, hcnt[8:0]}];
-            sp_bv_lo <= sp_claim_lo[lbuf_sel][hcnt[8:0]];
-            sp_bv_hi <= sp_claim_hi[lbuf_sel][hcnt[8:0]];
+            sp_bv_lo <= lbuf_sel ? sp_claim_lo1[hcnt[8:0]] : sp_claim_lo0[hcnt[8:0]];
+            sp_bv_hi <= lbuf_sel ? sp_claim_hi1[hcnt[8:0]] : sp_claim_hi0[hcnt[8:0]];
         end
     end
 
