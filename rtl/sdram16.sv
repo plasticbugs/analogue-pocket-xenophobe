@@ -45,6 +45,11 @@ module sdram16
         input      [24:0] addr,        // 25 bit address for 8bit mode. addr[0] = 0 for 16bit mode for correct operations.
         output      [7:0] dout,        // Data output to cpu
         output     [15:0] dout16,      // Full 16-bit word (issue reads with addr[0]=0)
+        // burst port: 8 consecutive words starting at a 16-byte boundary
+        input      [24:4] baddr,       // 16-byte block address
+        input             brd,         // edge-triggered like rd
+        output reg [127:0] bdata,      // words 0..7, [15:0] first
+        output reg        bready,
         input       [7:0] din,         // Data input from cpu
         input             we,          // Cpu requests write
         input             rd,          // Cpu requests read
@@ -91,12 +96,16 @@ module sdram16
         STATE_STARTUP,
         STATE_OPEN_1, STATE_OPEN_2,
         STATE_IDLE,	  STATE_IDLE_1, STATE_IDLE_2, STATE_IDLE_3,
-        STATE_IDLE_4, STATE_IDLE_5, STATE_IDLE_6, STATE_IDLE_7
+        STATE_IDLE_4, STATE_IDLE_5, STATE_IDLE_6, STATE_IDLE_7,
+        STATE_BOPEN, STATE_BREAD
     } state_t;
 
     always @(posedge clk) begin
-        reg old_we, old_rd;
+        reg old_we, old_rd, old_brd, new_brd;
+        reg [3:0] bcol;
+        reg [2:0] bcap;
         reg [CAS_LATENCY:0] data_ready_delay;
+        reg [CAS_LATENCY:0] bready_delay;
 
         reg  [7:0] new_data;
         reg        new_we;
@@ -159,10 +168,44 @@ module sdram16
                 end
             end
 
+            STATE_BOPEN: begin
+                bcol  <= 0;
+                bcap  <= 0;
+                state <= STATE_BREAD;
+            end
+
+            STATE_BREAD: begin
+                // pipelined reads at consecutive columns; auto-precharge on
+                // the last one. Data arrives CL2 later; capture via delay.
+                if (bcol <= 4'd7) begin
+                    command <= CMD_READ;
+                    SDRAM_A <= {2'b00, 1'b0, (bcol == 4'd7), baddr[9:4], bcol[2:0]};
+                end
+                if (bcol <= 4'd8) bcol <= bcol + 1'd1;
+                bready_delay <= {(bcol <= 4'd7), bready_delay[CAS_LATENCY:1]};
+                if (bready_delay[0]) begin
+                    bdata[bcap*16 +: 16] <= SDRAM_DQ;
+                    bcap <= bcap + 1'd1;
+                    if (bcap == 3'd7) begin
+                        bready <= 1'b1;
+                        bready_delay <= 0;
+                        state <= STATE_IDLE_2;   // tRP after auto-precharge
+                    end
+                end
+            end
+
             STATE_IDLE: begin
                 // Priority is to issue a refresh if one is outstanding
                 if(refresh_count > (cycles_per_refresh<<1))
                     state <= STATE_IDLE_1;
+                else if(new_brd) begin
+                    new_brd  <= 0;
+                    SDRAM_A  <= baddr[22:10];
+                    SDRAM_BA <= baddr[24:23];
+                    command  <= CMD_ACTIVE;
+                    bready_delay <= 0;
+                    state    <= STATE_BOPEN;
+                end
                 else if(new_rd | new_we) begin
                     // Service ONE op and leave the other queued: clearing
                     // both here silently dropped a read that arrived while
@@ -174,14 +217,14 @@ module sdram16
                         new_we    <= 0;
                         save_we   <= 1'b1;
                         save_addr <= new_waddr;
-                        SDRAM_A   <= new_waddr[13:1];
+                        SDRAM_A   <= new_waddr[22:10];
                         SDRAM_BA  <= new_waddr[24:23];
                     end
                     else begin
                         new_rd    <= 0;
                         save_we   <= 1'b0;
                         save_addr <= addr;
-                        SDRAM_A   <= addr[13:1];
+                        SDRAM_A   <= addr[22:10];
                         SDRAM_BA  <= addr[24:23];
                     end
                     state     <= STATE_OPEN_1;
@@ -192,7 +235,7 @@ module sdram16
             STATE_OPEN_1: begin state <= STATE_OPEN_2; end
 
             STATE_OPEN_2: begin
-                SDRAM_A      <= {save_we & ~save_addr[0], save_we & save_addr[0], 2'b10, save_addr[22:14]};
+                SDRAM_A      <= {save_we & ~save_addr[0], save_we & save_addr[0], 2'b10, save_addr[9:1]};
                 if(save_we) begin
                     command  <= CMD_WRITE;
                     SDRAM_DQ <= {new_data[7:0], new_data[7:0]};
@@ -221,6 +264,11 @@ module sdram16
             new_waddr <= addr;
         end
 
+        old_brd <= brd;
+        if(brd & ~old_brd) begin
+            {bready, new_brd} <= {1'b0, 1'b1};
+        end
+
         old_rd <= rd;
         if(rd & ~old_rd) begin
             if(ready & ~save_we & (save_addr[24:1] == addr[24:1])) begin
@@ -232,6 +280,9 @@ module sdram16
         end
     end
 
+`ifdef VERILATOR
+    assign SDRAM_CLK = ~clk;   // sim: chip clocks on our negedge-equivalent
+`else
     altddio_out #(
         .extend_oe_disable      ( "OFF"          ),
         .intended_device_family ( "Cyclone V"    ),
@@ -253,5 +304,6 @@ module sdram16
         .sclr                   ( 1'b0           ),
         .sset                   ( 1'b0           )
     );
+`endif
 
 endmodule

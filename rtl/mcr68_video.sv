@@ -43,10 +43,16 @@ module mcr68_video (
     input  logic [8:0]  pal_din,
     input  logic        pal_we,
 
-    // graphics ROM load port (during APF asset load)
-    input  logic [18:0] gfx_load_addr, // byte address: 0x00000-0x0ffff bg, 0x10000-0x4ffff sprites
+    // bg tile ROM load port (during APF asset load; sprites live in SDRAM)
+    input  logic [18:0] gfx_load_addr, // byte address: 0x00000-0x0ffff bg
     input  logic [7:0]  gfx_load_data,
     input  logic        gfx_load_we,
+
+    // sprite row fetch (16 bytes per {code, row} block, served from SDRAM)
+    output logic [13:0] spr_fetch_addr, // {code[8:0], row[4:0]}
+    output logic        spr_fetch_req,
+    input  logic [127:0] spr_fetch_data,
+    input  logic        spr_fetch_done,
 
     // video out
     output logic [7:0]  r, g, b,
@@ -145,42 +151,10 @@ module mcr68_video (
         else            bg_q0 <= bg_rdata;
     end
 
-    // sprite ROM: 4 banks x 32K x 16 = 256KB. Per bank, sprite row = 2 words.
-    // word addr within bank: {code[8:0], row[4:0], word}
-    logic [15:0] spr_rom0 [0:32767];
-    logic [15:0] spr_rom1 [0:32767];
-    logic [15:0] spr_rom2 [0:32767];
-    logic [15:0] spr_rom3 [0:32767];
-    logic [15:0] spr_q [0:3];
-    logic [14:0] spr_raddr;
-    wire  [1:0]  gl_bank = 2'(gfx_load_addr[18:16] - 3'd1); // sprites start at 0x10000
-    wire         gl_spr  = gfx_load_we && gfx_load_addr[0]
-                         && gfx_load_addr[18:16] != 3'b000;   // full word on odd byte
-    wire [15:0] gl_word = {gl_evenb, gfx_load_data};
-    always_ff @(posedge clk) begin
-        if (gl_spr && gl_bank == 2'd0) spr_rom0[gfx_load_addr[15:1]] <= gl_word;
-        spr_q[0] <= spr_rom0[spr_raddr];
-    end
-    always_ff @(posedge clk) begin
-        if (gl_spr && gl_bank == 2'd1) spr_rom1[gfx_load_addr[15:1]] <= gl_word;
-        spr_q[1] <= spr_rom1[spr_raddr];
-    end
-    always_ff @(posedge clk) begin
-        if (gl_spr && gl_bank == 2'd2) spr_rom2[gfx_load_addr[15:1]] <= gl_word;
-        spr_q[2] <= spr_rom2[spr_raddr];
-    end
-    always_ff @(posedge clk) begin
-        if (gl_spr && gl_bank == 2'd3) spr_rom3[gfx_load_addr[15:1]] <= gl_word;
-        spr_q[3] <= spr_rom3[spr_raddr];
-    end
 
 `ifdef SIM_GFX_INIT
     initial begin
         $readmemh("bg_rom.hex",  bg_rom);
-        $readmemh("spr_rom0.hex", spr_rom0);
-        $readmemh("spr_rom1.hex", spr_rom1);
-        $readmemh("spr_rom2.hex", spr_rom2);
-        $readmemh("spr_rom3.hex", spr_rom3);
     end
 `endif
 
@@ -382,21 +356,28 @@ module mcr68_video (
                 sp_fetch_cnt <= '0;
             end
             SP_FETCH: begin
-                if (sp_fetch_cnt == 0) sp_x <= sprram_rq[7:0]; // rq = word3
-                if (sp_fetch_cnt == 0 && sp_code[8:0] == 0) sp_next(1'b0);
-                else begin
-                    // 2 sequential word reads shared by all 4 banks.
-                    // Registered BRAM: issue at cnt 0/1, data valid at 2/3.
-                    spr_raddr <= {sp_code[8:0], sp_rowsel, sp_fetch_cnt[0]};
-                    sp_fetch_cnt <= sp_fetch_cnt + 1'd1;
-                    if (sp_fetch_cnt >= 3'd2) begin
-                        for (int i = 0; i < 4; i++)
-                            sp_row[i][sp_fetch_cnt - 2] <= spr_q[i];
+                if (sp_fetch_cnt == 3'd0) begin
+                    sp_x <= sprram_rq[7:0];                 // rq = word3
+                    if (sp_code[8:0] == 0) sp_next(1'b0);
+                    else begin
+                        spr_fetch_addr <= {sp_code[8:0], sp_rowsel};
+                        spr_fetch_req  <= 1'b1;
+                        sp_fetch_cnt   <= 3'd1;
                     end
-                    if (sp_fetch_cnt == 3'd3) begin
-                        sp_px <= '0;
-                        sp_st <= SP_BLEND;
-                    end
+                end else if (spr_fetch_done) begin
+`ifdef SPRFETCH_TRACE
+                    if (sp_line == 9'd100 || sp_line == 9'd250)
+                        $display("SPRFETCH line=%0d addr=%04x data=%032x",
+                                 sp_line, spr_fetch_addr, spr_fetch_data);
+`endif
+                    spr_fetch_req <= 1'b0;
+                    for (int b = 0; b < 4; b++)
+                        for (int w = 0; w < 2; w++)
+                            sp_row[b][w] <= {spr_fetch_data[(b*2+w)*16 +: 8],
+                                             spr_fetch_data[(b*2+w)*16+8 +: 8]};
+                    sp_fetch_cnt <= 3'd0;
+                    sp_px <= '0;
+                    sp_st <= SP_BLEND;
                 end
             end
             SP_BLEND: begin

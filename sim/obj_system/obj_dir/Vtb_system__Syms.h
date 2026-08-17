@@ -34,6 +34,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system__Syms final : public VerilatedSyms
     Vtb_system_fx68k               TOP__tb_system__DOT__snd__DOT__cpu;
 
     // SCOPE NAMES
+    VerilatedScope* __Vscopep_tb_system__sdram_chip;
     VerilatedScope* __Vscopep_tb_system__video;
 
     // CONSTRUCTORS

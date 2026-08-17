@@ -25,10 +25,16 @@ module xenophobe_core (
     input  logic [15:0] snd_rom_q,
     input  logic        snd_rom_ack,
 
-    // graphics ROM load (during asset load)
+    // bg tile ROM load (during asset load)
     input  logic [18:0] gfx_load_addr,
     input  logic [7:0]  gfx_load_data,
     input  logic        gfx_load_we,
+
+    // sprite row fetch channel (to rom_server / SDRAM)
+    output logic [13:0] spr_fetch_addr,
+    output logic        spr_fetch_req,
+    input  logic [127:0] spr_fetch_data,
+    input  logic        spr_fetch_done,
 
     // video out (512x480 @ 60 Hz progressive, 20 MHz dot via ce_pix)
     output logic [7:0]  r, g, b,
@@ -81,6 +87,8 @@ module xenophobe_core (
         .sprram_addr(sprram_addr), .sprram_din(sprram_din), .sprram_we(sprram_we), .sprram_q(sprram_q),
         .pal_addr(pal_addr), .pal_din(pal_din), .pal_we(pal_we),
         .gfx_load_addr(gfx_load_addr), .gfx_load_data(gfx_load_data), .gfx_load_we(gfx_load_we),
+        .spr_fetch_addr(spr_fetch_addr), .spr_fetch_req(spr_fetch_req),
+        .spr_fetch_data(spr_fetch_data), .spr_fetch_done(spr_fetch_done),
         .r(r), .g(g), .b(b), .hs(hs), .vs(vs), .de(de),
         .vsync30(vsync30), .hsync_pulse(hsync_pulse), .vblank(vblank),
         .field_o(vid_field)

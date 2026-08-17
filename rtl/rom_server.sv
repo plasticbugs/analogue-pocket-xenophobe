@@ -24,9 +24,21 @@ module rom_server (
 
     // loader (during download only)
     input  logic        dl_active,
-    input  logic [18:0] dl_addr,       // byte address within 512KB CPU ROM area
+    input  logic [24:0] dl_addr,       // sdram byte address (CPU + permuted sprites)
     input  logic [7:0]  dl_data,
     input  logic        dl_wr,         // pulse (held a few clks by data_io)
+
+    // sprite row burst client (highest priority; 16-byte blocks)
+    input  logic [24:4] spr_baddr,
+    input  logic        spr_req,       // level; hold until done
+    output logic [127:0] spr_data,
+    output logic        spr_done,
+
+    // sdram burst port passthrough
+    output logic [24:4] sd_baddr,
+    output logic        sd_brd,
+    input  logic [127:0] sd_bdata,
+    input  logic        sd_bready,
 
     // CPU clients
     input  logic [17:1] rd0_addr,      // main: bytes 0x00000-0x3FFFF
@@ -39,23 +51,25 @@ module rom_server (
     output logic        rd1_done
 );
 
-    typedef enum logic [1:0] {IDLE, WAIT_BUSY, WAIT_DONE} st_e;
+    typedef enum logic [2:0] {IDLE, WAIT_BUSY, WAIT_DONE, BWAIT_BUSY, BWAIT_DONE} st_e;
     st_e  st;
-    logic cur;                        // which client
-    logic ready_q;
+    logic cur;                        // which CPU client
+    logic ready_q, bready_q;
 
     always_ff @(posedge clk) begin
         ready_q <= sd_ready;
+        bready_q <= sd_bready;
         if (reset) begin
-            st <= IDLE; sd_we <= 1'b0; sd_rd <= 1'b0;
-            rd0_done <= 1'b0; rd1_done <= 1'b0;
+            st <= IDLE; sd_we <= 1'b0; sd_rd <= 1'b0; sd_brd <= 1'b0;
+            rd0_done <= 1'b0; rd1_done <= 1'b0; spr_done <= 1'b0;
         end else begin
             if (!rd0_req) rd0_done <= 1'b0;
             if (!rd1_req) rd1_done <= 1'b0;
+            if (!spr_req) spr_done <= 1'b0;
 
             if (dl_active) begin
                 // loader owns the port: pass byte writes straight through
-                sd_addr <= {6'b0, dl_addr};
+                sd_addr <= dl_addr;
                 sd_din  <= dl_data;
                 sd_we   <= dl_wr;
                 sd_rd   <= 1'b0;
@@ -64,7 +78,11 @@ module rom_server (
                 case (st)
                     IDLE: begin
                         sd_we <= 1'b0;
-                        if (rd0_req && !rd0_done) begin
+                        if (spr_req && !spr_done) begin
+                            sd_baddr <= spr_baddr;
+                            sd_brd <= 1'b1;
+                            st <= BWAIT_BUSY;
+                        end else if (rd0_req && !rd0_done) begin
                             cur <= 1'b0;
                             sd_addr <= {7'b0, rd0_addr, 1'b0};
                             sd_rd <= 1'b1;
@@ -79,6 +97,15 @@ module rom_server (
                     WAIT_BUSY: if (!sd_ready) begin      // controller accepted
                         sd_rd <= 1'b0;
                         st <= WAIT_DONE;
+                    end
+                    BWAIT_BUSY: if (!sd_bready) begin
+                        sd_brd <= 1'b0;
+                        st <= BWAIT_DONE;
+                    end
+                    BWAIT_DONE: if (sd_bready && !bready_q) begin
+                        spr_data <= sd_bdata;
+                        spr_done <= 1'b1;
+                        st <= IDLE;
                     end
                     WAIT_DONE: if (sd_ready && !ready_q) begin
                         // 68k byte order: even byte (bits 7:0 in sdram) -> D15:8

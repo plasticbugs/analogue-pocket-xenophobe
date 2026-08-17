@@ -29,7 +29,7 @@ verilator --binary -j 4 -O2 --no-assert-case --top-module tb_xeno \
     +define+SIM_GFX_INIT \
     -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC -Wno-CASEINCOMPLETE -Wno-UNUSEDSIGNAL \
     -Wno-PINMISSING -Wno-UNOPTFLAT -Wno-TIMESCALEMOD \
-    -Wno-BLKANDNBLK -Wno-MULTIDRIVEN -Wno-LATCH -Wno-ALWCOMBORDER \
+    -Wno-BLKANDNBLK -Wno-MULTIDRIVEN -Wno-LATCH -Wno-ALWCOMBORDER -Wno-IMPLICITSTATIC \
     -I../../rtl -I../../modules/cpu-fx68k \
     ../tb_xeno.sv ../../rtl/mcr68_main.sv ../../rtl/mcr68_video.sv \
     ../../rtl/ptm6840.sv \

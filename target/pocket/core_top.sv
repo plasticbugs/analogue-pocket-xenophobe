@@ -838,15 +838,32 @@ module core_top
     //! ROM routing: single slot (xenophobe.rom)
     //!   0x00000-0x7FFFF CPU ROMs -> SDRAM  |  0x80000-0xCFFFF gfx -> BRAM
     wire        ioctl_isROM   = ioctl_download && ioctl_index == 16'h0;
-    wire        gfx_load_we   = ioctl_isROM && ioctl_wr && ioctl_addr[19];
-    wire [18:0] gfx_load_addr = ioctl_addr[18:0];           // addr - 0x80000
-    wire        cpu_load_wr   = ioctl_isROM && ioctl_wr && !ioctl_addr[19];
+    // .rom layout: 0x00000 CPU ROMs (to SDRAM verbatim), 0x80000 bg tiles
+    // (to BRAM), 0x90000 sprites (to SDRAM, addresses PERMUTED so the 16
+    // bytes of one sprite row land consecutively for burst reads):
+    //   in-bank byte b: {bank[1:0]=a[17:16], code=a[15:7], row=a[6:2], k=a[1:0]}
+    //   sdram byte    : 0x90000 + {code, row, bank, k}
+    wire        is_bg         = ioctl_addr[19:16] == 4'h8;
+    wire        is_spr        = ioctl_addr[19:16] >= 4'h9 && ioctl_addr[19:16] <= 4'hC;
+    wire [17:0] spr_off       = ioctl_addr[17:0] - 18'h10000;    // within sprite region
+    wire [24:0] dl_sdram_addr = is_spr
+        ? 25'h90000 + {7'b0, spr_off[15:7], spr_off[6:2], spr_off[17:16], spr_off[1:0]}
+        : {5'b0, ioctl_addr[19:0]};
+    wire        gfx_load_we   = ioctl_isROM && ioctl_wr && is_bg;
+    wire [18:0] gfx_load_addr = {3'b0, ioctl_addr[15:0]};
+    wire        cpu_load_wr   = ioctl_isROM && ioctl_wr && !is_bg;
 
     //! SDRAM (proven controller, 16-bit read tap) + ROM word server
     wire [24:0] sd_addr;
     wire  [7:0] sd_din;
     wire        sd_we, sd_rd, sd_ready;
     wire [15:0] sd_dout16;
+    wire [24:4] sd_baddr;
+    wire        sd_brd, sd_bready;
+    wire [127:0] sd_bdata;
+    wire [13:0] spr_fetch_addr;
+    wire        spr_fetch_req, spr_fetch_done;
+    wire [127:0] spr_fetch_data;
 
     sdram16 sdram16
     (
@@ -867,6 +884,10 @@ module core_top
 
         .dout       (                    ),
         .dout16     ( sd_dout16          ),
+        .baddr      ( sd_baddr           ),
+        .brd        ( sd_brd             ),
+        .bdata      ( sd_bdata           ),
+        .bready     ( sd_bready          ),
         .din        ( sd_din             ),
         .addr       ( sd_addr            ),
         .we         ( sd_we              ),
@@ -890,9 +911,17 @@ module core_top
         .sd_dout16 ( sd_dout16      ),
         .sd_ready  ( sd_ready       ),
         .dl_active ( ioctl_isROM    ),
-        .dl_addr   ( ioctl_addr[18:0] ),
+        .dl_addr   ( dl_sdram_addr  ),
         .dl_data   ( ioctl_data     ),
         .dl_wr     ( cpu_load_wr    ),
+        .spr_baddr ( 21'h9000 + {7'b0, spr_fetch_addr} ),
+        .spr_req   ( spr_fetch_req  ),
+        .spr_data  ( spr_fetch_data ),
+        .spr_done  ( spr_fetch_done ),
+        .sd_baddr  ( sd_baddr       ),
+        .sd_brd    ( sd_brd         ),
+        .sd_bdata  ( sd_bdata       ),
+        .sd_bready ( sd_bready      ),
         .rd0_addr  ( main_rom_addr  ),
         .rd0_req   ( main_rom_req   ),
         .rd0_q     ( main_rom_q     ),
@@ -951,6 +980,10 @@ module core_top
         .gfx_load_addr ( gfx_load_addr ),
         .gfx_load_data ( ioctl_data    ),
         .gfx_load_we   ( gfx_load_we   ),
+        .spr_fetch_addr ( spr_fetch_addr ),
+        .spr_fetch_req  ( spr_fetch_req  ),
+        .spr_fetch_data ( spr_fetch_data ),
+        .spr_fetch_done ( spr_fetch_done ),
         .r             ( xr            ),
         .g             ( xg            ),
         .b             ( xb            ),

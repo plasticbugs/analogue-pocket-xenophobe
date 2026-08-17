@@ -107,6 +107,13 @@ extern const VlWide<20>/*639:0*/ Vtb_system__ConstPool__CONST_h79f0020d_0 = VlWi
         0xffffffff, 0x00000014, 0x00000000, 0x00000000
 }};
 
+extern const VlWide<16>/*511:0*/ Vtb_system__ConstPool__CONST_h93e1b771_0 = VlWide<16>{{
+        0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000, 0x00000000, 0x00000000
+}};
+
 extern const VlWide<16>/*511:0*/ Vtb_system__ConstPool__CONST_he0dc4311_0 = VlWide<16>{{
         0xffffffff, 0x00000002, 0xffffffff, 0x00000003,
         0xffffffff, 0x00000004, 0xffffffff, 0x00000005,

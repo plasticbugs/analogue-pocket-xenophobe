@@ -16,7 +16,7 @@ cp ../../modules/cpu-fx68k/microrom.mem ../../modules/cpu-fx68k/nanorom.mem .
 verilator --binary -j 4 -O2 --no-assert-case --top-module tb_sounds_good \
     -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC -Wno-CASEINCOMPLETE -Wno-UNUSEDSIGNAL \
     -Wno-PINMISSING -Wno-UNOPTFLAT -Wno-TIMESCALEMOD \
-    -Wno-BLKANDNBLK -Wno-MULTIDRIVEN -Wno-LATCH -Wno-ALWCOMBORDER \
+    -Wno-BLKANDNBLK -Wno-MULTIDRIVEN -Wno-LATCH -Wno-ALWCOMBORDER -Wno-IMPLICITSTATIC \
     -I../../rtl -I../../modules/cpu-fx68k \
     ../tb_sounds_good.sv ../../rtl/sounds_good.sv ../../rtl/pia6821.sv \
     ../../modules/cpu-fx68k/fx68k.sv ../../modules/cpu-fx68k/fx68kAlu.sv \

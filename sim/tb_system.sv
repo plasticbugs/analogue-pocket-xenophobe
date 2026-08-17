@@ -61,14 +61,55 @@ module tb_system (
     logic [5:0]  pal_addr;   logic [8:0]  pal_din;  logic pal_we;
     logic hsync_pulse, vsync30, vblank;
 
+    // SDRAM path for sprite fetches
+    wire [15:0] sdq;
+    wire [12:0] sda;
+    wire [1:0]  sdba;
+    wire        sdml, sdmh, sdcs, sdras, sdcas, sdwen, sdcke, sdclko;
+    wire [24:4] sd_baddr;  wire sd_brd, sd_bready;  wire [127:0] sd_bdata;
+    wire [24:0] sd_addr;   wire [7:0] sd_din;
+    wire        sd_we, sd_rd, sd_ready;
+    wire [15:0] sd_dout16;
+    wire [13:0] spr_fetch_addr;
+    wire        spr_fetch_req, spr_fetch_done;
+    wire [127:0] spr_fetch_data;
+
+    sdram16 sdram16 (
+        .init(1'b0), .clk(clk),
+        .SDRAM_DQ(sdq), .SDRAM_A(sda), .SDRAM_DQML(sdml), .SDRAM_DQMH(sdmh),
+        .SDRAM_BA(sdba), .SDRAM_nCS(sdcs), .SDRAM_nWE(sdwen),
+        .SDRAM_nRAS(sdras), .SDRAM_nCAS(sdcas), .SDRAM_CKE(sdcke), .SDRAM_CLK(sdclko),
+        .addr(sd_addr), .dout(), .dout16(sd_dout16),
+        .baddr(sd_baddr), .brd(sd_brd), .bdata(sd_bdata), .bready(sd_bready),
+        .din(sd_din), .we(sd_we), .rd(sd_rd), .ready(sd_ready)
+    );
+    sdram_model sdram_chip (
+        .clk(clk), .dq(sdq), .a(sda), .ba(sdba), .dqml(sdml), .dqmh(sdmh),
+        .cs_n(sdcs), .ras_n(sdras), .cas_n(sdcas), .we_n(sdwen), .cke(sdcke)
+    );
+    rom_server rom_srv (
+        .clk(clk), .reset(reset),
+        .sd_addr(sd_addr), .sd_din(sd_din), .sd_we(sd_we), .sd_rd(sd_rd),
+        .sd_dout16(sd_dout16), .sd_ready(sd_ready),
+        .dl_active(1'b0), .dl_addr('0), .dl_data('0), .dl_wr(1'b0),
+        .spr_baddr(21'h9000 + {7'b0, spr_fetch_addr}),
+        .spr_req(spr_fetch_req), .spr_data(spr_fetch_data), .spr_done(spr_fetch_done),
+        .sd_baddr(sd_baddr), .sd_brd(sd_brd), .sd_bdata(sd_bdata), .sd_bready(sd_bready),
+        .rd0_addr('0), .rd0_req(1'b0), .rd0_q(), .rd0_done(),
+        .rd1_addr('0), .rd1_req(1'b0), .rd1_q(), .rd1_done()
+    );
+    initial $readmemh("sdram_init.hex", sdram_chip.mem);
+
     mcr68_video video (
         .clk(clk), .ce_pix(ce_pix),
         .vram_addr(vram_addr), .vram_din(vram_din), .vram_we(vram_we), .vram_q(vram_q),
         .sprram_addr(sprram_addr), .sprram_din(sprram_din), .sprram_we(sprram_we), .sprram_q(sprram_q),
         .pal_addr(pal_addr), .pal_din(pal_din), .pal_we(pal_we),
         .gfx_load_addr('0), .gfx_load_data('0), .gfx_load_we(1'b0),
+        .spr_fetch_addr(spr_fetch_addr), .spr_fetch_req(spr_fetch_req),
+        .spr_fetch_data(spr_fetch_data), .spr_fetch_done(spr_fetch_done),
         .r(r), .g(g), .b(b), .hs(hs), .vs(vs), .de(de),
-        .vsync30(vsync30), .hsync_pulse(hsync_pulse), .vblank(vblank)
+        .vsync30(vsync30), .hsync_pulse(hsync_pulse), .vblank(vblank), .field_o()
     );
 
     mcr68_main main_board (

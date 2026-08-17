@@ -30,6 +30,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video__Syms final : public VerilatedSyms 
     Vtb_video___024root            TOP;
 
     // SCOPE NAMES
+    VerilatedScope* __Vscopep_tb_video__sdram_chip;
     VerilatedScope* __Vscopep_tb_video__video;
 
     // CONSTRUCTORS
