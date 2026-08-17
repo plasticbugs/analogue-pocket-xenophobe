@@ -18,10 +18,17 @@ Vtb_xeno::Vtb_xeno(VerilatedContext* _vcontextp__, const char* _vcname__)
     , vs{vlSymsp->TOP.vs}
     , de{vlSymsp->TOP.de}
     , wdt{vlSymsp->TOP.wdt}
+    , dbg_as{vlSymsp->TOP.dbg_as}
+    , dbg_irq493{vlSymsp->TOP.dbg_irq493}
+    , dbg_ptm_irq{vlSymsp->TOP.dbg_ptm_irq}
+    , dbg_iack{vlSymsp->TOP.dbg_iack}
     , in0{vlSymsp->TOP.in0}
     , in1{vlSymsp->TOP.in1}
     , dsw{vlSymsp->TOP.dsw}
     , ctrl{vlSymsp->TOP.ctrl}
+    , dbg_palw{vlSymsp->TOP.dbg_palw}
+    , dbg_vramw{vlSymsp->TOP.dbg_vramw}
+    , dbg_addr{vlSymsp->TOP.dbg_addr}
     , __PVT____024unit{vlSymsp->TOP.__PVT____024unit}
     , rootp{&(vlSymsp->TOP)}
 {

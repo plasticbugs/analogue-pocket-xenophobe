@@ -70,7 +70,7 @@ void Vtb_xeno___024root___eval_ico(Vtb_xeno___024root* vlSelf) {
                                                    (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
                                                     >> 8U))
                                                 : (
-                                                   (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq) 
+                                                   (((IData)(vlSelfRef.dbg_ptm_irq) 
                                                      << 7U) 
                                                     | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag)) 
                                                    & (- (IData)(
@@ -101,7 +101,7 @@ void Vtb_xeno___024root___eval_ico(Vtb_xeno___024root* vlSelf) {
                                                   (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
                                                    >> 8U))
                                                : ((
-                                                   ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq) 
+                                                   ((IData)(vlSelfRef.dbg_ptm_irq) 
                                                     << 7U) 
                                                    | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag)) 
                                                   & (- (IData)(
@@ -145,8 +145,8 @@ void Vtb_xeno___024root___eval_ico(Vtb_xeno___024root* vlSelf) {
     if ((3ULL & vlSelfRef.__VicoTriggered[0U])) {
         {
             // Inlined CFunc: _ico_comb__TOP__1
-            IData/*31:0*/ __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_7;
-            __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_7 = 0;
+            IData/*31:0*/ __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_6;
+            __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_6 = 0;
             vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT____Vcellinp__nanoRom__clk 
                 = vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Clks
                 .__PVT__clk;
@@ -173,9 +173,9 @@ void Vtb_xeno___024root___eval_ico(Vtb_xeno___024root* vlSelf) {
                                         & (~ ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeI) 
                                               | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeiDelay)))) 
                                        & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Vpai)));
-            __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_7 
+            __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_6 
                 = (((((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase) 
-                      & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
+                      & ((IData)(vlSelfRef.dbg_as) 
                          & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg))) 
                      | ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BRi) 
                         & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BgackI) 
@@ -208,11 +208,11 @@ void Vtb_xeno___024root___eval_ico(Vtb_xeno___024root* vlSelf) {
                                                      & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__bcReset) 
                                                         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg)))
                                                      ? 6U
-                                                     : __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_7)
+                                                     : __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_6)
                                                     : 
                                                    ((1U 
                                                      == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase)
-                                                     ? __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_7
+                                                     ? __Vinline_0__ico_comb__TOP__1___VdfgRegularize_hebeb780c_0_6
                                                      : 1U)))))));
             vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busEnding 
                 = ((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__next) 
@@ -524,8 +524,8 @@ void Vtb_xeno___024root___act_comb__TOP__0(Vtb_xeno___024root* vlSelf) {
     __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__isByte = 0;
     CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__ov;
     __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__ov = 0;
-    IData/*31:0*/ __VdfgRegularize_hebeb780c_0_7;
-    __VdfgRegularize_hebeb780c_0_7 = 0;
+    IData/*31:0*/ __VdfgRegularize_hebeb780c_0_6;
+    __VdfgRegularize_hebeb780c_0_6 = 0;
     IData/*31:0*/ __Vtemp_1;
     // Body
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nDecoder__DOT__dblSpecial 
@@ -887,8 +887,8 @@ void Vtb_xeno___024root___act_comb__TOP__0(Vtb_xeno___024root* vlSelf) {
            .__PVT__rxl2db & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__rxIsAreg) 
                              | vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod
                              .__PVT__dblDbd));
-    __VdfgRegularize_hebeb780c_0_7 = (((((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase) 
-                                         & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
+    __VdfgRegularize_hebeb780c_0_6 = (((((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase) 
+                                         & ((IData)(vlSelfRef.dbg_as) 
                                             & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg))) 
                                         | ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BRi) 
                                            & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BgackI) 
@@ -1116,11 +1116,11 @@ void Vtb_xeno___024root___act_comb__TOP__0(Vtb_xeno___024root* vlSelf) {
                                                      & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__bcReset) 
                                                         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg)))
                                                      ? 6U
-                                                     : __VdfgRegularize_hebeb780c_0_7)
+                                                     : __VdfgRegularize_hebeb780c_0_6)
                                                     : 
                                                    ((1U 
                                                      == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase)
-                                                     ? __VdfgRegularize_hebeb780c_0_7
+                                                     ? __VdfgRegularize_hebeb780c_0_6
                                                      : 1U)))))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__ablIdle = 0U;
     if ((1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__Pcl2Abl)))) {
@@ -1546,7 +1546,7 @@ void Vtb_xeno___024root___act_comb__TOP__0(Vtb_xeno___024root* vlSelf) {
                | (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdOverf) 
                    << 1U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdCarry)));
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_3 = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrTemp) 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_2 = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrTemp) 
                                                  & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrMask)) 
                                                 | ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrMask)) 
                                                    & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr)));
@@ -1587,6 +1587,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __Vdly__tb_xeno__DOT__acc = 0;
     CData/*0:0*/ __Vdly__tb_xeno__DOT__phi_tog;
     __Vdly__tb_xeno__DOT__phi_tog = 0;
+    SData/*15:0*/ __Vdly__dbg_vramw;
+    __Vdly__dbg_vramw = 0;
+    SData/*15:0*/ __Vdly__dbg_palw;
+    __Vdly__dbg_palw = 0;
     CData/*3:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__wdt_cnt;
     __Vdly__tb_xeno__DOT__main_board__DOT__wdt_cnt = 0;
     CData/*2:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done;
@@ -1739,6 +1743,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v2 = 0;
     CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v2;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v2 = 0;
+    SData/*15:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18;
+    __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18 = 0;
+    CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18;
+    __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18 = 0;
+    SData/*15:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v19;
+    __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v19 = 0;
+    SData/*15:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v20;
+    __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v20 = 0;
     CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v3;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v3 = 0;
     CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v3;
@@ -1824,6 +1836,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     // Body
     __Vdly__tb_xeno__DOT__video__DOT__bg_rhalf = vlSelfRef.tb_xeno__DOT__video__DOT__bg_rhalf;
     vlSelfRef.__Vdly__tb_xeno__DOT__ce_div = vlSelfRef.tb_xeno__DOT__ce_div;
+    __Vdly__dbg_palw = vlSelfRef.dbg_palw;
+    __Vdly__dbg_vramw = vlSelfRef.dbg_vramw;
     __Vdly__tb_xeno__DOT__video__DOT__lbuf_sel = vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel;
     __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1 = 0U;
     vlSelfRef.__Vdly__tb_xeno__DOT__video__DOT__hcnt 
@@ -1854,10 +1868,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __Vdly__tb_xeno__DOT__video__DOT__sp_px = vlSelfRef.tb_xeno__DOT__video__DOT__sp_px;
     __VdlySet__tb_xeno__DOT__video__DOT__sp_row__v0 = 0U;
     __VdlySet__tb_xeno__DOT__video__DOT__palette__v0 = 0U;
-    __VdlySet__tb_xeno__DOT__video__DOT__vram__v0 = 0U;
-    __VdlySet__tb_xeno__DOT__video__DOT__vram__v1 = 0U;
     __VdlySet__tb_xeno__DOT__video__DOT__sprram__v0 = 0U;
     __VdlySet__tb_xeno__DOT__video__DOT__sprram__v1 = 0U;
+    __VdlySet__tb_xeno__DOT__video__DOT__vram__v0 = 0U;
+    __VdlySet__tb_xeno__DOT__video__DOT__vram__v1 = 0U;
     __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done 
         = vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done;
     __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag_read 
@@ -1892,6 +1906,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v15 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v16 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v17 = 0U;
+    __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v3 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ram__v0 = 0U;
     __VdlySet__tb_xeno__DOT__main_board__DOT__ram__v1 = 0U;
@@ -2008,31 +2023,13 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     __VdlyVal__tb_xeno__DOT__video__DOT__spr_q__v3 
         = vlSelfRef.tb_xeno__DOT__video__DOT__spr_rom3
         [vlSelfRef.tb_xeno__DOT__video__DOT__spr_raddr];
-    if (((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2) 
-         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal))) {
+    if (vlSelfRef.tb_xeno__DOT__pal_we) {
         __VdlyVal__tb_xeno__DOT__video__DOT__palette__v0 
             = (0x000001ffU & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob));
         __VdlyDim0__tb_xeno__DOT__video__DOT__palette__v0 
             = (0x0000003fU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
                               >> 1U));
         __VdlySet__tb_xeno__DOT__video__DOT__palette__v0 = 1U;
-    }
-    if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__vram_we))) {
-        __VdlyVal__tb_xeno__DOT__video__DOT__vram__v0 
-            = (0x000000ffU & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob));
-        __VdlyDim0__tb_xeno__DOT__video__DOT__vram__v0 
-            = (0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
-                              >> 1U));
-        __VdlySet__tb_xeno__DOT__video__DOT__vram__v0 = 1U;
-    }
-    if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__vram_we))) {
-        __VdlyVal__tb_xeno__DOT__video__DOT__vram__v1 
-            = (0x000000ffU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob) 
-                              >> 8U));
-        __VdlyDim0__tb_xeno__DOT__video__DOT__vram__v1 
-            = (0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
-                              >> 1U));
-        __VdlySet__tb_xeno__DOT__video__DOT__vram__v1 = 1U;
     }
     if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__sprram_we))) {
         __VdlyVal__tb_xeno__DOT__video__DOT__sprram__v0 
@@ -2050,6 +2047,23 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
             = (0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
                               >> 1U));
         __VdlySet__tb_xeno__DOT__video__DOT__sprram__v1 = 1U;
+    }
+    if ((1U & (IData)(vlSelfRef.tb_xeno__DOT__vram_we))) {
+        __VdlyVal__tb_xeno__DOT__video__DOT__vram__v0 
+            = (0x000000ffU & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob));
+        __VdlyDim0__tb_xeno__DOT__video__DOT__vram__v0 
+            = (0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
+                              >> 1U));
+        __VdlySet__tb_xeno__DOT__video__DOT__vram__v0 = 1U;
+    }
+    if ((2U & (IData)(vlSelfRef.tb_xeno__DOT__vram_we))) {
+        __VdlyVal__tb_xeno__DOT__video__DOT__vram__v1 
+            = (0x000000ffU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob) 
+                              >> 8U));
+        __VdlyDim0__tb_xeno__DOT__video__DOT__vram__v1 
+            = (0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
+                              >> 1U));
+        __VdlySet__tb_xeno__DOT__video__DOT__vram__v1 = 1U;
     }
     if ((1U & vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U])) {
         if ((1U & ((2U & vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U])
@@ -2254,7 +2268,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                             = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                                 << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
                         __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v0 = 1U;
-                        if (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset) {
+                        __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
+                            = (3U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
+                        if ((1U & ((~ (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U] 
+                                       >> 4U)) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset)))) {
                             __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v15 
                                 = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                                     << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
@@ -2266,7 +2283,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                         = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                             << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
                     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v1 = 1U;
-                    if (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset) {
+                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
+                        = (5U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
+                    if ((1U & ((~ (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
+                                   >> 4U)) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset)))) {
                         __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v16 
                             = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                                 << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
@@ -2279,7 +2299,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                         = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                             << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
                     __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v2 = 1U;
-                    if (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset) {
+                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
+                        = (6U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
+                    if ((1U & ((~ (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U] 
+                                   >> 4U)) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset)))) {
                         __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v17 
                             = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__msb_buf) 
                                 << 8U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din));
@@ -2299,24 +2322,19 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                     = vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din;
                 __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v2 = 1U;
             }
-            if ((0U == (7U & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
-                              >> 1U)))) {
-                if ((1U & vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U])) {
-                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
-                        = (6U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
-                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done 
-                        = (6U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done));
-                } else {
-                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
-                        = (3U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
-                    __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done 
-                        = (3U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done));
-                }
-            }
-            if ((1U == (7U & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
-                              >> 1U)))) {
-                __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag 
-                    = (5U & (IData)(__Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag));
+            if ((IData)(((0U == (0x0000000eU & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                         & (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
+                            & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din) 
+                               ^ vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U]))))) {
+                __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag = 0U;
+                __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done = 0U;
+                __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18 
+                    = vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__latch[0U];
+                __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18 = 1U;
+                __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v19 
+                    = vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__latch[1U];
+                __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v20 
+                    = vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__latch[2U];
             }
         }
         if ((1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rRWn)))) {
@@ -2336,6 +2354,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         }
     }
     if (vlSelfRef.reset) {
+        __Vdly__dbg_palw = 0U;
+        __Vdly__dbg_vramw = 0U;
         __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag_read = 0U;
         __VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cr__v3 = 1U;
         __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__flag = 0U;
@@ -2346,6 +2366,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.wdt = 0U;
         vlSelfRef.ctrl = 0x0020U;
     } else {
+        if (vlSelfRef.tb_xeno__DOT__pal_we) {
+            __Vdly__dbg_palw = (0x0000ffffU & ((IData)(1U) 
+                                               + (IData)(vlSelfRef.dbg_palw)));
+        }
+        if ((0U != (IData)(vlSelfRef.tb_xeno__DOT__vram_we))) {
+            __Vdly__dbg_vramw = (0x0000ffffU & ((IData)(1U) 
+                                                + (IData)(vlSelfRef.dbg_vramw)));
+        }
         if (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_wdt) 
              & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rRWn)))) {
             __Vdly__tb_xeno__DOT__main_board__DOT__wdt_cnt = 0U;
@@ -2452,6 +2480,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
     vlSelfRef.tb_xeno__DOT__vram_q = vlSelfRef.tb_xeno__DOT__video__DOT__vram
         [(0x00000fffU & (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob 
                          >> 1U))];
+    vlSelfRef.dbg_palw = __Vdly__dbg_palw;
+    vlSelfRef.dbg_vramw = __Vdly__dbg_vramw;
     vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done 
         = __Vdly__tb_xeno__DOT__main_board__DOT__ptm__DOT__oneshot_done;
     vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag_read 
@@ -2572,6 +2602,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
             = __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v17;
     }
+    if (__VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18) {
+        vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
+            = __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v18;
+        vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[1U] 
+            = __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v19;
+        vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[2U] 
+            = __VdlyVal__tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt__v20;
+    }
     if (__VdlySet__tb_xeno__DOT__main_board__DOT__ptm__DOT__latch__v3) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__latch[0U] = 0xffffU;
         vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__latch[1U] = 0xffffU;
@@ -2681,8 +2719,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                                            << 6U)) 
                            | ((0x0000003eU & (((0x00000020U 
                                                 & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_flags))
-                                                ? (~ (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_15))
-                                                : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_15)) 
+                                                ? (~ (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_14))
+                                                : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_14)) 
                                               << 1U)) 
                               | (1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_fetch_cnt))));
                     __Vdly__tb_xeno__DOT__video__DOT__sp_fetch_cnt 
@@ -2848,7 +2886,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__video__DOT__sp_lbuf[__VdlyDim1__tb_xeno__DOT__video__DOT__sp_lbuf__v1][__VdlyDim0__tb_xeno__DOT__video__DOT__sp_lbuf__v1] 
             = __VdlyVal__tb_xeno__DOT__video__DOT__sp_lbuf__v1;
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_15 = (0x0000001fU 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_14 = (0x0000001fU 
                                                  & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_line) 
                                                     - 
                                                     (0x000003ffU 
@@ -3467,6 +3505,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__inExcept01 
             = (1U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__tvn));
     }
+    vlSelfRef.dbg_as = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)));
     if (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Clks
         .__PVT__pwrUp) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__wendReg = 0U;
@@ -3921,7 +3960,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
                 vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BgackI = 1U;
                 vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BRi = 1U;
                 vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Vpai 
-                    = vlSelfRef.tb_xeno__DOT__main_board__DOT__vpa_n;
+                    = (1U & (~ (IData)(vlSelfRef.dbg_iack)));
                 vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeiDelay 
                     = vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeI;
             }
@@ -4010,7 +4049,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
             vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__iIpl 
                 = vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rIpl;
             vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rIpl 
-                = (7U & (~ (4U | ((2U & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq)) 
+                = (7U & (~ (4U | ((2U & ((~ (IData)(vlSelfRef.dbg_ptm_irq)) 
                                          << 1U)) | 
                                   (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__irq493)))))));
         }
@@ -4187,20 +4226,19 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
             = vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Irdecod
             .__PVT__isByte;
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_6 = ((2U 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_5 = ((2U 
                                                  & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
                                                     << 1U)) 
                                                 | (1U 
                                                    & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rLDS))));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle 
-        = (1U & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
-                 & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
-                    | (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rLDS)))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din 
         = (0x000000ffU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)
                            ? (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob)
                            : ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob) 
                               >> 8U)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle 
+        = ((IData)(vlSelfRef.dbg_as) & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
+                                        | (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rLDS))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__eCntr 
         = __Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__eCntr;
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nDecoder__DOT__dobCtrl 
@@ -4233,9 +4271,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
                                                   ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineF)
                                                     ? 0x0bU
                                                     : 1U))))))))));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__vpa_n 
-        = (1U & (~ ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
-                    & (7U == (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rFC)))));
+    vlSelfRef.dbg_iack = ((IData)(vlSelfRef.dbg_as) 
+                          & (7U == (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rFC)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__iAddrErr 
         = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__addrOe) 
            & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rAddrErr));
@@ -4316,11 +4353,12 @@ void Vtb_xeno___024root___nba_sequent__TOP__1(Vtb_xeno___024root* vlSelf) {
             = vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod
             .__PVT__todbin;
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_0 = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__vpa_n) 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_0 = ((~ (IData)(vlSelfRef.dbg_iack)) 
                                                 & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__enErrClk 
         = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__iBusErr) 
            | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__iAddrErr));
+    vlSelfRef.dbg_addr = (0x00fffffeU & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob);
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busAddrErr 
         = (1U & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__bciByte)) 
                  & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob));
@@ -4340,14 +4378,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
     Vtb_xeno__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Locals
-    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_8;
-    __VdfgRegularize_hebeb780c_0_8 = 0;
-    CData/*4:0*/ __VdfgRegularize_hebeb780c_0_12;
+    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_7;
+    __VdfgRegularize_hebeb780c_0_7 = 0;
+    CData/*4:0*/ __VdfgRegularize_hebeb780c_0_11;
+    __VdfgRegularize_hebeb780c_0_11 = 0;
+    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_12;
     __VdfgRegularize_hebeb780c_0_12 = 0;
     SData/*8:0*/ __VdfgRegularize_hebeb780c_0_13;
     __VdfgRegularize_hebeb780c_0_13 = 0;
-    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_14;
-    __VdfgRegularize_hebeb780c_0_14 = 0;
     CData/*4:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr;
     __Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr = 0;
     IData/*31:0*/ __Vtemp_1;
@@ -4368,14 +4406,14 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
                    .__PVT__aluFinish | vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod
                    .__PVT__aluInit))) {
         __Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr 
-            = ((0x00000018U & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_3)) 
+            = ((0x00000018U & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2)) 
                | ((4U & (((vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod
                            .__PVT__aluFinish | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__isArX))
                            ? (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr) 
                                & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrTemp)) 
-                              >> 2U) : ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_3) 
+                              >> 2U) : ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2) 
                                         >> 2U)) << 2U)) 
-                  | (3U & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_3))));
+                  | (3U & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2))));
     }
     if (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__enT1) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdLatch 
@@ -4389,10 +4427,10 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdOverf 
             = (1U & ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
                       ? ((~ ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch) 
-                             >> 7U)) & ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_11) 
+                             >> 7U)) & ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_10) 
                                         >> 3U)) : (
                                                    (~ 
-                                                    ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_9) 
+                                                    ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_8) 
                                                      >> 3U)) 
                                                    & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch) 
                                                       >> 7U))));
@@ -4493,7 +4531,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
     __Vtemp_1 = VL_MATCHMASKED_I(32, (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper), Vtb_xeno__ConstPool__CONST_h79f0020d_0);
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__shftRight 
         = Vtb_xeno__ConstPool__TABLE_h163a3758_0[__Vtemp_1];
-    __VdfgRegularize_hebeb780c_0_13 = (6U & (- (IData)(
+    __VdfgRegularize_hebeb780c_0_12 = (6U & (- (IData)(
                                                        ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__coreH) 
                                                         | ((6U 
                                                             != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper)) 
@@ -4506,19 +4544,19 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
                                                                      >> 1U)))))))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT____Vcellinp__shifter__swapWords 
         = (IData)((0U != (0x0082U & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__row))));
-    __VdfgRegularize_hebeb780c_0_8 = (0x000001ffU & 
+    __VdfgRegularize_hebeb780c_0_7 = (0x000001ffU & 
                                       ((0x000000ffU 
                                         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch)) 
-                                       - (IData)(__VdfgRegularize_hebeb780c_0_13)));
-    __VdfgRegularize_hebeb780c_0_14 = (0x000001ffU 
-                                       & ((IData)(__VdfgRegularize_hebeb780c_0_13) 
+                                       - (IData)(__VdfgRegularize_hebeb780c_0_12)));
+    __VdfgRegularize_hebeb780c_0_13 = (0x000001ffU 
+                                       & ((IData)(__VdfgRegularize_hebeb780c_0_12) 
                                           + (0x000000ffU 
                                              & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__htemp 
         = ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
-            ? (IData)(__VdfgRegularize_hebeb780c_0_14)
-            : (IData)(__VdfgRegularize_hebeb780c_0_8));
-    __VdfgRegularize_hebeb780c_0_12 = (6U & (- (IData)(
+            ? (IData)(__VdfgRegularize_hebeb780c_0_13)
+            : (IData)(__VdfgRegularize_hebeb780c_0_7));
+    __VdfgRegularize_hebeb780c_0_11 = (6U & (- (IData)(
                                                        (1U 
                                                         & (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr) 
                                                             >> 4U) 
@@ -4533,18 +4571,18 @@ void Vtb_xeno___024root___nba_sequent__TOP__2(Vtb_xeno___024root* vlSelf) {
                                                                        (3U 
                                                                         & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__htemp) 
                                                                            >> 5U)))))))))));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_9 = (0x0000001fU 
-                                                & (((IData)(__VdfgRegularize_hebeb780c_0_8) 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_8 = (0x0000001fU 
+                                                & (((IData)(__VdfgRegularize_hebeb780c_0_7) 
                                                     >> 4U) 
-                                                   - (IData)(__VdfgRegularize_hebeb780c_0_12)));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_11 = (0x0000001fU 
-                                                 & (((IData)(__VdfgRegularize_hebeb780c_0_14) 
+                                                   - (IData)(__VdfgRegularize_hebeb780c_0_11)));
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_10 = (0x0000001fU 
+                                                 & (((IData)(__VdfgRegularize_hebeb780c_0_13) 
                                                      >> 4U) 
-                                                    + (IData)(__VdfgRegularize_hebeb780c_0_12)));
+                                                    + (IData)(__VdfgRegularize_hebeb780c_0_11)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__hNib 
         = ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
-            ? (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_11)
-            : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_9));
+            ? (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_10)
+            : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_8));
 }
 
 void Vtb_xeno___024root___nba_sequent__TOP__3(Vtb_xeno___024root* vlSelf) {
@@ -4760,16 +4798,15 @@ void Vtb_xeno___024root___nba_sequent__TOP__4(Vtb_xeno___024root* vlSelf) {
     CData/*0:0*/ tb_xeno__DOT__main_board__DOT__ptm__DOT__unnamedblk1__DOT__unnamedblk2__DOT__src;
     tb_xeno__DOT__main_board__DOT__ptm__DOT__unnamedblk1__DOT__unnamedblk2__DOT__src = 0;
     // Body
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq 
-        = (0U != ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag) 
-                  & ((4U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U] 
-                             >> 6U) << 2U)) | ((2U 
-                                                & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
-                                                    >> 6U) 
-                                                   << 1U)) 
-                                               | (1U 
-                                                  & (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U] 
-                                                     >> 6U))))));
+    vlSelfRef.dbg_ptm_irq = (0U != ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag) 
+                                    & ((4U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U] 
+                                               >> 6U) 
+                                              << 2U)) 
+                                       | ((2U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
+                                                  >> 6U) 
+                                                 << 1U)) 
+                                          | (1U & (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U] 
+                                                   >> 6U))))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__slow_dtack 
         = ((((((((((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ram) 
                    | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram)) 
@@ -4805,6 +4842,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__4(Vtb_xeno___024root* vlSelf) {
     }
     vlSelfRef.tb_xeno__DOT__main_board__DOT__line_cnt 
         = vlSelfRef.__Vdly__tb_xeno__DOT__main_board__DOT__line_cnt;
+    vlSelfRef.dbg_irq493 = vlSelfRef.tb_xeno__DOT__main_board__DOT__irq493;
     if (vlSelfRef.tb_xeno__DOT__ce_div) {
         vlSelfRef.tb_xeno__DOT__hsync_pulse = 0U;
         vlSelfRef.tb_xeno__DOT__vsync30 = 0U;
@@ -4976,8 +5014,8 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
     tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__isRegShift = 0;
     CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__unnamedblk1__DOT__eaIsAreg;
     tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__unnamedblk1__DOT__eaIsAreg = 0;
-    CData/*0:0*/ __VdfgRegularize_hebeb780c_0_10;
-    __VdfgRegularize_hebeb780c_0_10 = 0;
+    CData/*0:0*/ __VdfgRegularize_hebeb780c_0_9;
+    __VdfgRegularize_hebeb780c_0_9 = 0;
     IData/*31:0*/ __Vtemp_1;
     IData/*31:0*/ __Vtemp_2;
     IData/*31:0*/ __Vtemp_3;
@@ -5096,11 +5134,11 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
     // Body
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__ftu 
         = vlSelfRef.__Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__ftu;
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal 
-        = (IData)(((0x00090000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_wdt 
         = (IData)(((0x000b0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal 
+        = (IData)(((0x00090000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
                    & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_in0 
         = (IData)(((0x000d0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
@@ -5112,13 +5150,13 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
         = (IData)(((0x000f0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
                    & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ram 
-        = (IData)(((0x00060000U == (0x000fc000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+        = (IData)(((0x00060000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
                    & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ctl 
         = (IData)(((0x000c0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
                    & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram 
-        = (IData)(((0x00070000U == (0x000fe000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+        = (IData)(((0x00070000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
                    & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_spr 
         = (IData)(((0x00080000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
@@ -5513,11 +5551,11 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__enl 
         = ((2U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                   >> 5U)) | (1U & (~ (0U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__prenLatch)))));
-    __VdfgRegularize_hebeb780c_0_10 = (1U & (Vtb_xeno__ConstPool__TABLE_he204aa36_0
-                                             [(0x0000000fU 
-                                               & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
-                                                  >> 0x0000000cU))] 
-                                             >> 0x0000000eU));
+    __VdfgRegularize_hebeb780c_0_9 = (1U & (Vtb_xeno__ConstPool__TABLE_he204aa36_0
+                                            [(0x0000000fU 
+                                              & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
+                                                 >> 0x0000000cU))] 
+                                            >> 0x0000000eU));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Irdecod.__PVT__rx 
         = (7U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                  >> 9U));
@@ -5623,7 +5661,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
                                        >> 0x0000000cU))] 
                                     >> 3U)))));
     tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__isRegShift 
-        = ((IData)(__VdfgRegularize_hebeb780c_0_10) 
+        = ((IData)(__VdfgRegularize_hebeb780c_0_9) 
            & (3U != (3U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                            >> 6U))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Irdecod.__PVT__ftuConst 
@@ -5636,7 +5674,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__5(Vtb_xeno___024root* vlSelf) {
                                                       >> 7U)))) 
                                        << 8U)) | (0x000000ffU 
                                                   & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird)))
-            : ((1U & ((IData)(__VdfgRegularize_hebeb780c_0_10) 
+            : ((1U & ((IData)(__VdfgRegularize_hebeb780c_0_9) 
                       | (Vtb_xeno__ConstPool__TABLE_he204aa36_0
                          [(0x0000000fU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                                           >> 0x0000000cU))] 

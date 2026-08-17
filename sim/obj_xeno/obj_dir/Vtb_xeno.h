@@ -39,10 +39,17 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno VL_NOT_FINAL : public VerilatedModel
     VL_OUT8(&vs,0,0);
     VL_OUT8(&de,0,0);
     VL_OUT8(&wdt,0,0);
+    VL_OUT8(&dbg_as,0,0);
+    VL_OUT8(&dbg_irq493,0,0);
+    VL_OUT8(&dbg_ptm_irq,0,0);
+    VL_OUT8(&dbg_iack,0,0);
     VL_IN16(&in0,15,0);
     VL_IN16(&in1,15,0);
     VL_IN16(&dsw,15,0);
     VL_OUT16(&ctrl,15,0);
+    VL_OUT16(&dbg_palw,15,0);
+    VL_OUT16(&dbg_vramw,15,0);
+    VL_OUT(&dbg_addr,23,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.

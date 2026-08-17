@@ -323,16 +323,18 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
     __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__nib = 0;
     SData/*15:0*/ __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__w;
     __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__w = 0;
-    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_8;
-    __VdfgRegularize_hebeb780c_0_8 = 0;
-    CData/*0:0*/ __VdfgRegularize_hebeb780c_0_10;
-    __VdfgRegularize_hebeb780c_0_10 = 0;
-    CData/*4:0*/ __VdfgRegularize_hebeb780c_0_12;
+    CData/*0:0*/ __VdfgRegularize_hebeb780c_0_1;
+    __VdfgRegularize_hebeb780c_0_1 = 0;
+    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_7;
+    __VdfgRegularize_hebeb780c_0_7 = 0;
+    CData/*0:0*/ __VdfgRegularize_hebeb780c_0_9;
+    __VdfgRegularize_hebeb780c_0_9 = 0;
+    CData/*4:0*/ __VdfgRegularize_hebeb780c_0_11;
+    __VdfgRegularize_hebeb780c_0_11 = 0;
+    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_12;
     __VdfgRegularize_hebeb780c_0_12 = 0;
     SData/*8:0*/ __VdfgRegularize_hebeb780c_0_13;
     __VdfgRegularize_hebeb780c_0_13 = 0;
-    SData/*8:0*/ __VdfgRegularize_hebeb780c_0_14;
-    __VdfgRegularize_hebeb780c_0_14 = 0;
     IData/*31:0*/ __Vtemp_1;
     IData/*31:0*/ __Vtemp_3;
     IData/*31:0*/ __Vtemp_4;
@@ -540,8 +542,10 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                               | (3U 
                                                  & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__rgb9) 
                                                     >> 4U))));
+    vlSelfRef.dbg_addr = (0x00fffffeU & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob);
     vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__t1_reset 
         = (1U & vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U]);
+    vlSelfRef.dbg_irq493 = vlSelfRef.tb_xeno__DOT__main_board__DOT__irq493;
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__grp1LatchEn 
         = (vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__microLatch 
            & (0x00000010U != (0x00000012U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__microLatch)));
@@ -594,7 +598,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                                         << 1U) 
                                                        - (IData)(4U)) 
                                                       + (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_px)));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_15 = (0x0000001fU 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_14 = (0x0000001fU 
                                                  & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_line) 
                                                     - 
                                                     (0x000003ffU 
@@ -916,11 +920,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
         = ((((IData)(vlSelfRef.tb_xeno__DOT__hsync_pulse) 
              & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__field)) 
             << 2U) | (IData)(vlSelfRef.tb_xeno__DOT__vsync30));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_2 = (1U 
-                                                & (~ 
-                                                   ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__wr_q) 
-                                                    | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rRWn))));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_6 = ((2U 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_5 = ((2U 
                                                  & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
                                                     << 1U)) 
                                                 | (1U 
@@ -950,19 +950,20 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
     __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__Vfuncout 
         = __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__nib;
     vlSelfRef.tb_xeno__DOT__video__DOT__sp_pval = __Vfunc_tb_xeno__DOT__video__DOT__sp_pen__9__Vfuncout;
+    __VdfgRegularize_hebeb780c_0_1 = (1U & (~ ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__wr_q) 
+                                               | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rRWn))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__iAddrErr 
         = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__addrOe) 
            & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rAddrErr));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq 
-        = (0U != ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag) 
-                  & ((4U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U] 
-                             >> 6U) << 2U)) | ((2U 
-                                                & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
-                                                    >> 6U) 
-                                                   << 1U)) 
-                                               | (1U 
-                                                  & (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U] 
-                                                     >> 6U))))));
+    vlSelfRef.dbg_ptm_irq = (0U != ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag) 
+                                    & ((4U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[2U] 
+                                               >> 6U) 
+                                              << 2U)) 
+                                       | ((2U & ((vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[1U] 
+                                                  >> 6U) 
+                                                 << 1U)) 
+                                          | (1U & (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cr[0U] 
+                                                   >> 6U))))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__uaddrDecode__DOT__pla_lined__DOT__arA1[6U] 
         = (0x000003ffU & ((1U == (0x0000000fU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir) 
                                                  >> 8U)))
@@ -1107,7 +1108,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
         = vlSelfRef.tb_xeno__DOT__phi1;
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Clks.__PVT__enPhi2 
         = vlSelfRef.tb_xeno__DOT__phi2;
-    __VdfgRegularize_hebeb780c_0_13 = (6U & (- (IData)(
+    __VdfgRegularize_hebeb780c_0_12 = (6U & (- (IData)(
                                                        ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__coreH) 
                                                         | ((6U 
                                                             != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper)) 
@@ -1165,11 +1166,11 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                 ? ((8U & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir))
                     ? 0x0119U : 0x030bU) : 0x01d0U);
     }
-    __VdfgRegularize_hebeb780c_0_10 = (1U & (Vtb_xeno__ConstPool__TABLE_he204aa36_0
-                                             [(0x0000000fU 
-                                               & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
-                                                  >> 0x0000000cU))] 
-                                             >> 0x0000000eU));
+    __VdfgRegularize_hebeb780c_0_9 = (1U & (Vtb_xeno__ConstPool__TABLE_he204aa36_0
+                                            [(0x0000000fU 
+                                              & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
+                                                 >> 0x0000000cU))] 
+                                            >> 0x0000000eU));
     __Vtemp_1 = VL_MATCHMASKED_I(32, (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper), Vtb_xeno__ConstPool__CONST_h79f0020d_0);
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__shftRight 
         = Vtb_xeno__ConstPool__TABLE_h163a3758_0[__Vtemp_1];
@@ -1181,13 +1182,6 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                               >> 7U)))
                            : (7U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir) 
                                     >> 6U))));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__vpa_n 
-        = (1U & (~ ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
-                    & (7U == (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rFC)))));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle 
-        = (1U & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
-                 & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
-                    | (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rLDS)))));
     tb_xeno__DOT__main_board__DOT__cpu__DOT__uaddrDecode__DOT__eaCol 
         = (0x0000000fU & ((7U == (7U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir) 
                                         >> 3U))) ? 
@@ -1229,6 +1223,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
             = ((0x00000020U & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir))
                 ? 0x00000382U : 0x00000381U);
     }
+    vlSelfRef.dbg_as = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod.__PVT__updTpend 
         = (1U == (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nDecoder__DOT__ftuCtrl));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod.__PVT__clrTpend 
@@ -1457,12 +1452,12 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                 & (~ ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeI) 
                                       | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BeiDelay)))) 
                                & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Vpai)));
-    __VdfgRegularize_hebeb780c_0_8 = (0x000001ffU & 
+    __VdfgRegularize_hebeb780c_0_7 = (0x000001ffU & 
                                       ((0x000000ffU 
                                         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch)) 
-                                       - (IData)(__VdfgRegularize_hebeb780c_0_13)));
-    __VdfgRegularize_hebeb780c_0_14 = (0x000001ffU 
-                                       & ((IData)(__VdfgRegularize_hebeb780c_0_13) 
+                                       - (IData)(__VdfgRegularize_hebeb780c_0_12)));
+    __VdfgRegularize_hebeb780c_0_13 = (0x000001ffU 
+                                       & ((IData)(__VdfgRegularize_hebeb780c_0_12) 
                                           + (0x000000ffU 
                                              & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch))));
     if (((((((((0U == (0x0000000fU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
@@ -1654,7 +1649,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                                       >> 7U)))) 
                                        << 8U)) | (0x000000ffU 
                                                   & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird)))
-            : ((1U & ((IData)(__VdfgRegularize_hebeb780c_0_10) 
+            : ((1U & ((IData)(__VdfgRegularize_hebeb780c_0_9) 
                       | (Vtb_xeno__ConstPool__TABLE_he204aa36_0
                          [(0x0000000fU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                                           >> 0x0000000cU))] 
@@ -1680,11 +1675,9 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                                               >> 0x0000000cU))] 
                                                           >> 4U))))))));
     tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__isRegShift 
-        = ((IData)(__VdfgRegularize_hebeb780c_0_10) 
+        = ((IData)(__VdfgRegularize_hebeb780c_0_9) 
            & (3U != (3U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ird) 
                            >> 6U))));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_0 = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__vpa_n) 
-                                                & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle));
     if ((0U == (0x00000027U & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir) 
                                >> 6U)))) {
         __Vtemp_4 = VL_MATCHMASKED_I(32, (IData)(tb_xeno__DOT__main_board__DOT__cpu__DOT__uaddrDecode__DOT__eaCol), Vtb_xeno__ConstPool__CONST_he4e93662_0);
@@ -3361,6 +3354,11 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
             = (0x000003ffU & (vlSelfRef.__VcaseDecoderOut106 
                               >> 0x0000000bU));
     }
+    vlSelfRef.dbg_iack = ((IData)(vlSelfRef.dbg_as) 
+                          & (7U == (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rFC)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle 
+        = ((IData)(vlSelfRef.dbg_as) & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rUDS)) 
+                                        | (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rLDS))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod.__PVT__isWrite 
         = (0U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nDecoder__DOT__dobCtrl));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__rstUrom 
@@ -3609,44 +3607,13 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                            >> 0x0000000cU))])
                           ? (~ (IData)(tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__isRegShift))
                           : (IData)(tb_xeno__DOT__main_board__DOT__cpu__DOT__irdDecode__DOT__unnamedblk1__DOT__eaIsAreg)))));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal 
-        = (IData)(((0x00090000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_wdt 
-        = (IData)(((0x000b0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_rom 
-        = (IData)(((0U == (0x00fc0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ram 
-        = (IData)(((0x00060000U == (0x000fc000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ctl 
-        = (IData)(((0x000c0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_in0 
-        = (IData)(((0x000d0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_in1 
-        = (IData)(((0x000e0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_dsw 
-        = (IData)(((0x000f0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ptm 
-        = (IData)(((0x000a0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram 
-        = (IData)(((0x00070000U == (0x000fe000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_spr 
-        = (IData)(((0x00080000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
-                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_0 = ((~ (IData)(vlSelfRef.dbg_iack)) 
+                                                & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__bus_cycle));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__htemp 
         = ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
-            ? (IData)(__VdfgRegularize_hebeb780c_0_14)
-            : (IData)(__VdfgRegularize_hebeb780c_0_8));
-    __VdfgRegularize_hebeb780c_0_12 = (6U & (- (IData)(
+            ? (IData)(__VdfgRegularize_hebeb780c_0_13)
+            : (IData)(__VdfgRegularize_hebeb780c_0_7));
+    __VdfgRegularize_hebeb780c_0_11 = (6U & (- (IData)(
                                                        (1U 
                                                         & (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr) 
                                                             >> 4U) 
@@ -3711,15 +3678,69 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                [(0x0000000fU & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Ir) 
                                 >> 0x0000000cU))]);
     }
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_wdt 
+        = (IData)(((0x000b0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal 
+        = (IData)(((0x00090000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_rom 
+        = (IData)(((0U == (0x00fc0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ram 
+        = (IData)(((0x00060000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ctl 
+        = (IData)(((0x000c0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_in0 
+        = (IData)(((0x000d0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_in1 
+        = (IData)(((0x000e0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_dsw 
+        = (IData)(((0x000f0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ptm 
+        = (IData)(((0x000a0000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram 
+        = (IData)(((0x00070000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_spr 
+        = (IData)(((0x00080000U == (0x000f0000U & vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__aob)) 
+                   & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_0)));
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_8 = (0x0000001fU 
+                                                & (((IData)(__VdfgRegularize_hebeb780c_0_7) 
+                                                    >> 4U) 
+                                                   - (IData)(__VdfgRegularize_hebeb780c_0_11)));
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_10 = (0x0000001fU 
+                                                 & (((IData)(__VdfgRegularize_hebeb780c_0_13) 
+                                                     >> 4U) 
+                                                    + (IData)(__VdfgRegularize_hebeb780c_0_11)));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__hNib 
+        = ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
+            ? (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_10)
+            : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_8));
+    vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nma 
+        = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__A0Err)
+            ? ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__a0Rst)
+                ? 2U : (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcRst) 
+                         | ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcBusErr) 
+                            | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcAdrErr)))
+                         ? 1U : 3U)) : (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__uNma));
+    vlSelfRef.tb_xeno__DOT__pal_we = ((IData)(__VdfgRegularize_hebeb780c_0_1) 
+                                      & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_pal));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_stb 
         = ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_cs_q)) 
            & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_ptm));
-    vlSelfRef.tb_xeno__DOT__vram_we = ((- (IData)(((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2) 
+    vlSelfRef.tb_xeno__DOT__vram_we = ((- (IData)(((IData)(__VdfgRegularize_hebeb780c_0_1) 
                                                    & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_vram)))) 
-                                       & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_6));
-    vlSelfRef.tb_xeno__DOT__sprram_we = ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_6) 
+                                       & (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_5));
+    vlSelfRef.tb_xeno__DOT__sprram_we = ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_5) 
                                          & (- (IData)(
-                                                      ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_2) 
+                                                      ((IData)(__VdfgRegularize_hebeb780c_0_1) 
                                                        & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_spr)))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu_din = 0xffffU;
     if (vlSelfRef.tb_xeno__DOT__main_board__DOT__sel_rom) {
@@ -3766,7 +3787,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                                     (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
                                                      >> 8U))
                                                     : 
-                                                   ((((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq) 
+                                                   ((((IData)(vlSelfRef.dbg_ptm_irq) 
                                                       << 7U) 
                                                      | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag)) 
                                                     & (- (IData)(
@@ -3804,7 +3825,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
                                                   (vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt[0U] 
                                                    >> 8U))
                                                   : 
-                                                 ((((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm_irq) 
+                                                 ((((IData)(vlSelfRef.dbg_ptm_irq) 
                                                     << 7U) 
                                                    | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__flag)) 
                                                   & (- (IData)(
@@ -3827,25 +3848,6 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_sequent__TOP__0(Vtb_xeno___024root* v
         vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu_din 
             = vlSelfRef.ctrl;
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_9 = (0x0000001fU 
-                                                & (((IData)(__VdfgRegularize_hebeb780c_0_8) 
-                                                    >> 4U) 
-                                                   - (IData)(__VdfgRegularize_hebeb780c_0_12)));
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_11 = (0x0000001fU 
-                                                 & (((IData)(__VdfgRegularize_hebeb780c_0_14) 
-                                                     >> 4U) 
-                                                    + (IData)(__VdfgRegularize_hebeb780c_0_12)));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__hNib 
-        = ((6U != (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__oper))
-            ? (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_11)
-            : (IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_9));
-    vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__nma 
-        = ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__A0Err)
-            ? ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__a0Rst)
-                ? 2U : (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcRst) 
-                         | ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcBusErr) 
-                            | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcAdrErr)))
-                         ? 1U : 3U)) : (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__uNma));
 }
 
 extern const VlWide<20>/*639:0*/ Vtb_xeno__ConstPool__CONST_h1b96ab98_0;
@@ -3888,8 +3890,8 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_comb__TOP__2(Vtb_xeno___024root* vlSe
     __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__isByte = 0;
     CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__ov;
     __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__ov = 0;
-    IData/*31:0*/ __VdfgRegularize_hebeb780c_0_7;
-    __VdfgRegularize_hebeb780c_0_7 = 0;
+    IData/*31:0*/ __VdfgRegularize_hebeb780c_0_6;
+    __VdfgRegularize_hebeb780c_0_6 = 0;
     IData/*31:0*/ __Vtemp_1;
     // Body
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod.__PVT__pcldbl 
@@ -4269,8 +4271,8 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_comb__TOP__2(Vtb_xeno___024root* vlSe
            .__PVT__rxl2db & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__rxIsAreg) 
                              | vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod
                              .__PVT__dblDbd));
-    __VdfgRegularize_hebeb780c_0_7 = (((((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase) 
-                                         & ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__rAS)) 
+    __VdfgRegularize_hebeb780c_0_6 = (((((1U == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase) 
+                                         & ((IData)(vlSelfRef.dbg_as) 
                                             & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg))) 
                                         | ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BRi) 
                                            & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__BgackI) 
@@ -4498,11 +4500,11 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_comb__TOP__2(Vtb_xeno___024root* vlSe
                                                      & ((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__bcReset) 
                                                         & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__isRmcReg)))
                                                      ? 6U
-                                                     : __VdfgRegularize_hebeb780c_0_7)
+                                                     : __VdfgRegularize_hebeb780c_0_6)
                                                     : 
                                                    ((1U 
                                                      == vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase)
-                                                     ? __VdfgRegularize_hebeb780c_0_7
+                                                     ? __VdfgRegularize_hebeb780c_0_6
                                                      : 1U)))))));
     vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__ablIdle = 0U;
     if ((1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__Pcl2Abl)))) {
@@ -4928,7 +4930,7 @@ VL_ATTR_COLD void Vtb_xeno___024root___stl_comb__TOP__2(Vtb_xeno___024root* vlSe
                | (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdOverf) 
                    << 1U) | (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__bcdCarry)));
     }
-    vlSelfRef.__VdfgRegularize_hebeb780c_0_3 = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrTemp) 
+    vlSelfRef.__VdfgRegularize_hebeb780c_0_2 = (((IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrTemp) 
                                                  & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrMask)) 
                                                 | ((~ (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrMask)) 
                                                    & (IData)(vlSelfRef.tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr)));
@@ -5097,6 +5099,13 @@ VL_ATTR_COLD void Vtb_xeno___024root___ctor_var_reset(Vtb_xeno___024root* vlSelf
     vlSelf->de = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13418971983228644420ull);
     vlSelf->ctrl = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 10440442894316637683ull);
     vlSelf->wdt = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14173959881752473474ull);
+    vlSelf->dbg_addr = VL_SCOPED_RAND_RESET_I(24, __VscopeHash, 10106814393097140953ull);
+    vlSelf->dbg_as = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1221284467513802497ull);
+    vlSelf->dbg_irq493 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2333094972609851462ull);
+    vlSelf->dbg_ptm_irq = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1430614571847611806ull);
+    vlSelf->dbg_iack = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 10088818986513694796ull);
+    vlSelf->dbg_palw = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 12478890472069928200ull);
+    vlSelf->dbg_vramw = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 114937670342268830ull);
     vlSelf->tb_xeno__DOT__phi1 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14695364496993123585ull);
     vlSelf->tb_xeno__DOT__phi2 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 15984357640728202148ull);
     for (int __Vi0 = 0; __Vi0 < 131072; ++__Vi0) {
@@ -5109,10 +5118,10 @@ VL_ATTR_COLD void Vtb_xeno___024root___ctor_var_reset(Vtb_xeno___024root* vlSelf
     vlSelf->tb_xeno__DOT__vram_we = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 970732780566703006ull);
     vlSelf->tb_xeno__DOT__sprram_q = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 9039924918490471934ull);
     vlSelf->tb_xeno__DOT__sprram_we = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 16902054447949551724ull);
+    vlSelf->tb_xeno__DOT__pal_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16038950824430020449ull);
     vlSelf->tb_xeno__DOT__hsync_pulse = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9275890700715396553ull);
     vlSelf->tb_xeno__DOT__vsync30 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9819231710316658571ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__cpu_din = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 14146256711350938076ull);
-    vlSelf->tb_xeno__DOT__main_board__DOT__vpa_n = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 12587300004483822292ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__e_clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8255978684425092116ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__e_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 5868240845291626764ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__e_tick = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11411143450594724245ull);
@@ -5133,7 +5142,6 @@ VL_ATTR_COLD void Vtb_xeno___024root___ctor_var_reset(Vtb_xeno___024root* vlSelf
     }
     vlSelf->tb_xeno__DOT__main_board__DOT__ram_q = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 5725949292632811285ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__wr_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3906623326039218553ull);
-    vlSelf->tb_xeno__DOT__main_board__DOT__ptm_irq = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1785660573093113562ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__ptm_cs_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16533261242666943090ull);
     vlSelf->tb_xeno__DOT__main_board__DOT__ptm_stb = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2966386285928433683ull);
     vlSelf->tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din = 0;
@@ -5713,11 +5721,10 @@ VL_ATTR_COLD void Vtb_xeno___024root___ctor_var_reset(Vtb_xeno___024root* vlSelf
     vlSelf->__Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__cout = 0;
     vlSelf->__VdfgRegularize_hebeb780c_0_0 = 0;
     vlSelf->__VdfgRegularize_hebeb780c_0_2 = 0;
-    vlSelf->__VdfgRegularize_hebeb780c_0_3 = 0;
-    vlSelf->__VdfgRegularize_hebeb780c_0_6 = 0;
-    vlSelf->__VdfgRegularize_hebeb780c_0_9 = 0;
-    vlSelf->__VdfgRegularize_hebeb780c_0_11 = 0;
-    vlSelf->__VdfgRegularize_hebeb780c_0_15 = 0;
+    vlSelf->__VdfgRegularize_hebeb780c_0_5 = 0;
+    vlSelf->__VdfgRegularize_hebeb780c_0_8 = 0;
+    vlSelf->__VdfgRegularize_hebeb780c_0_10 = 0;
+    vlSelf->__VdfgRegularize_hebeb780c_0_14 = 0;
     vlSelf->__Vdly__tb_xeno__DOT__ce_div = 0;
     vlSelf->__Vdly__tb_xeno__DOT__main_board__DOT__line_cnt = 0;
     vlSelf->__Vdly__tb_xeno__DOT__video__DOT__hcnt = 0;

@@ -28,6 +28,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VL_OUT8(vs,0,0);
         VL_OUT8(de,0,0);
         VL_OUT8(wdt,0,0);
+        VL_OUT8(dbg_as,0,0);
+        VL_OUT8(dbg_irq493,0,0);
+        VL_OUT8(dbg_ptm_irq,0,0);
+        VL_OUT8(dbg_iack,0,0);
         CData/*0:0*/ tb_xeno__DOT__ce_div;
         CData/*0:0*/ tb_xeno__DOT__phi_tog;
         CData/*0:0*/ tb_xeno__DOT__phi1;
@@ -35,9 +39,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__rom_ack;
         CData/*1:0*/ tb_xeno__DOT__vram_we;
         CData/*1:0*/ tb_xeno__DOT__sprram_we;
+        CData/*0:0*/ tb_xeno__DOT__pal_we;
         CData/*0:0*/ tb_xeno__DOT__hsync_pulse;
         CData/*0:0*/ tb_xeno__DOT__vsync30;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__vpa_n;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__e_clk;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__e_q;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__e_tick;
@@ -54,7 +58,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__sel_in1;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__sel_dsw;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__wr_q;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__ptm_irq;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__ptm_cs_q;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__ptm_stb;
         CData/*7:0*/ tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din;
@@ -80,11 +83,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT____Vcellinp__nanoRom__clk;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__Tpend;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__intPend;
+    };
+    struct {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswT;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswS;
         CData/*2:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswI;
-    };
-    struct {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__dcr4;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__isLineA;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__isLineF;
@@ -146,11 +149,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dblIdle;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbdIdle;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbl2Pcl;
+    };
+    struct {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbh2Pch;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__abh2Pch;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__abl2Pcl;
-    };
-    struct {
         CData/*3:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__prHbit;
         CData/*4:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__pswCcr;
         CData/*4:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__ccrCore;
@@ -212,11 +215,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rPriv;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineA;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineF;
+    };
+    struct {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcRst;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcAdrErr;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcBusErr;
-    };
-    struct {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rSpurious;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rAutovec;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__grp1LatchEn;
@@ -251,12 +254,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__sp_norm;
         CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__cout;
         CData/*0:0*/ __VdfgRegularize_hebeb780c_0_0;
-        CData/*0:0*/ __VdfgRegularize_hebeb780c_0_2;
-        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_3;
-        CData/*1:0*/ __VdfgRegularize_hebeb780c_0_6;
-        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_9;
-        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_11;
-        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_15;
+        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_2;
+        CData/*1:0*/ __VdfgRegularize_hebeb780c_0_5;
+        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_8;
+        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_10;
+        CData/*4:0*/ __VdfgRegularize_hebeb780c_0_14;
         CData/*0:0*/ __Vdly__tb_xeno__DOT__ce_div;
         CData/*0:0*/ __Vdly__tb_xeno__DOT__video__DOT__field;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v0;
@@ -279,10 +281,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68H__v8;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v9;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68H__v9;
-        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v10;
-        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68H__v10;
     };
     struct {
+        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v10;
+        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68H__v10;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v11;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68H__v11;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__regs68L__v12;
@@ -345,10 +347,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v11;
         CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v12;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v12;
-        CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v13;
-        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v13;
     };
     struct {
+        CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v13;
+        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v13;
         CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v14;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v14;
         CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v15;
@@ -411,10 +413,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v43;
         CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v44;
         CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v44;
-        CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v45;
-        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v45;
     };
     struct {
+        CData/*0:0*/ __VdlyVal__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v45;
+        CData/*0:0*/ __VdlySet__tb_xeno__DOT__main_board__DOT__cpu__DOT__Nanod__v45;
         CData/*0:0*/ __VstlDidInit;
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VstlPhaseResult;
@@ -432,6 +434,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VL_IN16(in1,15,0);
         VL_IN16(dsw,15,0);
         VL_OUT16(ctrl,15,0);
+        VL_OUT16(dbg_palw,15,0);
+        VL_OUT16(dbg_vramw,15,0);
         SData/*15:0*/ tb_xeno__DOT__rom_q;
         SData/*15:0*/ tb_xeno__DOT__vram_q;
         SData/*15:0*/ tb_xeno__DOT__sprram_q;
@@ -475,12 +479,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alub;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dobInput;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch;
+    };
+    struct {
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__result;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__row;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aOperand;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__dOperand;
-    };
-    struct {
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__cRow;
         SData/*8:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluCorf__DOT__htemp;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dataIo__DOT__dob;
@@ -526,6 +530,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         SData/*15:0*/ __Vtrigprevexpr___TOP__in0__0;
         SData/*15:0*/ __Vtrigprevexpr___TOP__in1__0;
         SData/*15:0*/ __Vtrigprevexpr___TOP__dsw__0;
+        VL_OUT(dbg_addr,23,0);
         IData/*16:0*/ tb_xeno__DOT__acc;
         IData/*23:0*/ tb_xeno__DOT__st_cnt;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__tState;
@@ -540,13 +545,13 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__shftResult;
         IData/*16:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__Vstatic__rtemp;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busArbiter__DOT__dmaPhase;
+    };
+    struct {
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busArbiter__DOT__next;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__next;
         IData/*30:0*/ __VcaseDecoderOut1;
         IData/*30:0*/ __VcaseDecoderOut2;
-    };
-    struct {
         IData/*30:0*/ __VcaseDecoderOut3;
         IData/*30:0*/ __VcaseDecoderOut4;
         IData/*30:0*/ __VcaseDecoderOut5;
@@ -606,13 +611,13 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         IData/*20:0*/ __VcaseDecoderOut59;
         IData/*20:0*/ __VcaseDecoderOut60;
         IData/*20:0*/ __VcaseDecoderOut61;
+    };
+    struct {
         IData/*20:0*/ __VcaseDecoderOut62;
         IData/*20:0*/ __VcaseDecoderOut63;
         IData/*20:0*/ __VcaseDecoderOut64;
         IData/*20:0*/ __VcaseDecoderOut65;
         IData/*20:0*/ __VcaseDecoderOut66;
-    };
-    struct {
         IData/*20:0*/ __VcaseDecoderOut67;
         IData/*20:0*/ __VcaseDecoderOut68;
         IData/*20:0*/ __VcaseDecoderOut69;
@@ -672,13 +677,13 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VlUnpacked<CData/*7:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__cr;
         VlUnpacked<SData/*15:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__latch;
         VlUnpacked<SData/*15:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt;
+    };
+    struct {
         VlUnpacked<CData/*7:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__lsb_buf;
         VlUnpacked<SData/*15:0*/, 4096> tb_xeno__DOT__video__DOT__vram;
         VlUnpacked<SData/*15:0*/, 4096> tb_xeno__DOT__video__DOT__sprram;
         VlUnpacked<SData/*8:0*/, 64> tb_xeno__DOT__video__DOT__palette;
         VlUnpacked<SData/*15:0*/, 32768> tb_xeno__DOT__video__DOT__bg_rom;
-    };
-    struct {
         VlUnpacked<SData/*15:0*/, 32768> tb_xeno__DOT__video__DOT__spr_rom0;
         VlUnpacked<SData/*15:0*/, 32768> tb_xeno__DOT__video__DOT__spr_rom1;
         VlUnpacked<SData/*15:0*/, 32768> tb_xeno__DOT__video__DOT__spr_rom2;

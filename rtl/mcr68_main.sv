@@ -90,8 +90,11 @@ module mcr68_main (
     wire [19:1] a  = cpu_addr[19:1];
 
     wire sel_rom  = bus_cycle & ~iack & (cpu_addr[23:18] == 6'b000000);
-    wire sel_ram  = bus_cycle & ~iack & (a[19:14] == 6'b011000);        // 60000-63FFF
-    wire sel_vram = bus_cycle & ~iack & (a[19:13] == 7'b0111000);       // 70000-71FFF
+    // NB: the address PAL decodes whole 64K blocks; RAM/VRAM mirror through
+    // their block (the 6840-multitask context restore reads past 0x63FFF and
+    // relies on the 0x64000 mirror answering).
+    wire sel_ram  = bus_cycle & ~iack & (a[19:16] == 4'h6);             // 60000-6FFFF
+    wire sel_vram = bus_cycle & ~iack & (a[19:16] == 4'h7);             // 70000-7FFFF
     wire sel_spr  = bus_cycle & ~iack & (a[19:16] == 4'h8);             // 80000-8FFFF
     wire sel_pal  = bus_cycle & ~iack & (a[19:16] == 4'h9);
     wire sel_ptm  = bus_cycle & ~iack & (a[19:16] == 4'hA);

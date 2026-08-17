@@ -11,7 +11,10 @@ module tb_xeno (
     output logic [7:0] r, g, b,
     output logic hs, vs, de,
     output logic [15:0] ctrl,
-    output logic wdt
+    output logic wdt,
+    output logic [23:0] dbg_addr,
+    output logic dbg_as, dbg_irq493, dbg_ptm_irq, dbg_iack,
+    output logic [15:0] dbg_palw, dbg_vramw
 );
 
     // pixel enable 20 MHz
@@ -76,5 +79,18 @@ module tb_xeno (
         .hsync_pulse(hsync_pulse), .vsync30(vsync30), .field(video.field),
         .watchdog_expired(wdt)
     );
+
+    assign dbg_addr    = {main_board.cpu_addr, 1'b0};
+    assign dbg_as      = ~main_board.as_n;
+    assign dbg_irq493  = main_board.irq493;
+    assign dbg_ptm_irq = main_board.ptm_irq;
+    assign dbg_iack    = main_board.iack;
+    always_ff @(posedge clk) begin
+        if (reset) begin dbg_palw <= '0; dbg_vramw <= '0; end
+        else begin
+            if (pal_we) dbg_palw <= dbg_palw + 1'd1;
+            if (|vram_we) dbg_vramw <= dbg_vramw + 1'd1;
+        end
+    end
 
 endmodule

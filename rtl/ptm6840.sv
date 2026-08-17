@@ -102,18 +102,30 @@ module ptm6840 (
                     3'd0: if (cr[1][0]) cr[0] <= din; else cr[2] <= din;
                     3'd1: cr[1] <= din;
                     3'd2: msb_buf <= din;
-                    3'd3: begin latch[0] <= {msb_buf, din}; if (t1_reset) cnt[0] <= {msb_buf, din}; end
+                    3'd3: begin
+                        latch[0] <= {msb_buf, din};
+                        flag[0] <= 1'b0;              // latch write clears T1 flag
+                        if (!cr[0][4] || t1_reset) cnt[0] <= {msb_buf, din};
+                    end
                     3'd4: msb_buf <= din;
-                    3'd5: begin latch[1] <= {msb_buf, din}; if (t1_reset) cnt[1] <= {msb_buf, din}; end
+                    3'd5: begin
+                        latch[1] <= {msb_buf, din};
+                        flag[1] <= 1'b0;
+                        if (!cr[1][4] || t1_reset) cnt[1] <= {msb_buf, din};
+                    end
                     3'd6: msb_buf <= din;
-                    3'd7: begin latch[2] <= {msb_buf, din}; if (t1_reset) cnt[2] <= {msb_buf, din}; end
+                    3'd7: begin
+                        latch[2] <= {msb_buf, din};
+                        flag[2] <= 1'b0;
+                        if (!cr[2][4] || t1_reset) cnt[2] <= {msb_buf, din};
+                    end
                 endcase
-                // writing a control reg clears that timer's flag and re-inits
-                if (rs == 3'd0) begin
-                    if (cr[1][0]) begin flag[0] <= 1'b0; oneshot_done[0] <= 1'b0; end
-                    else          begin flag[2] <= 1'b0; oneshot_done[2] <= 1'b0; end
+                // CR1 reset bit transitions clear all flags and reload
+                if (rs == 3'd0 && cr[1][0] && (din[0] ^ cr[0][0])) begin
+                    flag <= '0;
+                    oneshot_done <= '0;
+                    for (int i = 0; i < 3; i++) cnt[i] <= latch[i];
                 end
-                if (rs == 3'd1) flag[1] <= 1'b0;
             end else begin
                 case (rs)
                     3'd1: flag_read <= flag;      // status read arms the clear
