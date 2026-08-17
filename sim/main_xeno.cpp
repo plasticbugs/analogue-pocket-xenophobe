@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     auto* tb = new Vtb_xeno;
 
     int frames_to_run = 240;                 // 60 Hz display frames (4s)
-    std::set<int> dump = {180, 600, 900, 1100, 1200, 1300, 1400, 1500, 1650};
+    std::set<int> dump = {180, 600, 900, 1100, 1101, 1200, 1300, 1400, 1500, 1650};
     if (argc > 1) frames_to_run = atoi(argv[1]);
 
     tb->in0 = 0xffff;                        // nothing pressed (active low)
@@ -116,9 +116,11 @@ int main(int argc, char** argv) {
             if (frame >= 480 && frame < 490) in0 &= ~0x1000;   // P1 BUTTON1
             if (frame >= 560 && frame < 570) in0 &= ~0x1000;   // confirm character
             tb->in0 = in0;
-            if (frame == 1100) {
-                // state dump in MAME statedump.lua format for model diffing
-                FILE* f = fopen("sim_state.txt", "w");
+            if (frame == 178 || frame == 1100 || frame == 1101) {
+                // state dump in MAME statedump.lua format for model diffing;
+                // two consecutive dumps bracket the displayed frame between
+                FILE* f = fopen(frame == 178 ? "sim_state178.txt" :
+                                frame == 1100 ? "sim_state.txt" : "sim_state2.txt", "w");
                 auto& vr = tb->rootp->tb_xeno__DOT__video__DOT__vram;
                 auto& sr = tb->rootp->tb_xeno__DOT__video__DOT__sprram;
                 auto& pl = tb->rootp->tb_xeno__DOT__video__DOT__palette;

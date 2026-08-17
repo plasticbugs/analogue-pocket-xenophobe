@@ -304,12 +304,16 @@ module mcr68_video (
     wire [9:0]  yt_row = {1'b0, sp_line} - yt_y0;
     wire        yt_hit = yt_row < 10'd32;
 
-    // scan helper: issue Y read for the next entry
+    // scan helper. Invariant during SP_Y_TEST evaluating entry j:
+    //   rq == Y_j  and  raddr == {j-1, 0}  (issued one cycle earlier).
+    // So a rejection must issue {j-2} (two ahead of the entry being tested),
+    // and the SP_Y_REQ re-entry cycle issues {idx-1} to establish it.
     task automatic sp_next(input logic from_scan);
         if (sp_idx == 0) sp_st <= SP_IDLE;
         else begin
             sp_idx <= sp_idx - 1'd1;
-            sprram_raddr <= {sp_idx - 1'd1, 2'd0};
+            sprram_raddr <= from_scan ? {sp_idx - 2'd2, 2'd0}
+                                      : {sp_idx - 1'd1, 2'd0};
             sp_st <= from_scan ? SP_Y_TEST : SP_Y_REQ;
         end
     endtask
@@ -336,7 +340,10 @@ module mcr68_video (
                     sp_st <= SP_Y_REQ;
                 end
             end
-            SP_Y_REQ: sp_st <= SP_Y_TEST;    // rq valid next cycle
+            SP_Y_REQ: begin                  // rq valid next cycle
+                sprram_raddr <= {sp_idx - 1'd1, 2'd0};   // prefetch next entry
+                sp_st <= SP_Y_TEST;
+            end
             SP_Y_TEST: begin
                 // rq now holds word0 (Y) of sp_idx
                 if (yt_hit) begin
@@ -407,6 +414,13 @@ module mcr68_video (
     wire signed [10:0] sp_xs = sp_x0w + {5'b0, sp_px};
     wire        sp_xok = (sp_xs >= 0) && (sp_xs < 11'sd512);
 
+`ifdef SIM_GFX_INIT
+    always_ff @(posedge clk)
+        if (sp_st == SP_BLEND && sp_px == 0 && sp_line == 9'd250)
+            $display("SPTRACE line=%0d idx=%0d code=%03x x=%02x y=%02x fl_col=%0d row=%0d",
+                     sp_line, sp_idx, sp_code, sp_x, sp_y, sp_color, sp_rowsel);
+`endif
+
     always_ff @(posedge clk) begin
         if (sp_st == SP_BLEND && sp_pval != 0 && sp_xok) begin
             logic [15:0] cur;
@@ -423,6 +437,7 @@ module mcr68_video (
 
     // ---------------- compositor ----------------
     logic [8:0] rgb9;
+    logic       de_d, hs_d, vs_d;
     always_ff @(posedge clk) if (ce_pix) begin
         if (hcnt == H_TOTAL-1 && vcnt == V_TOTAL-1) lbuf_sel <= ~lbuf_sel;
         else if (hcnt == H_TOTAL-1 && vcnt < V_VIS) lbuf_sel <= ~lbuf_sel;
@@ -430,9 +445,14 @@ module mcr68_video (
         bg_disp_q <= bg_lbuf[lbuf_sel][hcnt[8:0]];
         sp_disp_q <= sp_lbuf[lbuf_sel][hcnt[8:0]];
 
-        de <= (hcnt < H_VIS) && (vcnt < V_VIS);
-        hs <= (hcnt >= HS_START && hcnt < HS_END);
-        vs <= (vcnt >= VS_START && vcnt < VS_END);
+        // rgb9 lags the counters by two ce_pix stages (disp_q, then palette
+        // lookup) - delay syncs to match
+        de_d <= (hcnt < H_VIS) && (vcnt < V_VIS);
+        hs_d <= (hcnt >= HS_START && hcnt < HS_END);
+        vs_d <= (vcnt >= VS_START && vcnt < VS_END);
+        de <= de_d;
+        hs <= hs_d;
+        vs <= vs_d;
 
         begin
             logic [5:0] idx;
