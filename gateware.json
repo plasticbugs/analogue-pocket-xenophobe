@@ -1,0 +1,45 @@
+{
+    "name": "xenophobe",
+    "displayName": "Xenophobe",
+    "description": "Xenophobe (Bally Midway MCR-68000) Arcade Gateware IP Core",
+    "author": "plasticbugs",
+    "version": "0.1.0",
+    "license": "GPL-3.0-or-later",
+    "repository": "https://github.com/plasticbugs/analogue-pocket-xenophobe",
+    "keywords": [
+        "ecosystem:gateman"
+    ],
+    "scripts": {
+        "verilator": "echo \"Error: no simulation specified\" && exit 1",
+        "build:pocket": "quartus_sh --flow compile projects/xeno_pocket.qpf",
+        "program:pocket": "quartus_pgm -m jtag -c 1 -o \"p;projects/output_files/xeno_pocket.sof@1\""
+    },
+    "hardware": {
+        "id": "xenophobe",
+        "name": "Xenophobe",
+        "year": 1987
+    },
+    "release": {
+        "image": "docs/git-social.png",
+        "folders": {
+            "output_folder": "projects/output_files",
+            "pkg_folder": "pkg",
+            "meta_folder": "pkg/meta",
+            "stage_folder": "staging",
+            "release_folder": "release"
+        },
+        "target": {
+            "pocket": {
+                "release_file": "{author}.{core}_{version}_{date}-{target}"
+            }
+        }
+    },
+    "platforms": {
+        "pocket": "2.0.0"
+    },
+    "modules": {
+        "cpu-t80": "1.0.0",
+        "sound-jt49": "1.0.0",
+        "video-vdp18": "1.0.0"
+    }
+}

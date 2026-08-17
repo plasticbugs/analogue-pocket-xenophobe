@@ -651,8 +651,6 @@ module core_top
     wire             core_vs, core_vb; // Vertical Sync/Blank
     wire             core_de;          // Display Enable
 
-    // The V9938 provides a fixed-size display-enable window (borders included)
-    assign core_de = msx_video_de;
     assign core_hb = 1'b0;
     assign core_vb = 1'b0;
 
@@ -706,7 +704,7 @@ module core_top
     (
         // Clocks and Reset
         .clk_74a                  ( clk_74a                  ),
-        .clk_memory               ( clk_21m                  ),
+        .clk_memory               ( clk_sys                  ),
         // Pocket Bridge Slots
         .dataslot_requestwrite    ( dataslot_requestwrite    ), // [i]
         .dataslot_requestwrite_id ( dataslot_requestwrite_id ), // [i]
@@ -759,7 +757,7 @@ module core_top
 
     gamepad #(.JOY_PADS(JOY_PADS),.JOY_ALT(JOY_ALT)) pocket_gamepad
     (
-        .clk_sys   ( clk_21m   ),
+        .clk_sys   ( clk_sys   ),
         // Pocket PAD Interface
         .cont1_key ( cont1_key ), .cont1_joy ( cont1_joy ),
         .cont2_key ( cont2_key ), .cont2_joy ( cont2_joy ),
@@ -807,11 +805,11 @@ module core_top
     //! Clocks
     //! ------------------------------------------------------------------------
     wire pll_core_locked, pll_core_locked_s;
-    wire clk_sys;       // Core : 42.954536 Mhz
-    wire clk_vid;       // Video: 10.738634 Mhz
-    wire clk_vid_90deg; // Video: 10.738634 Mhz @ 90deg Phase Shift
-    wire clk_ram;       // SDRAM: 85.909072 Mhz
-    wire clk_21m;       // MSX  : 21.477268 Mhz (VDP pixel engine + machine)
+    wire clk_sys;       // Machine + SDRAM: 40.0 MHz
+    wire clk_vid;       // Video: 20.0 MHz (dot clock)
+    wire clk_vid_90deg; // Video: 20.0 MHz @ 90deg (Pocket RGB clock pair)
+    wire clk_ram;       // unused
+    wire clk_21m;       // unused
 
     core_pll core_pll
     (
@@ -831,241 +829,27 @@ module core_top
     synch_3 sync_lck(pll_core_locked, pll_core_locked_s, clk_74a);
 
     //! ------------------------------------------------------------------------
-    //! Keyboard
+    //! @ Xenophobe (Bally Midway MCR-68000 + Sounds Good)
     //! ------------------------------------------------------------------------
-    wire [10:0] ps2_key;
-
-    usb_keyboard u_usb_kbd
-    (
-        .clk        ( clk_21m    ),
-        .reset      ( reset_sw   ),
-        .cont3_key  ( cont3_key  ),
-        .cont3_joy  ( cont3_joy  ),
-        .cont3_trig ( cont3_trig ),
-        .ps2_key    ( ps2_key    )
-    );
-
-    //! ------------------------------------------------------------------------
-    //! @ IP Core RTL
-    //! ------------------------------------------------------------------------
-    wire [1:0] sdram_size     = 2'h2; // 0 - none, 1 - 32MB, 2 - 64MB, 3 - 128MB
-
-    reg  [1:0] rom_enabled    = 2'b00;
-    wire       ioctl_isROMA   = ioctl_download && ioctl_index == 16'h0;
-    wire       ioctl_isROMB   = ioctl_download && ioctl_index == 16'h1;
-    wire       ioctl_isBIOS   = ioctl_download && ioctl_index == 16'h2;
-    wire       ioctl_isFWBIOS = ioctl_download && ioctl_index == 16'h3;
-    wire       ioctl_isCAS     = ioctl_download && ioctl_index == 16'h4;
-    wire       ioctl_isSUBBIOS = ioctl_download && ioctl_index == 16'h5;
-    wire       ioctl_isMAPDB   = ioctl_download && ioctl_index == 16'h6;
-
-    always @(posedge clk_21m) begin
-        if (svc_sw) begin // Reset & Detach ROM Cartridges
-            rom_enabled <= 2'b00;
-        end
-        else begin
-            if (ioctl_isROMA) begin rom_enabled[0] <= 1'b1; end
-            if (ioctl_isROMB) begin rom_enabled[1] <= 1'b1; end
-        end
-    end
-
-    //! CLOCKS (10.74MHz enable on the 21.477MHz machine clock)
-    reg ce_10m7 = 0;
-
-    always @(posedge clk_21m) begin
-        ce_10m7 <= ~ce_10m7;
-    end
-
-    //! RESET
-    reg [7:0] last_mapper = 8'h0;
-    always @(posedge clk_21m) begin
-        last_mapper <= dip_sw0;
-    end
-
-    wire mapper_reset = last_mapper != dip_sw0;
-    // isMAPDB included: the database streams into SDRAM at core setup, and
-    // a running machine's mapper-RAM traffic would fight it in the mux and
-    // corrupt the table in place
-    wire msx_reset = ioctl_isROMA | ioctl_isROMB | ioctl_isBIOS | ioctl_isSUBBIOS | ioctl_isMAPDB | mapper_reset;
-
-    // Synchronize the (clk_74a domain) user reset into the machine domain
+    // Reset: user switch, asset download, PLL lock
     wire reset_sw_s;
-    synch_3 sync_rst(reset_sw, reset_sw_s, clk_21m);
+    synch_3 sync_rst(reset_sw, reset_sw_s, clk_sys);
+    wire xeno_reset = reset_sw_s | ioctl_download | ~pll_core_locked_s;
 
-    //! CORE
-    wire        hsync_n, vsync_n, msx_video_de;
-    wire        ioctl_waitROM;
-    wire  [3:0] mapper_info;
+    //! ROM routing: single slot (xenophobe.rom)
+    //!   0x00000-0x7FFFF CPU ROMs -> SDRAM  |  0x80000-0xCFFFF gfx -> BRAM
+    wire        ioctl_isROM   = ioctl_download && ioctl_index == 16'h0;
+    wire        gfx_load_we   = ioctl_isROM && ioctl_wr && ioctl_addr[19];
+    wire [18:0] gfx_load_addr = ioctl_addr[18:0];           // addr - 0x80000
+    wire        cpu_load_wr   = ioctl_isROM && ioctl_wr && !ioctl_addr[19];
 
-    reg hs_o, vs_o;
-    always @(posedge clk_21m) begin
-        hs_o <= ~hsync_n;
-        if(~hs_o & ~hsync_n) begin
-            vs_o <= ~vsync_n;
-        end
-    end
+    //! SDRAM (proven controller, 16-bit read tap) + ROM word server
+    wire [24:0] sd_addr;
+    wire  [7:0] sd_din;
+    wire        sd_we, sd_rd, sd_ready;
+    wire [15:0] sd_dout16;
 
-    assign core_hs = hs_o;
-    assign core_vs = vs_o;
-
-    //! PAL/NTSC scaler preset auto-detection: count lines per field
-    //! (NTSC: 242 visible lines -> preset 0, PAL: 293 -> preset 1)
-    reg [9:0] line_cnt = 0;
-    reg       pal_mode = 0;
-    reg       hs_d, vs_d;
-
-    always @(posedge clk_21m) begin
-        hs_d <= hs_o;
-        vs_d <= vs_o;
-        if (vs_o & ~vs_d) begin
-            pal_mode <= (line_cnt > 10'd280);
-            line_cnt <= 0;
-        end
-        else if (hs_o & ~hs_d) begin
-            line_cnt <= line_cnt + 1'd1;
-        end
-    end
-
-    assign video_preset = pal_mode ? 3'd1 : 3'd0;
-
-    wire        osk_visible;
-    wire  [5:0] joy0    = { p1_btn_b, p1_btn_a, p1_up, p1_down, p1_left, p1_right };
-    wire  [5:0] joy1    = { p2_btn_b, p2_btn_a, p2_up, p2_down, p2_left, p2_right };
-
-    // the on-screen keyboard owns the pad while visible: keep Joy2Key from
-    // typing mapped keys into the machine as the cursor moves and A/B press
-    wire  [9:0] joy_key = osk_visible ? 10'b0 :
-                          { p1_up, p1_down, p1_left, p1_right,
-                            p1_start, p1_select, p1_btn_r1, p1_btn_l1, p1_btn_x, p1_btn_y };
-    // six 6-bit key indices: Y/X/L/R/Select in mod_sw[29:0] (0xF2000000),
-    // Start in dip_sw bits [17:12] (0xF1000000, above the mapper/PAL bits)
-    wire [35:0] key_map = { dip_sw2[1:0], dip_sw1[7:4],
-                            mod_sw3[5:0], mod_sw2, mod_sw1, mod_sw0 };
-    wire [10:0] ps2_joy;
-
-    joy2ps2 u_joy2key
-    (
-        .clk     ( clk_21m    ),
-        .reset   ( reset_sw   ),
-        .enable  ( dip_sw1[2] ),
-        .key_map ( key_map    ),
-        .joy_key ( joy_key    ),
-        .ps2_key ( ps2_joy    )
-    );
-
-    msx2 msx2
-    (
-        .clk            ( clk_21m                ), // [i]
-        .ce_10m7        ( ce_10m7                ), // [i]
-        .reset_i        ( msx_reset | reset_sw_s ), // [i]
-
-        .vdp_pal        ( dip_sw1[0]             ), // [i]
-        .osk_chord      ( p1_btn_l1 & p1_btn_r1 & p1_select ), // [i]
-        .osk_chord2     ( p1_btn_l1 & p1_btn_r1 & p1_start  ), // [i]
-        .osk_visible    ( osk_visible            ), // [o]
-
-        .R              ( core_r               ), // [o]
-        .G              ( core_g               ), // [o]
-        .B              ( core_b               ), // [o]
-        .hsync_n        ( hsync_n              ), // [o]
-        .vsync_n        ( vsync_n              ), // [o]
-        .video_de       ( msx_video_de         ), // [o]
-
-        .audio          ( core_snd_l           ), // [o]
-
-        .ps2_key        ( ps2_key | ps2_joy    ), // [i]
-
-        .joy0           ( joy0                 ), // [i]
-        .joy1           ( joy1                 ), // [i]
-
-        .ioctl_download ( ioctl_download       ), // [i]
-        .ioctl_index    ( ioctl_index[7:0]     ), // [i]
-        .ioctl_wr       ( ioctl_wr             ), // [i]
-        .ioctl_addr     ( ioctl_addr           ), // [i]
-        .ioctl_dout     ( ioctl_data           ), // [i]
-        .ioctl_isROMA   ( ioctl_isROMA         ), // [i]
-        .ioctl_isROMB   ( ioctl_isROMB         ), // [i]
-        .ioctl_isBIOS   ( ioctl_isBIOS         ), // [i]
-        .ioctl_isFWBIOS ( ioctl_isFWBIOS       ), // [i]
-        .ioctl_isSUBBIOS( ioctl_isSUBBIOS      ), // [i]
-        .ioctl_isMAPDB  ( ioctl_isMAPDB        ), // [i]
-        .ioctl_wait     ( ioctl_waitROM        ), // [o]
-
-        .cas_motor      ( /* CAS_motor      */ ), // [o]
-        .cas_audio_in   ( /* CAS_dout       */ ), // [i]
-
-        .rom_enabled    ( rom_enabled          ), // [i]
-        .slot_A         ( dip_sw0[3:0]         ), // [i]
-        .slot_B         ( dip_sw0[7:4]         ), // [i]
-        .mapper_info    ( mapper_info          ), // [o]
-
-        .img_mounted    ( /* img_mounted    */ ), // signaling that new image has been mounted
-        .img_size       ( /* img_size       */ ), // size of image in bytes
-        .img_wp         ( /* img_readonly   */ ), // write protect
-
-        .sd_lba         ( /* sd_lba[0]      */ ),
-        .sd_rd          ( /* sd_rd          */ ),
-        .sd_wr          ( /* sd_wr          */ ),
-        .sd_ack         ( /* sd_ack         */ ),
-        .sd_buff_addr   ( /* sd_buff_addr   */ ),
-        .sd_buff_dout   ( /* sd_buff_dout   */ ),
-        .sd_buff_din    ( /* sd_buff_din[0] */ ),
-        .sd_buff_wr     ( /* sd_buff_wr     */ ),
-
-        .sdram_dout     ( sdram_dout           ),
-        .sdram_din      ( sdram_din            ),
-        .sdram_addr     ( sdram_addr           ),
-        .sdram_we       ( sdram_we             ),
-        .sdram_rd       ( sdram_rd             ),
-        .sdram_ready    ( sdram_ready          ),
-        .sdram_size     ( sdram_size           )
-    );
-
-    //! SDRAM
-    //!
-    //! The machine (21.477MHz) and the SDRAM controller (85.909MHz, exactly
-    //! 4x) are integer-related PLL outputs, so the crossing is synchronous
-    //! and timed by the SDC. The cartridge mappers' address arithmetic is
-    //! too deep to settle inside the 11.6ns crossing window, so the whole
-    //! interface is registered at the machine clock in both directions:
-    //! every cross-domain path becomes a logic-free register-to-register
-    //! hop. The two added machine cycles (~93ns) are far inside the Z80's
-    //! memory-cycle budget.
-    wire  [7:0] sdram_dout;
-    wire  [7:0] sdram_din;
-    wire [24:0] sdram_addr;
-    wire        sdram_we;
-    wire        sdram_rd;
-    wire        sdram_ready;
-
-    wire  [7:0] sdram_dout_raw;
-    wire        sdram_ready_raw;
-
-    reg  [7:0] sdram_din_q;
-    reg [24:0] sdram_addr_q;
-    reg        sdram_we_q, sdram_rd_q;
-    reg  [7:0] sdram_dout_q;
-    reg        sdram_ready_q;
-
-    always @(posedge clk_21m) begin
-        sdram_din_q   <= sdram_din;
-        sdram_addr_q  <= sdram_addr;
-        sdram_we_q    <= sdram_we;
-        sdram_rd_q    <= sdram_rd;
-        sdram_dout_q  <= sdram_dout_raw;
-        sdram_ready_q <= sdram_ready_raw;
-    end
-
-    assign sdram_dout  = sdram_dout_q;
-    assign sdram_ready = sdram_ready_q;
-
-    // The controller runs at 42.95MHz (exactly 2x the machine clock): the
-    // cartridge is paced by a 3.58MHz CPU with wait-states and downloads by
-    // the bridge, so nothing needs 86MHz -- and at half speed every SDRAM
-    // pin path gains ~12ns of slack, far beyond temperature/process drift.
-    // The interface proved marginal at 85.9MHz: reads verified clean on a
-    // cold device and corrupted as it warmed.
-    sdram sdram
+    sdram16 sdram16
     (
         .init       ( ~pll_core_locked_s ),
         .clk        ( clk_sys            ),
@@ -1082,47 +866,130 @@ module core_top
         .SDRAM_CKE  ( dram_cke           ),
         .SDRAM_CLK  ( dram_clk           ),
 
-        .dout       ( sdram_dout_raw     ),
-        .din        ( sdram_din_q        ),
-        .addr       ( sdram_addr_q       ),
-        .we         ( sdram_we_q         ),
-        .rd         ( sdram_rd_q         ),
-        .ready      ( sdram_ready_raw    )
+        .dout       (                    ),
+        .dout16     ( sd_dout16          ),
+        .din        ( sd_din             ),
+        .addr       ( sd_addr            ),
+        .we         ( sd_we              ),
+        .rd         ( sd_rd              ),
+        .ready      ( sd_ready           )
     );
 
-    // TODO: Implement Cassette on PSRAM/SRAM instead of DDR
-    //! CAS load
-    // wire        buff_mem_ready;
+    wire [17:1] main_rom_addr, snd_rom_addr;
+    wire        main_rom_req,  snd_rom_req;
+    wire [15:0] main_rom_q,    snd_rom_q;
+    wire        main_rom_done, snd_rom_done;
 
-    // ddram buffer
-    // (
-    //     .reset (  reset_sw                                  ),
-    //     .we    (  ioctl_isCAS && ioctl_wr                   ),
-    //     .rd    ( ~ioctl_isCAS && CAS_rd                     ),
-    //     .addr  (  ioctl_isCAS ? ioctl_addr[26:0] : CAS_addr ),
-    //     .din   (  ioctl_data                                ),
-    //     .dout  (  CAS_di                                    ),
-    //     .ready (  buff_mem_ready                            ),
-    // );
+    rom_server rom_server
+    (
+        .clk       ( clk_sys        ),
+        .reset     ( ~pll_core_locked_s ),
+        .sd_addr   ( sd_addr        ),
+        .sd_din    ( sd_din         ),
+        .sd_we     ( sd_we          ),
+        .sd_rd     ( sd_rd          ),
+        .sd_dout16 ( sd_dout16      ),
+        .sd_ready  ( sd_ready       ),
+        .dl_active ( ioctl_isROM    ),
+        .dl_addr   ( ioctl_addr[18:0] ),
+        .dl_data   ( ioctl_data     ),
+        .dl_wr     ( cpu_load_wr    ),
+        .rd0_addr  ( main_rom_addr  ),
+        .rd0_req   ( main_rom_req   ),
+        .rd0_q     ( main_rom_q     ),
+        .rd0_done  ( main_rom_done  ),
+        .rd1_addr  ( snd_rom_addr   ),
+        .rd1_req   ( snd_rom_req    ),
+        .rd1_q     ( snd_rom_q      ),
+        .rd1_done  ( snd_rom_done   )
+    );
 
-    // wire        CAS_rd;
-    // wire [26:0] CAS_addr;
-    // wire        CAS_dout;
-    // wire  [7:0] CAS_di;
-    // wire        CAS_motor;
-    // wire        CAS_rewind = status[13] | ioctl_isCAS | reset;
+    //! Inputs (active low). IN0: coins/service + P1; IN1: P2 (P3 idle).
+    //! Xenophobe: 8-way stick + BTN1 (fire), BTN2 (jump/action), BTN3.
+    wire [15:0] xeno_in0 = ~{ 1'b0,                       // 15 unused
+                              p1_btn_b,                   // 14 BTN2
+                              p1_btn_x,                   // 13 BTN3
+                              p1_btn_a,                   // 12 BTN1 (fire)
+                              p1_right, p1_left, p1_down, p1_up,  // 11..8
+                              1'b0,                       // 7 service mode (off)
+                              svc_sw,                     // 6 service credit
+                              1'b0,                       // 5 tilt
+                              2'b00,                      // 4:3 unused (4 = snd status, overridden in core)
+                              1'b0,                       // 2 coin3
+                              p2_select,                  // 1 coin2
+                              p1_select };                // 0 coin1
+    wire [15:0] xeno_in1 = ~{ 1'b0,
+                              4'b0000, 4'b0000,           // P3 idle (bits 14..8 pattern below)
+                              1'b0,
+                              p2_btn_b,                   // 6 P2 BTN2
+                              p2_btn_x,                   // 5 P2 BTN3
+                              p2_btn_a,                   // 4 P2 BTN1
+                              p2_right, p2_left, p2_down, p2_up }; // 3..0
 
-    // tape cass
-    // (
-    //     .clk            ( clk_sys        ),
-    //     .ce_5m3         ( ce_5m3         ),
-    //     .cas_out        ( CAS_dout       ),
-    //     .ram_a          ( CAS_addr       ),
-    //     .ram_di         ( CAS_di         ),
-    //     .ram_rd         ( CAS_rd         ),
-    //     .buff_mem_ready ( buff_mem_ready ),
-    //     .play           ( ~CAS_motor     ),
-    //     .rewind         ( CAS_rewind     )
-    // );
+    //! DIPs: interact switches XOR factory defaults (0 = default)
+    wire [15:0] xeno_dsw = 16'hFF3F ^ {8'h00, dip_sw0[7:0]};
+
+    //! The machine
+    wire [7:0] xr, xg, xb;
+    wire       xhs, xvs, xde;
+    wire [9:0] xdac;
+
+    xenophobe_core xeno
+    (
+        .clk           ( clk_sys       ),
+        .reset         ( xeno_reset    ),
+        .in0           ( xeno_in0      ),
+        .in1           ( xeno_in1      ),
+        .dsw           ( xeno_dsw      ),
+        .main_rom_addr ( main_rom_addr ),
+        .main_rom_req  ( main_rom_req  ),
+        .main_rom_q    ( main_rom_q    ),
+        .main_rom_ack  ( main_rom_done ),
+        .snd_rom_addr  ( snd_rom_addr  ),
+        .snd_rom_req   ( snd_rom_req   ),
+        .snd_rom_q     ( snd_rom_q     ),
+        .snd_rom_ack   ( snd_rom_done  ),
+        .gfx_load_addr ( gfx_load_addr ),
+        .gfx_load_data ( ioctl_data    ),
+        .gfx_load_we   ( gfx_load_we   ),
+        .r             ( xr            ),
+        .g             ( xg            ),
+        .b             ( xb            ),
+        .hs            ( xhs           ),
+        .vs            ( xvs           ),
+        .de            ( xde           ),
+        .audio_dac     ( xdac          ),
+        .control_word  (               ),
+        .watchdog_expired (            )
+    );
+
+    //! Video: capture the 20 MHz-rate pixel stream on clk_vid for the mixer
+    //! (same-PLL related clocks; the crossing is STA-timed)
+    reg [7:0] vr_q, vg_q, vb_q;
+    reg       vhs_q, vvs_q, vde_q;
+    always @(posedge clk_vid) begin
+        vr_q  <= xr;  vg_q <= xg;  vb_q <= xb;
+        vhs_q <= xhs; vvs_q <= xvs; vde_q <= xde;
+    end
+    assign core_r  = vr_q;
+    assign core_g  = vg_q;
+    assign core_b  = vb_q;
+    assign core_hs = vhs_q;
+    assign core_vs = vvs_q;
+    assign core_de = vde_q;
+    assign video_preset = 3'd0;
+
+    //! Audio: DC-block the unsigned DAC stream (idle level is not midscale),
+    //! leaky integrator tau ~13 ms at 40 MHz
+    reg  [25:0] dc_acc = {1'b1, 25'b0};
+    wire [15:0] dac_x64 = {xdac, 6'b0};
+    wire signed [16:0] dc_diff = $signed({1'b0, dac_x64}) - $signed({1'b0, dc_acc[25:10]});
+    always @(posedge clk_sys) begin
+        dc_acc <= dc_acc + {{9{dc_diff[16]}}, dc_diff[16:0]};
+    end
+    wire signed [16:0] ac = dc_diff;   // already the AC term
+    assign core_snd_l = (ac > 17'sd32767)  ? 16'sd32767  :
+                        (ac < -17'sd32768) ? -16'sd32768 : ac[15:0];
+    assign core_snd_r = core_snd_l;
 
 endmodule
