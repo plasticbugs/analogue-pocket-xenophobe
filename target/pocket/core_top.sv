@@ -547,7 +547,6 @@ module core_top
             32'hF8xxxxxx: begin bridge_rd_data <= cmd_bridge_rd_data;   end // APF Bridge (Reserved)
             32'hFA000000: begin bridge_rd_data <= int_bridge_rd_data;   end // Status Low  [31:0]
             32'hFB000000: begin bridge_rd_data <= int_bridge_rd_data;   end // Status High [63:32]
-            32'hFE000000: begin bridge_rd_data <= {28'h0, mapper_info}; end
             default:      begin bridge_rd_data <= 0;                    end
         endcase
     end
@@ -559,7 +558,7 @@ module core_top
 
     pause_crtl core_pause
     (
-        .clk_sys    ( clk_21m         ),
+        .clk_sys    ( clk_sys         ),
         .os_inmenu  ( osnotify_inmenu ),
         .pause_req  ( pause_req       ),
         .pause_core ( pause_core      )
@@ -579,7 +578,7 @@ module core_top
     (
         // Clocks and Reset
         .clk_74a          ( clk_74a            ),
-        .clk_sync         ( clk_21m            ),
+        .clk_sync         ( clk_sys            ),
         .reset_n          ( reset_n            ),
         // Pocket Bridge
         .bridge_addr      ( bridge_addr        ),
