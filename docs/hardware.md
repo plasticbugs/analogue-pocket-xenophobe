@@ -61,11 +61,13 @@ CONFIRMED from MAME midway_sound.cpp (bally/):
 
 ## Graphics formats (pixel-verified)
 
-### Background tiles ("gfx1": xeno_bg.12d then 11d, 64KB region)
+### Background tiles ("gfx1": xeno_bg.11d then 12d, 64KB region, ROMREGION_INVERT)
 MAME `mcr68_bg_layout`: 8×8 logical, 4bpp, drawn 2×2 → 16×16 screen pixels.
+- **Data is INVERTED** (ROMREGION_INVERT — complement every byte at load).
+- Region order: 11d at 0x0000 (pen bits 1:0), 12d at 0x8000 (pen bits 3:2).
 - 16 bytes/tile per ROM half; row = big-endian word per half.
-- Pixel x (0..7) = bits (15−2x, 14−2x) of each half's word.
-- 11d (upper half of region) = pixel bits 3:2, 12d = bits 1:0.
+- Pixel x (0..7) = bits (15−2x, 14−2x) of each (inverted) half's word.
+- Verified pixel-identical to MAME on the attract screen (100.00% match).
 - 2048 tiles. Verified: font + UI text renders readable ("CROUCH TAKE THROW…").
 - Video RAM word per cell: low 10 bits tile index + attribute bits (palette, flip) — exact attribute bits TBD from mcr68 video code + disasm.
 

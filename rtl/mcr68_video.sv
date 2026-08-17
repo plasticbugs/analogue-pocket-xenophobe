@@ -312,7 +312,9 @@ module mcr68_video (
 
     always_ff @(posedge clk) begin
         case (sp_st)
-            SP_IDLE: if (ce_pix && hcnt == H_VIS
+            // Start a full line ahead of the beam (hcnt==0 of the previous
+            // line) so clear+scan+blend complete before the line displays.
+            SP_IDLE: if (ce_pix && hcnt == 10'd0
                          && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 sp_line <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 sp_clr_addr <= '0;
@@ -320,9 +322,11 @@ module mcr68_video (
                 sp_st <= SP_CLR;
             end
             SP_CLR: begin
-                sp_lbuf[sp_wrbuf][sp_clr_addr] <= '0;
+                // 4 entries per clk -> 128 clks
+                for (int i = 0; i < 4; i++)
+                    sp_lbuf[sp_wrbuf][{sp_clr_addr[6:0], i[1:0]}] <= '0;
                 sp_clr_addr <= sp_clr_addr + 1'd1;
-                if (sp_clr_addr == 9'd511) begin
+                if (sp_clr_addr == 9'd127) begin
                     sp_idx <= 9'd511;      // highest offs first = lowest priority
                     sprram_raddr <= {9'd511, 2'd0};
                     sp_st <= SP_Y_REQ;

@@ -254,8 +254,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*5:0*/ tb_xeno__DOT__video__DOT__sp_px;
         CData/*0:0*/ tb_xeno__DOT__video__DOT__yt_hit;
         CData/*3:0*/ tb_xeno__DOT__video__DOT__sp_pval;
-        CData/*5:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__idx;
-        CData/*0:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__sp_norm;
+        CData/*5:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__idx;
+        CData/*0:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__sp_norm;
         CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__cout;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_2;
         CData/*1:0*/ __VdfgRegularize_hebeb780c_0_5;
@@ -518,7 +518,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         SData/*10:0*/ tb_xeno__DOT__video__DOT__sp_code;
         SData/*9:0*/ tb_xeno__DOT__video__DOT__sp_xpos;
         SData/*8:0*/ tb_xeno__DOT__video__DOT__rgb9;
-        SData/*8:0*/ tb_xeno__DOT__video__DOT__unnamedblk2__DOT__cur;
+        SData/*8:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__cur;
         SData/*10:0*/ __VcaseDecoderOut0;
         SData/*15:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__result;
         SData/*10:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__line_cnt;
