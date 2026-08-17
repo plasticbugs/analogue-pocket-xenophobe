@@ -49,8 +49,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*0:0*/ tb_video__DOT__video__DOT__vs_d;
         CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk3__DOT__cls;
         CData/*5:0*/ tb_video__DOT__video__DOT__unnamedblk4__DOT__idx;
-        CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk4__DOT__eff;
-        CData/*0:0*/ tb_video__DOT__video__DOT__unnamedblk4__DOT__eff_hi;
+        CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk4__DOT__lo;
+        CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk4__DOT__hi;
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VstlPhaseResult;
         CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;

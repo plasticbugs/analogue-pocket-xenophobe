@@ -193,32 +193,24 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
         vlSelfRef.hs = vlSelfRef.tb_video__DOT__video__DOT__hs_d;
         vlSelfRef.vs = vlSelfRef.tb_video__DOT__video__DOT__vs_d;
         vlSelfRef.de = vlSelfRef.tb_video__DOT__video__DOT__de_d;
-        vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff_hi 
-            = (0U != (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_disp_q) 
-                            >> 0x0eU)));
-        vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff 
-            = (0x000000ffU & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff_hi)
-                               ? ((IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_disp_q) 
-                                  >> 8U) : (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_disp_q)));
+        vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__lo 
+            = (0x000000ffU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_disp_q));
+        vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__hi 
+            = (0x000000ffU & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_disp_q) 
+                              >> 8U));
         vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
             = (0x0000003fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q));
-        if ((1U == (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff) 
+        if ((IData)(((0x40U == (0xc0U & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__lo))) 
+                     & (~ (((IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q) 
+                            >> 6U) & (0U != (0x0000000fU 
+                                             & (IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q)))))))) {
+            vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
+                = (0x0000003fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__lo));
+        }
+        if ((1U == (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__hi) 
                           >> 6U)))) {
-            if (vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff_hi) {
-                vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
-                    = (0x0000003fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff));
-            } else if ((1U & (~ (((IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q) 
-                                  >> 6U) & (0U != (0x0000000fU 
-                                                   & (IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q))))))) {
-                vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
-                    = (0x0000003fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff));
-            }
-        } else if ((2U == (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff) 
-                                 >> 6U)))) {
-            if ((0U == (0x0000000fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_disp_q)))) {
-                vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
-                    = (8U | (0x00000030U & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__eff)));
-            }
+            vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx 
+                = (0x0000003fU & (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__hi));
         }
         vlSelfRef.tb_video__DOT__video__DOT__rgb9 = vlSelfRef.tb_video__DOT__video__DOT__palette
             [vlSelfRef.tb_video__DOT__video__DOT__unnamedblk4__DOT__idx];
@@ -273,7 +265,7 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
             = (0x000000ffU & ((4U & (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_flags))
                                ? ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk3__DOT__cur) 
                                   >> 8U) : (IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk3__DOT__cur)));
-        if ((2U != (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk3__DOT__cls) 
+        if ((0U == (3U & ((IData)(vlSelfRef.tb_video__DOT__video__DOT__unnamedblk3__DOT__cls) 
                           >> 6U)))) {
             vlSelfRef.tb_video__DOT__video__DOT__unnamedblk3__DOT__cls 
                 = ((((8U == (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_pval))

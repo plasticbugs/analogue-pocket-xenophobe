@@ -422,13 +422,16 @@ module mcr68_video (
                      sp_line, sp_idx, sp_code, sp_x, sp_y, sp_color, sp_rowsel);
 `endif
 
+    // First-wins per class (MAME drawgfx PIXEL_OP_..._PRIORITY, validated
+    // 0.000% on ten MAME states): a pixel once claimed is never rewritten.
+    // Pen 8 claims invisibly (state 2 renders as background downstream).
     always_ff @(posedge clk) begin
         if (sp_st == SP_BLEND && sp_pval != 0 && sp_xok) begin
             logic [15:0] cur;
             logic [7:0]  cls;
             cur = sp_lbuf[sp_wrbuf][sp_xs[8:0]];
             cls = sp_pri ? cur[15:8] : cur[7:0];
-            if (cls[7:6] != 2'd2) begin      // not masked in this class
+            if (cls[7:6] == 2'd0) begin      // unclaimed only
                 cls = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, sp_color, sp_pval};
                 if (sp_pri) sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cls, cur[7:0]};
                 else        sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cur[15:8], cls};
@@ -457,21 +460,16 @@ module mcr68_video (
 
         begin
             logic [5:0] idx;
-            logic [7:0] eff;
-            logic       eff_hi;
-            // effective sprite pixel: hi class wins where present
-            eff_hi = (sp_disp_q[15:14] != 2'd0);
-            eff    = eff_hi ? sp_disp_q[15:8] : sp_disp_q[7:0];
-            idx = {bg_disp_q[5:4], bg_disp_q[3:0]};            // default bg
-            if (eff[7:6] == 2'd1) begin                        // normal sprite
-                if (eff_hi)                                    // hi: over all
-                    idx = {eff[5:4], eff[3:0]};
-                else if (!(bg_disp_q[6] && bg_disp_q[3:0] != 0)) // lo: pri tiles cover
-                    idx = {eff[5:4], eff[3:0]};
-            end else if (eff[7:6] == 2'd2) begin               // pen-8 mask
-                if (bg_disp_q[3:0] == 0)                       // visible only over bg pen 0
-                    idx = {eff[5:4], 4'd8};
-            end
+            logic [7:0] lo, hi;
+            lo = sp_disp_q[7:0];
+            hi = sp_disp_q[15:8];
+            // bg -> lo sprites (covered by cat-1 tiles) -> hi sprites;
+            // state 2 (pen-8 claim) always falls through to bg
+            idx = {bg_disp_q[5:4], bg_disp_q[3:0]};
+            if (lo[7:6] == 2'd1 && !(bg_disp_q[6] && bg_disp_q[3:0] != 0))
+                idx = {lo[5:4], lo[3:0]};
+            if (hi[7:6] == 2'd1)
+                idx = {hi[5:4], hi[3:0]};
             rgb9 <= palette[idx];
         end
     end

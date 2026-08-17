@@ -99,14 +99,17 @@ def render(vram, sprram, pal):
                             bgpen[Y][X] = p
                             bgidx[Y][X] = bank*16+p
                             bgpri[Y][X] = pri
-    # sprite pass per MAME mcr68_update_sprites, two priority classes
-    # priority bitmap semantics reduced to per-pixel layers:
-    sp = [[None]*W for _ in range(H)]   # (idx, pri) of visible sprite pixel
-    blocked = [[0]*W for _ in range(H)] # pen-8 mask (per priority class pass)
+    # Sprite pass per MAME mcr68_update_sprites + drawgfx
+    # PIXEL_OP_REBASE_TRANSMASK_PRIORITY semantics (drawgfxt.ipp):
+    # priority bitmap filled with 1 per class pass; every non-zero pen stamps
+    # pri=31; visible pens draw only where pri != 31 -> FIRST sprite drawn
+    # claims the pixel, and sprites iterate offs high->low, so higher offs =
+    # on top. Pen 8 NEVER draws (its pmask 0x02 test fails on pri 1 and 31):
+    # it claims pixels invisibly - bg shows through, later same-class sprites
+    # are blocked. Cat-1 tiles cover class-0 sprites; class-1 covers those.
+    layer = [[[None]*W for _ in range(H)] for _ in range(2)]
     for prio in (0,1):
-        for y in range(H):
-            for x in range(W):
-                blocked[y][x] = 0
+        claimed = [[0]*W for _ in range(H)]
         for offs in range(2048-4, -1, -4):
             flags = sprram[offs+1] & 0xff
             code = (sprram[offs+2]&0xff) + 256*((flags>>3)&1) + 512*((flags>>6)&3)
@@ -125,31 +128,19 @@ def render(vram, sprram, pal):
                     if X < 0 or X >= W: continue
                     p = spr_pen(code % 512, 31-sx if fx else sx, 31-sy if fy else sy)
                     if p == 0: continue
-                    if blocked[Y][X]: continue
-                    if p == 8:
-                        blocked[Y][X] = 1
-                        # pen 8 draws visibly where it lands (mask color),
-                        # sitting behind bg (handled at composite)
-                        sp[Y][X] = (color*16+8, prio, True)
-                    else:
-                        sp[Y][X] = (color*16+p, prio, False)
-    # composite: bg opaque -> lo sprites -> pri tiles -> hi sprites
+                    if not claimed[Y][X]:
+                        claimed[Y][X] = 1
+                        if p != 8:
+                            layer[prio][Y][X] = color*16+p
+    # composite: bg -> class0 sprites -> cat-1 tiles -> class1 sprites
     img = bytearray(W*H*3)
     for y in range(H):
         for x in range(W):
             idx = bgidx[y][x]
-            s = sp[y][x]
-            if s:
-                sidx, spri, mask8 = s
-                if mask8:
-                    # pen 8: behind background (bg shows if bg pen != 0)
-                    if bgpen[y][x] == 0: idx = sidx
-                elif spri == 1:
-                    idx = sidx
-                else:
-                    # lo sprite: pri tiles cover it
-                    if not (bgpri[y][x] and bgpen[y][x] != 0):
-                        idx = sidx
+            if layer[0][y][x] is not None and not (bgpri[y][x] and bgpen[y][x] != 0):
+                idx = layer[0][y][x]
+            if layer[1][y][x] is not None:
+                idx = layer[1][y][x]
             c = expand(pal[idx])
             img[(y*W+x)*3:(y*W+x)*3+3] = bytes(c)
     return img
