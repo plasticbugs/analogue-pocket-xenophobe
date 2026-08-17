@@ -1,0 +1,12 @@
+Vtb_xeno___024root__0__Slow.o: \
+  /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno__pch.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_config.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilatedos.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_types.h \
+  /opt/homebrew/Cellar/verilator/5.050/share/verilator/include/verilated_funcs.h \
+  /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno__Syms.h \
+  /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno.h \
+  /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno___024unit.h \
+  /Users/scottmoschella/work/xenophobe/sim/obj_xeno/obj_dir/Vtb_xeno___024root.h \
+  Vtb_xeno___024root__0__Slow.cpp Vtb_xeno__pch.h

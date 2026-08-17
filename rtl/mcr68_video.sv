@@ -30,11 +30,11 @@ module mcr68_video (
     input  logic        ce_pix,       // 20 MHz pixel enable
 
     // CPU write/read ports (main board decodes addresses)
-    input  logic [10:0] vram_addr,    // word address into 4KB
+    input  logic [11:0] vram_addr,    // word address into 8KB (4KB map + 4KB scratch)
     input  logic [15:0] vram_din,
     input  logic  [1:0] vram_we,      // byte lanes [1]=upper [0]=lower
     output logic [15:0] vram_q,
-    input  logic [9:0]  sprram_addr,  // word address into 2KB
+    input  logic [11:0] sprram_addr,  // word address into 8KB (512 entries + scratch)
     input  logic [15:0] sprram_din,
     input  logic  [1:0] sprram_we,
     output logic [15:0] sprram_q,
@@ -85,8 +85,8 @@ module mcr68_video (
     wire   hblank = (hcnt >= H_VIS);
 
     // ---------------- memories ----------------
-    // vram 2K x 16 (CPU) / render reads via port b
-    logic [15:0] vram [0:2047];
+    // vram 4K x 16: first 2K words = tilemap, rest = CPU scratch (0x71000)
+    logic [15:0] vram [0:4095];
     logic [15:0] vram_rq;
     always_ff @(posedge clk) begin
         if (vram_we[0]) vram[vram_addr][7:0]  <= vram_din[7:0];
@@ -95,17 +95,17 @@ module mcr68_video (
     end
 
     logic [10:0] vram_raddr;
-    always_ff @(posedge clk) vram_rq <= vram[vram_raddr];
+    always_ff @(posedge clk) vram_rq <= vram[{1'b0, vram_raddr}];
 
-    // sprite ram 1K x 16
-    logic [15:0] sprram [0:1023];
+    // sprite ram 4K x 16: first 2K words = 512 sprite entries, rest scratch
+    logic [15:0] sprram [0:4095];
     logic [15:0] sprram_rq;
-    logic [9:0]  sprram_raddr;
+    logic [10:0] sprram_raddr;
     always_ff @(posedge clk) begin
         if (sprram_we[0]) sprram[sprram_addr][7:0]  <= sprram_din[7:0];
         if (sprram_we[1]) sprram[sprram_addr][15:8] <= sprram_din[15:8];
         sprram_q  <= sprram[sprram_addr];
-        sprram_rq <= sprram[sprram_raddr];
+        sprram_rq <= sprram[{1'b0, sprram_raddr}];
     end
 
     // palette 64 x 9
@@ -128,19 +128,46 @@ module mcr68_video (
 
     // sprite ROM: 4 banks x 32K x 16 = 256KB. Per bank, sprite row = 2 words.
     // word addr within bank: {code[8:0], row[4:0], word}
-    logic [15:0] spr_rom [0:3][0:32767];
+    logic [15:0] spr_rom0 [0:32767];
+    logic [15:0] spr_rom1 [0:32767];
+    logic [15:0] spr_rom2 [0:32767];
+    logic [15:0] spr_rom3 [0:32767];
     logic [15:0] spr_q [0:3];
     logic [14:0] spr_raddr;
+    wire  [1:0]  gl_bank = gfx_load_addr[17:16] - 2'd1;   // sprites start at 0x10000
+    wire         gl_spr  = gfx_load_we && gfx_load_addr[17:16] != 2'b00;
     always_ff @(posedge clk) begin
-        if (gfx_load_we && gfx_load_addr[17:16] != 2'b00) begin
-            // sprites start at 0x10000; 64KB per bank
-            logic [1:0] bank;
-            bank = gfx_load_addr[17:16] - 2'd1;
-            if (gfx_load_addr[0]) spr_rom[bank][gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
-            else                  spr_rom[bank][gfx_load_addr[15:1]][15:8] <= gfx_load_data;
+        if (gl_spr && gl_bank == 2'd0) begin
+            if (gfx_load_addr[0]) spr_rom0[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
+            else                  spr_rom0[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
         end
-        for (int i = 0; i < 4; i++) spr_q[i] <= spr_rom[i][spr_raddr];
+        if (gl_spr && gl_bank == 2'd1) begin
+            if (gfx_load_addr[0]) spr_rom1[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
+            else                  spr_rom1[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
+        end
+        if (gl_spr && gl_bank == 2'd2) begin
+            if (gfx_load_addr[0]) spr_rom2[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
+            else                  spr_rom2[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
+        end
+        if (gl_spr && gl_bank == 2'd3) begin
+            if (gfx_load_addr[0]) spr_rom3[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
+            else                  spr_rom3[gfx_load_addr[15:1]][15:8] <= gfx_load_data;
+        end
+        spr_q[0] <= spr_rom0[spr_raddr];
+        spr_q[1] <= spr_rom1[spr_raddr];
+        spr_q[2] <= spr_rom2[spr_raddr];
+        spr_q[3] <= spr_rom3[spr_raddr];
     end
+
+`ifdef SIM_GFX_INIT
+    initial begin
+        $readmemh("bg_rom.hex",  bg_rom);
+        $readmemh("spr_rom0.hex", spr_rom0);
+        $readmemh("spr_rom1.hex", spr_rom1);
+        $readmemh("spr_rom2.hex", spr_rom2);
+        $readmemh("spr_rom3.hex", spr_rom3);
+    end
+`endif
 
     // ---------------- background renderer ----------------
     // Renders one line ahead into bg line buffer (pen[3:0], color[1:0], pri).
@@ -234,10 +261,11 @@ module mcr68_video (
     logic [8:0] sp_lbuf [0:1][0:511];
     logic [8:0] sp_disp_q;
 
-    typedef enum logic [2:0] {SP_IDLE, SP_CLR, SP_RD, SP_LATCH, SP_FETCH, SP_BLEND} sp_st_e;
+    typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
+                              SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
+                              SP_FETCH, SP_BLEND} sp_st_e;
     sp_st_e sp_st;
-    logic [6:0]  sp_idx;      // sprite entry 0..127 (scanned high->low)
-    logic [1:0]  sp_word;
+    logic [8:0]  sp_idx;      // sprite entry 0..511 (scanned high->low)
     logic [7:0]  sp_y, sp_flags, sp_code_lo, sp_x;
     logic [8:0]  sp_line;
     logic [2:0]  sp_fetch_cnt;
@@ -250,14 +278,25 @@ module mcr68_video (
     wire        sp_pri   = sp_flags[2];
     wire        sp_flipx = sp_flags[4];
     wire        sp_flipy = sp_flags[5];
-    // sprite screen y = (241 - Y)*2 .. +63; row within sprite (2x doubled? no:
-    // sprites are true 32px but displayed 2x tall? MAME: y=(241-Y)*2 and 32x32
-    // gfx drawn 1:1 in the 512x480 space -> occupies 32 lines; our lines are
-    // the same 480 space, so row = line - y0, 0..31, no doubling.
+    // sprite screen y = (241 - Y)*2; 32x32 art drawn 1:1 in the 512x480 space
     wire [9:0]  sp_y0 = (10'd241 - {2'b0, sp_y}) << 1;
     wire [9:0]  sp_row_idx10 = {1'b0, sp_line} - sp_y0;
-    wire        sp_hit = (sp_code != 0) && (sp_row_idx10 < 10'd32);
     wire [4:0]  sp_rowsel = sp_flipy ? ~sp_row_idx10[4:0] : sp_row_idx10[4:0];
+
+    // Y-in-range test evaluated on the freshly read Y byte (sprram_rq)
+    wire [9:0]  yt_y0  = (10'd241 - {2'b0, sprram_rq[7:0]}) << 1;
+    wire [9:0]  yt_row = {1'b0, sp_line} - yt_y0;
+    wire        yt_hit = yt_row < 10'd32;
+
+    // scan helper: issue Y read for the next entry
+    task automatic sp_next(input logic from_scan);
+        if (sp_idx == 0) sp_st <= SP_IDLE;
+        else begin
+            sp_idx <= sp_idx - 1'd1;
+            sprram_raddr <= {sp_idx - 1'd1, 2'd0};
+            sp_st <= from_scan ? SP_Y_TEST : SP_Y_REQ;
+        end
+    endtask
 
     always_ff @(posedge clk) begin
         case (sp_st)
@@ -270,60 +309,58 @@ module mcr68_video (
                 sp_lbuf[~lbuf_sel][sp_clr_addr] <= '0;
                 sp_clr_addr <= sp_clr_addr + 1'd1;
                 if (sp_clr_addr == 9'd511) begin
-                    sp_idx <= 7'd127;      // highest offs = drawn first (lowest on top later)
-                    sp_word <= '0;
-                    sp_st <= SP_RD;
+                    sp_idx <= 9'd511;      // highest offs first = lowest priority
+                    sprram_raddr <= {9'd511, 2'd0};
+                    sp_st <= SP_Y_REQ;
                 end
             end
-            SP_RD: begin
-                sprram_raddr <= {sp_idx, sp_word};   // entry*4 + word
-                sp_word <= sp_word + 1'd1;
-                if (sp_word == 2'd3) sp_st <= SP_LATCH;
+            SP_Y_REQ: sp_st <= SP_Y_TEST;    // rq valid next cycle
+            SP_Y_TEST: begin
+                // rq now holds word0 (Y) of sp_idx
+                if (yt_hit) begin
+                    sp_y <= sprram_rq[7:0];
+                    sprram_raddr <= {sp_idx, 2'd1};
+                    sp_st <= SP_RD_FLAGS;
+                end else
+                    sp_next(1'b1);           // 1 cycle per rejected entry
             end
-            SP_LATCH: begin
-                // sprram_rq lags one cycle; capture happens in shift reg below
-                if (sp_hit) begin
-                    sp_fetch_cnt <= '0;
-                    sp_st <= SP_FETCH;
-                end else begin
-                    sp_word <= '0;
-                    if (sp_idx == 0) sp_st <= SP_IDLE;
-                    else begin sp_idx <= sp_idx - 1'd1; sp_st <= SP_RD; end
-                end
+            SP_RD_FLAGS: begin
+                sprram_raddr <= {sp_idx, 2'd2};
+                sp_st <= SP_RD_CODE;
+            end
+            SP_RD_CODE: begin
+                sp_flags <= sprram_rq[7:0];  // rq = word1
+                sprram_raddr <= {sp_idx, 2'd3};
+                sp_st <= SP_RD_X;
+            end
+            SP_RD_X: begin
+                sp_code_lo <= sprram_rq[7:0]; // rq = word2
+                sp_st <= SP_FETCH;
+                sp_fetch_cnt <= '0;
             end
             SP_FETCH: begin
-                // 2 sequential word reads shared by all 4 banks (parallel q)
-                spr_raddr <= {sp_code[8:0], sp_rowsel, sp_fetch_cnt[0]};
-                sp_fetch_cnt <= sp_fetch_cnt + 1'd1;
-                if (sp_fetch_cnt >= 3'd1) begin
-                    for (int i = 0; i < 4; i++)
-                        sp_row[i][sp_fetch_cnt - 1] <= spr_q[i];
-                end
-                if (sp_fetch_cnt == 3'd2) begin
-                    sp_px <= '0;
-                    sp_st <= SP_BLEND;
+                if (sp_fetch_cnt == 0) sp_x <= sprram_rq[7:0]; // rq = word3
+                if (sp_fetch_cnt == 0 && sp_code == 0) sp_next(1'b0);
+                else begin
+                    // 2 sequential word reads shared by all 4 banks
+                    spr_raddr <= {sp_code[8:0], sp_rowsel, sp_fetch_cnt[0]};
+                    sp_fetch_cnt <= sp_fetch_cnt + 1'd1;
+                    if (sp_fetch_cnt >= 3'd1) begin
+                        for (int i = 0; i < 4; i++)
+                            sp_row[i][sp_fetch_cnt - 1] <= spr_q[i];
+                    end
+                    if (sp_fetch_cnt == 3'd2) begin
+                        sp_px <= '0;
+                        sp_st <= SP_BLEND;
+                    end
                 end
             end
             SP_BLEND: begin
                 sp_px <= sp_px + 1'd1;
-                if (sp_px == 6'd31) begin
-                    sp_word <= '0;
-                    if (sp_idx == 0) sp_st <= SP_IDLE;
-                    else begin sp_idx <= sp_idx - 1'd1; sp_st <= SP_RD; end
-                end
+                if (sp_px == 6'd31) sp_next(1'b0);
             end
             default: sp_st <= SP_IDLE;
         endcase
-
-        // latch entry bytes as they stream out of sprram (rq lags raddr by 1)
-        if (sp_st == SP_RD || sp_st == SP_LATCH) begin
-            case (sp_word)  // rq corresponds to word-2 due to pipeline; use shift
-                2'd2: sp_y       <= sprram_rq[7:0];
-                2'd3: sp_flags   <= sprram_rq[7:0];
-                2'd0: sp_code_lo <= sprram_rq[7:0];
-                2'd1: sp_x       <= sprram_rq[7:0];
-            endcase
-        end
     end
 
     // sprite pixel value from the 4 bank words
