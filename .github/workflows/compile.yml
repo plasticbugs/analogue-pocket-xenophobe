@@ -6,9 +6,10 @@ name: Compile Core
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    tags: ["v*"]
+  # push trigger re-enabled once projects/xeno_pocket.qpf exists:
+  # push:
+  #   branches: [main]
+  #   tags: ["v*"]
 
 jobs:
   compile:
