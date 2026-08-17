@@ -51,11 +51,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*2:0*/ tb_video__DOT__video__DOT__sp_fetch_cnt;
         CData/*5:0*/ tb_video__DOT__video__DOT__sp_px;
         CData/*0:0*/ tb_video__DOT__video__DOT__yt_hit;
-        CData/*3:0*/ tb_video__DOT__video__DOT__sp_pen_v;
         CData/*0:0*/ tb_video__DOT__video__DOT__sp_blend_go;
         CData/*7:0*/ tb_video__DOT__video__DOT__sp_wr_data;
         CData/*7:0*/ tb_video__DOT__video__DOT__sp_bq_lo;
         CData/*7:0*/ tb_video__DOT__video__DOT__sp_bq_hi;
+        CData/*0:0*/ tb_video__DOT__video__DOT__sp_bv_lo;
+        CData/*0:0*/ tb_video__DOT__video__DOT__sp_bv_hi;
         CData/*0:0*/ tb_video__DOT__video__DOT__de_d;
         CData/*0:0*/ tb_video__DOT__video__DOT__hs_d;
         CData/*0:0*/ tb_video__DOT__video__DOT__vs_d;
@@ -79,9 +80,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*7:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
-        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
     };
     struct {
+        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_0;
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VstlPhaseResult;
@@ -110,8 +111,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         SData/*10:0*/ tb_video__DOT__video__DOT__sp_xs;
         SData/*9:0*/ tb_video__DOT__video__DOT__sp_wr_addr;
         SData/*15:0*/ tb_video__DOT__video__DOT__sp_lbuf_bq;
-        SData/*9:0*/ tb_video__DOT__video__DOT__sp_rd_addr_q;
-        SData/*9:0*/ tb_video__DOT__video__DOT__sp_rd_addr;
         SData/*8:0*/ tb_video__DOT__video__DOT__rgb9;
         SData/*12:0*/ tb_video__DOT__sdram_chip__DOT__row_open;
         SData/*15:0*/ tb_video__DOT__sdram_chip__DOT__pipe_q1;
@@ -122,8 +121,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         VlWide<4>/*127:0*/ tb_video__DOT__sd_bdata;
         IData/*24:0*/ tb_video__DOT__sd_addr;
         VlWide<4>/*127:0*/ tb_video__DOT__spr_fetch_data;
-        VlWide<16>/*511:0*/ tb_video__DOT__video__DOT__sp_claim_lo;
-        VlWide<16>/*511:0*/ tb_video__DOT__video__DOT__sp_claim_hi;
         IData/*21:0*/ tb_video__DOT__sdram_chip__DOT__widx;
         IData/*24:0*/ tb_video__DOT__sdram16__DOT__save_addr;
         IData/*24:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_waddr;
@@ -136,6 +133,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         VlUnpacked<CData/*6:0*/, 1024> tb_video__DOT__video__DOT__bg_lbuf;
         VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_lo;
         VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_hi;
+        VlUnpacked<VlWide<16>/*511:0*/, 2> tb_video__DOT__video__DOT__sp_claim_lo;
+        VlUnpacked<VlWide<16>/*511:0*/, 2> tb_video__DOT__video__DOT__sp_claim_hi;
         VlUnpacked<VlUnpacked<SData/*15:0*/, 2>, 4> tb_video__DOT__video__DOT__sp_row;
         VlUnpacked<SData/*15:0*/, 2097152> tb_video__DOT__sdram_chip__DOT__mem;
         VlUnpacked<QData/*63:0*/, 1> __VstlTriggered;

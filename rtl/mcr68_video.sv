@@ -162,7 +162,7 @@ module mcr68_video (
     // Renders one line ahead into bg line buffer (pen[3:0], color[1:0], pri).
     // Flat dual-port BRAMs: {buffer, x} addressing. Port A = render write,
     // port B = display read (sprite buffer: + trailing clear between reads).
-    logic [6:0] bg_lbuf [0:1023];
+    (* ramstyle = "M10K, no_rw_check" *) logic [6:0] bg_lbuf [0:1023];
     logic       lbuf_sel;             // buffer being displayed
     logic       bg_wrbuf, sp_wrbuf;   // latched render targets
     logic [6:0] bg_disp_q;
@@ -261,13 +261,15 @@ module mcr68_video (
     //   [7:0]  lo class {state[1:0], color[1:0], pen[3:0]}
     // state: 0 empty, 1 normal, 2 masked8 (pen 8: blocks later sprites of the
     // same class; visible only where the bg pen is 0, else bg shows).
-    // Two 8-bit buffers (lo/hi class), each {valid, x, color2, pen4}: written
-    // only on claim (port A), read + self-cleared by the display port (port
-    // B). Exact Intel true-dual-port template so 18.1 infers M10K. Claim
-    // bits live in registers and reset in a single cycle at line start.
+    // Two 8-bit buffers (lo/hi class), each {state2, color2, pen4}, written
+    // on every claim (port A) and read by the display (port B) - pure
+    // simple-dual-port, guaranteed M10K inference. Validity comes from the
+    // ping-ponged claim registers (cleared per bank in one cycle); stale
+    // BRAM data is unreachable because data is written on every claim and
+    // the display requires claim AND a visible state.
     logic [7:0] sp_lbuf_lo [0:1023];
     logic [7:0] sp_lbuf_hi [0:1023];
-    logic [511:0] sp_claim_lo, sp_claim_hi;
+    logic [511:0] sp_claim_lo [0:1], sp_claim_hi [0:1];
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
@@ -425,44 +427,42 @@ module mcr68_video (
     // First-wins per class (MAME drawgfx PIXEL_OP_..._PRIORITY, validated
     // 0.000% on ten MAME states): a pixel once claimed is never rewritten.
     // Pen 8 claims invisibly (claim bit set, no data write -> renders as bg).
-    wire sp_claimed = sp_pri ? sp_claim_hi[sp_xs[8:0]] : sp_claim_lo[sp_xs[8:0]];
+    wire sp_claimed = sp_pri ? sp_claim_hi[sp_wrbuf][sp_xs[8:0]]
+                             : sp_claim_lo[sp_wrbuf][sp_xs[8:0]];
     wire sp_blend_go = (sp_st == SP_BLEND) && sp_pval != 0 && sp_xok && !sp_claimed;
     always_ff @(posedge clk) begin
         if (sp_st == SP_CLR) begin
-            sp_claim_lo <= '0;
-            sp_claim_hi <= '0;
+            sp_claim_lo[sp_wrbuf] <= '0;
+            sp_claim_hi[sp_wrbuf] <= '0;
         end else if (sp_blend_go) begin
-            if (sp_pri) sp_claim_hi[sp_xs[8:0]] <= 1'b1;
-            else        sp_claim_lo[sp_xs[8:0]] <= 1'b1;
+            if (sp_pri) sp_claim_hi[sp_wrbuf][sp_xs[8:0]] <= 1'b1;
+            else        sp_claim_lo[sp_wrbuf][sp_xs[8:0]] <= 1'b1;
         end
     end
-    // port A (render write)
+    // port A (render write; every claim writes, pen 8 writes state 2)
     wire [9:0] sp_wr_addr = {sp_wrbuf, sp_xs[8:0]};
-    wire [7:0] sp_wr_data = {2'd1, sp_color, sp_pval};
+    wire [7:0] sp_wr_data = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, sp_color, sp_pval};
     always_ff @(posedge clk) begin
-        if (sp_blend_go && sp_pval != 4'd8 && !sp_pri)
+        if (sp_blend_go && !sp_pri)
             sp_lbuf_lo[sp_wr_addr] <= sp_wr_data;
     end
     always_ff @(posedge clk) begin
-        if (sp_blend_go && sp_pval != 4'd8 && sp_pri)
+        if (sp_blend_go && sp_pri)
             sp_lbuf_hi[sp_wr_addr] <= sp_wr_data;
     end
 
-    // port B (display read; clears the just-consumed entry on off cycles)
+    // port B (display read only) + claim validity latched alongside
     logic [7:0]  sp_bq_lo, sp_bq_hi;
-    wire [15:0] sp_lbuf_bq = {sp_bq_hi, sp_bq_lo};
-    logic [9:0]  sp_rd_addr_q;
-    wire [9:0]  sp_rd_addr = ce_pix ? {lbuf_sel, hcnt[8:0]} : sp_rd_addr_q;
+    logic        sp_bv_lo, sp_bv_hi;
+    wire [15:0] sp_lbuf_bq = {sp_bv_hi ? sp_bq_hi : 8'h0,
+                              sp_bv_lo ? sp_bq_lo : 8'h0};
     always_ff @(posedge clk) begin
-        if (ce_pix) sp_rd_addr_q <= {lbuf_sel, hcnt[8:0]};
-    end
-    always_ff @(posedge clk) begin
-        if (!ce_pix) sp_lbuf_lo[sp_rd_addr] <= 8'h0;
-        if (ce_pix)  sp_bq_lo <= sp_lbuf_lo[sp_rd_addr];
-    end
-    always_ff @(posedge clk) begin
-        if (!ce_pix) sp_lbuf_hi[sp_rd_addr] <= 8'h0;
-        if (ce_pix)  sp_bq_hi <= sp_lbuf_hi[sp_rd_addr];
+        if (ce_pix) begin
+            sp_bq_lo <= sp_lbuf_lo[{lbuf_sel, hcnt[8:0]}];
+            sp_bq_hi <= sp_lbuf_hi[{lbuf_sel, hcnt[8:0]}];
+            sp_bv_lo <= sp_claim_lo[lbuf_sel][hcnt[8:0]];
+            sp_bv_hi <= sp_claim_hi[lbuf_sel][hcnt[8:0]];
+        end
     end
 
     // ---------------- compositor ----------------
