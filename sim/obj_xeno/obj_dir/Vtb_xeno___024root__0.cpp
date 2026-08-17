@@ -1859,12 +1859,12 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         = vlSelfRef.tb_xeno__DOT__video__DOT__vcnt;
     vlSelfRef.__Vdly__tb_xeno__DOT__video__DOT__field 
         = vlSelfRef.tb_xeno__DOT__video__DOT__field;
+    __Vdly__tb_xeno__DOT__acc = vlSelfRef.tb_xeno__DOT__acc;
+    __Vdly__tb_xeno__DOT__phi_tog = vlSelfRef.tb_xeno__DOT__phi_tog;
     __Vdly__tb_xeno__DOT__video__DOT__bg_st = vlSelfRef.tb_xeno__DOT__video__DOT__bg_st;
     __Vdly__tb_xeno__DOT__video__DOT__bg_px = vlSelfRef.tb_xeno__DOT__video__DOT__bg_px;
     __Vdly__tb_xeno__DOT__video__DOT__bg_cell = vlSelfRef.tb_xeno__DOT__video__DOT__bg_cell;
     __Vdly__tb_xeno__DOT__video__DOT__vram_raddr = vlSelfRef.tb_xeno__DOT__video__DOT__vram_raddr;
-    __Vdly__tb_xeno__DOT__acc = vlSelfRef.tb_xeno__DOT__acc;
-    __Vdly__tb_xeno__DOT__phi_tog = vlSelfRef.tb_xeno__DOT__phi_tog;
     vlSelfRef.__Vdly__tb_xeno__DOT__main_board__DOT__line_cnt 
         = vlSelfRef.tb_xeno__DOT__main_board__DOT__line_cnt;
     __VdlySet__tb_xeno__DOT__video__DOT__bg_lbuf__v0 = 0U;
@@ -1933,7 +1933,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
          & (0x0200U > (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_xpos)))) {
         vlSelfRef.tb_xeno__DOT__video__DOT__unnamedblk2__DOT__cur 
             = vlSelfRef.tb_xeno__DOT__video__DOT__sp_lbuf
-            [(1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)))]
+            [vlSelfRef.tb_xeno__DOT__video__DOT__sp_wrbuf]
             [(0x000001ffU & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_xpos))];
         if ((2U != (3U & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__unnamedblk2__DOT__cur) 
                           >> 7U)))) {
@@ -1956,7 +1956,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
             __VdlyDim0__tb_xeno__DOT__video__DOT__sp_lbuf__v1 
                 = (0x000001ffU & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_xpos));
             __VdlyDim1__tb_xeno__DOT__video__DOT__sp_lbuf__v1 
-                = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)));
+                = vlSelfRef.tb_xeno__DOT__video__DOT__sp_wrbuf;
             __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v1 = 1U;
         }
     }
@@ -2001,16 +2001,9 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                                           | (IData)(vlSelfRef.tb_xeno__DOT__video__DOT____VlemCall_0__bg_pen)));
         __VdlyDim0__tb_xeno__DOT__video__DOT__bg_lbuf__v0 
             = (((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_cell) 
-                << 4U) | ((0x0000000eU & ((0xfffffffeU 
-                                           & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px)) 
-                                          ^ ((- (IData)(
-                                                        (1U 
-                                                         & ((IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_d1) 
-                                                            >> 2U)))) 
-                                             << 1U))) 
-                          | (1U & (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px))));
+                << 4U) | (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__bg_px));
         __VdlyDim1__tb_xeno__DOT__video__DOT__bg_lbuf__v0 
-            = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)));
+            = vlSelfRef.tb_xeno__DOT__video__DOT__bg_wrbuf;
         __VdlySet__tb_xeno__DOT__video__DOT__bg_lbuf__v0 = 1U;
     }
     __VdlyVal__tb_xeno__DOT__video__DOT__spr_q__v0 
@@ -2792,7 +2785,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         __VdlyDim0__tb_xeno__DOT__video__DOT__sp_lbuf__v0 
             = vlSelfRef.tb_xeno__DOT__video__DOT__sp_clr_addr;
         __VdlyDim1__tb_xeno__DOT__video__DOT__sp_lbuf__v0 
-            = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)));
+            = vlSelfRef.tb_xeno__DOT__video__DOT__sp_wrbuf;
         __VdlySet__tb_xeno__DOT__video__DOT__sp_lbuf__v0 = 1U;
         __Vdly__tb_xeno__DOT__video__DOT__sp_clr_addr 
             = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__sp_clr_addr)));
@@ -2803,12 +2796,15 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         }
     } else if ((((IData)(vlSelfRef.tb_xeno__DOT__ce_div) 
                  & (0x0200U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__hcnt))) 
-                & (0x01e0U > (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt)))) {
+                & ((0x01dfU > (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt)) 
+                   | (0x020cU == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))))) {
         vlSelfRef.tb_xeno__DOT__video__DOT__sp_line 
             = ((0x020cU == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))
                 ? 0U : (0x000001ffU & ((IData)(1U) 
                                        + (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))));
         __Vdly__tb_xeno__DOT__video__DOT__sp_clr_addr = 0U;
+        vlSelfRef.tb_xeno__DOT__video__DOT__sp_wrbuf 
+            = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)));
         __Vdly__tb_xeno__DOT__video__DOT__sp_st = 1U;
     }
     vlSelfRef.tb_xeno__DOT__main_board__DOT__ptm__DOT__c_q 
@@ -2861,7 +2857,6 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         vlSelfRef.tb_xeno__DOT__video__DOT__sp_row[3U][__VdlyDim0__tb_xeno__DOT__video__DOT__sp_row__v3] 
             = __VdlyVal__tb_xeno__DOT__video__DOT__sp_row__v3;
     }
-    vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel = __Vdly__tb_xeno__DOT__video__DOT__lbuf_sel;
     if (__VdlySet__tb_xeno__DOT__video__DOT__bg_lbuf__v0) {
         vlSelfRef.tb_xeno__DOT__video__DOT__bg_lbuf[__VdlyDim1__tb_xeno__DOT__video__DOT__bg_lbuf__v0][__VdlyDim0__tb_xeno__DOT__video__DOT__bg_lbuf__v0] 
             = __VdlyVal__tb_xeno__DOT__video__DOT__bg_lbuf__v0;
@@ -3014,12 +3009,15 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
         __Vdly__tb_xeno__DOT__video__DOT__bg_st = 2U;
     } else if ((((IData)(vlSelfRef.tb_xeno__DOT__ce_div) 
                  & (0x0200U == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__hcnt))) 
-                & (0x01e0U > (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt)))) {
+                & ((0x01dfU > (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt)) 
+                   | (0x020cU == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))))) {
         __Vdly__tb_xeno__DOT__video__DOT__bg_cell = 0U;
         vlSelfRef.tb_xeno__DOT__video__DOT__bg_next_y 
             = ((0x020cU == (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))
                 ? 0U : (0x000001ffU & ((IData)(1U) 
                                        + (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__vcnt))));
+        vlSelfRef.tb_xeno__DOT__video__DOT__bg_wrbuf 
+            = (1U & (~ (IData)(vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel)));
         __Vdly__tb_xeno__DOT__video__DOT__bg_st = 1U;
     }
     vlSelfRef.tb_xeno__DOT__video__DOT__yt_hit = (0x0020U 
@@ -3034,6 +3032,7 @@ void Vtb_xeno___024root___nba_sequent__TOP__0(Vtb_xeno___024root* vlSelf) {
                                                        << 1U))));
     vlSelfRef.tb_xeno__DOT__video__DOT__bg_px = __Vdly__tb_xeno__DOT__video__DOT__bg_px;
     vlSelfRef.tb_xeno__DOT__video__DOT__bg_cell = __Vdly__tb_xeno__DOT__video__DOT__bg_cell;
+    vlSelfRef.tb_xeno__DOT__video__DOT__lbuf_sel = __Vdly__tb_xeno__DOT__video__DOT__lbuf_sel;
     vlSelfRef.tb_xeno__DOT__video__DOT__bg_st = __Vdly__tb_xeno__DOT__video__DOT__bg_st;
     vlSelfRef.tb_xeno__DOT__video__DOT__vram_rq = vlSelfRef.tb_xeno__DOT__video__DOT__vram
         [vlSelfRef.tb_xeno__DOT__video__DOT__vram_raddr];

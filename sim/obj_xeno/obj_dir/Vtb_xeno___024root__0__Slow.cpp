@@ -5578,6 +5578,8 @@ VL_ATTR_COLD void Vtb_xeno___024root___ctor_var_reset(Vtb_xeno___024root* vlSelf
         }
     }
     vlSelf->tb_xeno__DOT__video__DOT__lbuf_sel = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16412562556049861017ull);
+    vlSelf->tb_xeno__DOT__video__DOT__bg_wrbuf = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2854711138879139691ull);
+    vlSelf->tb_xeno__DOT__video__DOT__sp_wrbuf = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 15975205567802527509ull);
     vlSelf->tb_xeno__DOT__video__DOT__bg_disp_q = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 16092683739938650080ull);
     vlSelf->tb_xeno__DOT__video__DOT__bg_st = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 1971985725039597603ull);
     vlSelf->tb_xeno__DOT__video__DOT__bg_cell = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 3563612392113620826ull);

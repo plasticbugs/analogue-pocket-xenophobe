@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     auto* tb = new Vtb_xeno;
 
     int frames_to_run = 240;                 // 60 Hz display frames (4s)
-    std::set<int> dump = {60, 120, 180, 240, 300, 360, 420, 479};
+    std::set<int> dump = {600, 900, 1100, 1200, 1300, 1400, 1500, 1650};
     if (argc > 1) frames_to_run = atoi(argv[1]);
 
     tb->in0 = 0xffff;                        // nothing pressed (active low)
@@ -101,6 +101,12 @@ int main(int argc, char** argv) {
             break;
         }
         if (tb->vs && !last_vs) {
+            // scripted inputs: coin at f440, fire button at f480 to start
+            uint16_t in0 = 0xffff;
+            if (frame >= 440 && frame < 450) in0 &= ~0x0001;   // COIN1
+            if (frame >= 480 && frame < 490) in0 &= ~0x1000;   // P1 BUTTON1
+            if (frame >= 560 && frame < 570) in0 &= ~0x1000;   // confirm character
+            tb->in0 = in0;
             if (dump.count(frame)) {
                 char name[64];
                 snprintf(name, sizeof name, "frame_%03d.ppm", frame);

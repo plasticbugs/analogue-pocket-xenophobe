@@ -175,6 +175,7 @@ module mcr68_video (
     // Renders one line ahead into bg line buffer (pen[3:0], color[1:0], pri).
     logic [6:0] bg_lbuf [0:1][0:511];
     logic       lbuf_sel;             // buffer being displayed
+    logic       bg_wrbuf, sp_wrbuf;   // latched render targets
     logic [6:0] bg_disp_q;
 
     // bg state machine: for cell 0..31 of next line: read vram w0, w1,
@@ -202,6 +203,7 @@ module mcr68_video (
                          && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 bg_next_y <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 bg_cell <= '0;
+                bg_wrbuf <= ~lbuf_sel;   // latch target: render outlives the toggle
                 bg_st <= BG_VR0;
             end
             BG_VR0: begin
@@ -255,7 +257,8 @@ module mcr68_video (
 
     always_ff @(posedge clk) begin
         if (bg_st == BG_EMIT)
-            bg_lbuf[~lbuf_sel][{bg_cell, bg_px[3:1] ^ {3{bg_flipx}}, bg_px[0]}]
+            // position is linear; flipx applies only to the column selection
+            bg_lbuf[bg_wrbuf][{bg_cell, bg_px[3:1], bg_px[0]}]
                 <= {bg_pri, bg_color, bg_pen(bg_q0, bg_q1, bg_px[3:1] ^ {3{bg_flipx}})};
     end
     // NOTE: write path above emits each logical pixel twice (px[0] doubling).
@@ -310,10 +313,11 @@ module mcr68_video (
                          && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 sp_line <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 sp_clr_addr <= '0;
+                sp_wrbuf <= ~lbuf_sel;   // latch target: render outlives the toggle
                 sp_st <= SP_CLR;
             end
             SP_CLR: begin
-                sp_lbuf[~lbuf_sel][sp_clr_addr] <= '0;
+                sp_lbuf[sp_wrbuf][sp_clr_addr] <= '0;
                 sp_clr_addr <= sp_clr_addr + 1'd1;
                 if (sp_clr_addr == 9'd511) begin
                     sp_idx <= 9'd511;      // highest offs first = lowest priority
@@ -392,12 +396,12 @@ module mcr68_video (
     always_ff @(posedge clk) begin
         if (sp_st == SP_BLEND && sp_pval != 0 && sp_xpos < 10'd512) begin
             logic [8:0] cur;
-            cur = sp_lbuf[~lbuf_sel][sp_xpos[8:0]];
+            cur = sp_lbuf[sp_wrbuf][sp_xpos[8:0]];
             if (cur[8:7] != 2'd2) begin      // not masked
                 if (sp_pval == 4'd8)
-                    sp_lbuf[~lbuf_sel][sp_xpos[8:0]] <= {2'd2, sp_pri, sp_color, sp_pval};
+                    sp_lbuf[sp_wrbuf][sp_xpos[8:0]] <= {2'd2, sp_pri, sp_color, sp_pval};
                 else
-                    sp_lbuf[~lbuf_sel][sp_xpos[8:0]] <= {2'd1, sp_pri, sp_color, sp_pval};
+                    sp_lbuf[sp_wrbuf][sp_xpos[8:0]] <= {2'd1, sp_pri, sp_color, sp_pval};
             end
         end
     end
