@@ -22,6 +22,9 @@ Vtb_xeno::Vtb_xeno(VerilatedContext* _vcontextp__, const char* _vcname__)
     , dbg_irq493{vlSymsp->TOP.dbg_irq493}
     , dbg_ptm_irq{vlSymsp->TOP.dbg_ptm_irq}
     , dbg_iack{vlSymsp->TOP.dbg_iack}
+    , dbg_phi1{vlSymsp->TOP.dbg_phi1}
+    , dbg_wdt_kick{vlSymsp->TOP.dbg_wdt_kick}
+    , dbg_vsync30{vlSymsp->TOP.dbg_vsync30}
     , in0{vlSymsp->TOP.in0}
     , in1{vlSymsp->TOP.in1}
     , dsw{vlSymsp->TOP.dsw}

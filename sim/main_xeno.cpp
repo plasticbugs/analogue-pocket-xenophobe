@@ -23,6 +23,19 @@ int main(int argc, char** argv) {
     for (int i = 0; i < 128; i++) { tb->clk = 0; tb->eval(); tb->clk = 1; tb->eval(); }
     tb->reset = 0;
 
+    // clock-rate self-check: phi1 pulses and bus cycles over 4M clks (100ms)
+    {
+        int nphi = 0, nbus = 0, la2 = 0;
+        for (int i = 0; i < 4'000'000; i++) {
+            tb->clk = 0; tb->eval(); tb->clk = 1; tb->eval();
+            if (tb->dbg_phi1) nphi++;
+            if (tb->dbg_as && !la2) nbus++;
+            la2 = tb->dbg_as;
+        }
+        printf("calib: phi1=%.3f MHz, bus=%.0f cyc/s avg %.1f CPU-cycles/bus\n",
+               nphi / 100000.0, nbus * 10.0, (double)nphi / (nbus ? nbus : 1));
+    }
+
     static uint8_t fb[480][512][3];
     int frame = 0, x = 0, y = 0, last_vs = 0, last_de = 0;
     uint16_t last_ctrl = 0;
@@ -42,6 +55,15 @@ int main(int argc, char** argv) {
         last_as = tb->dbg_as;
         if (tb->dbg_irq493 && !last_493) n493++;
         last_493 = tb->dbg_irq493;
+        static int last_kick = 0; static int64_t kick_t[8]; static int kick_n = 0;
+        if (tb->dbg_wdt_kick && !last_kick) { kick_t[kick_n++ & 7] = t; }
+        last_kick = tb->dbg_wdt_kick;
+        if (tb->wdt) {
+            printf("  last kicks (ms before death): ");
+            for (int k = 0; k < 8; k++)
+                printf("%.1f ", (t - kick_t[(kick_n + k) & 7]) / 40000.0);
+            printf("\n");
+        }
         if (!(t & 1)) continue;              // sample at ce_pix rate
         if (tb->de) {
             if (!last_de) { /* line start */ }

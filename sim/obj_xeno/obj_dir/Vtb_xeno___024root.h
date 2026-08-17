@@ -32,11 +32,13 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VL_OUT8(dbg_irq493,0,0);
         VL_OUT8(dbg_ptm_irq,0,0);
         VL_OUT8(dbg_iack,0,0);
+        VL_OUT8(dbg_phi1,0,0);
+        VL_OUT8(dbg_wdt_kick,0,0);
+        VL_OUT8(dbg_vsync30,0,0);
         CData/*0:0*/ tb_xeno__DOT__ce_div;
         CData/*0:0*/ tb_xeno__DOT__phi_tog;
         CData/*0:0*/ tb_xeno__DOT__phi1;
         CData/*0:0*/ tb_xeno__DOT__phi2;
-        CData/*0:0*/ tb_xeno__DOT__rom_ack;
         CData/*1:0*/ tb_xeno__DOT__vram_we;
         CData/*1:0*/ tb_xeno__DOT__sprram_we;
         CData/*0:0*/ tb_xeno__DOT__pal_we;
@@ -63,7 +65,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*7:0*/ tb_xeno__DOT__main_board__DOT____Vcellinp__ptm__din;
         CData/*3:0*/ tb_xeno__DOT__main_board__DOT__wdt_cnt;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__irq493;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__slow_dtack;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__wClk;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__enT1;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__enT2;
@@ -82,9 +83,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__rstUrom;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT____Vcellinp__nanoRom__clk;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__Tpend;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__intPend;
     };
     struct {
+        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__intPend;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswT;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswS;
         CData/*2:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__pswI;
@@ -148,9 +149,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbhIdle;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dblIdle;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbdIdle;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbl2Pcl;
     };
     struct {
+        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbl2Pcl;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dbh2Pch;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__abh2Pch;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__abl2Pcl;
@@ -214,9 +215,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rIllegal;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rPriv;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineA;
-        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineF;
     };
     struct {
+        CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rLineF;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcRst;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcAdrErr;
         CData/*0:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__sequencer__DOT__rExcBusErr;
@@ -253,7 +254,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*5:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__idx;
         CData/*0:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__sp_norm;
         CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__cout;
-        CData/*0:0*/ __VdfgRegularize_hebeb780c_0_0;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_2;
         CData/*1:0*/ __VdfgRegularize_hebeb780c_0_5;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_8;
@@ -436,12 +436,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VL_OUT16(ctrl,15,0);
         VL_OUT16(dbg_palw,15,0);
         VL_OUT16(dbg_vramw,15,0);
-        SData/*15:0*/ tb_xeno__DOT__rom_q;
         SData/*15:0*/ tb_xeno__DOT__vram_q;
         SData/*15:0*/ tb_xeno__DOT__sprram_q;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu_din;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__ram_q;
-        SData/*9:0*/ tb_xeno__DOT__main_board__DOT__line_cnt;
+        SData/*10:0*/ tb_xeno__DOT__main_board__DOT__line_cnt;
         SData/*9:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__microAddr;
         SData/*9:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__nma;
         SData/*8:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__nanoAddr;
@@ -479,9 +478,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alub;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__dobInput;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aluLatch;
+        SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__result;
     };
     struct {
-        SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__result;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__row;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__aOperand;
         SData/*15:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__dOperand;
@@ -515,7 +514,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         SData/*8:0*/ tb_xeno__DOT__video__DOT__unnamedblk2__DOT__cur;
         SData/*10:0*/ __VcaseDecoderOut0;
         SData/*15:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__result;
-        SData/*9:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__line_cnt;
+        SData/*10:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__line_cnt;
         SData/*9:0*/ __Vdly__tb_xeno__DOT__video__DOT__hcnt;
         SData/*9:0*/ __Vdly__tb_xeno__DOT__video__DOT__vcnt;
         SData/*15:0*/ __Vdly__tb_xeno__DOT__main_board__DOT__cpu__DOT__ftu;
@@ -545,9 +544,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__shftResult;
         IData/*16:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__Vstatic__rtemp;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busArbiter__DOT__dmaPhase;
+        IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busArbiter__DOT__next;
     };
     struct {
-        IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busArbiter__DOT__next;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__busPhase;
         IData/*31:0*/ tb_xeno__DOT__main_board__DOT__cpu__DOT__busControl__DOT__next;
         IData/*30:0*/ __VcaseDecoderOut1;
@@ -611,9 +610,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         IData/*20:0*/ __VcaseDecoderOut59;
         IData/*20:0*/ __VcaseDecoderOut60;
         IData/*20:0*/ __VcaseDecoderOut61;
+        IData/*20:0*/ __VcaseDecoderOut62;
     };
     struct {
-        IData/*20:0*/ __VcaseDecoderOut62;
         IData/*20:0*/ __VcaseDecoderOut63;
         IData/*20:0*/ __VcaseDecoderOut64;
         IData/*20:0*/ __VcaseDecoderOut65;
@@ -677,9 +676,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         VlUnpacked<CData/*7:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__cr;
         VlUnpacked<SData/*15:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__latch;
         VlUnpacked<SData/*15:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__cnt;
+        VlUnpacked<CData/*7:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__lsb_buf;
     };
     struct {
-        VlUnpacked<CData/*7:0*/, 3> tb_xeno__DOT__main_board__DOT__ptm__DOT__lsb_buf;
         VlUnpacked<SData/*15:0*/, 4096> tb_xeno__DOT__video__DOT__vram;
         VlUnpacked<SData/*15:0*/, 4096> tb_xeno__DOT__video__DOT__sprram;
         VlUnpacked<SData/*8:0*/, 64> tb_xeno__DOT__video__DOT__palette;

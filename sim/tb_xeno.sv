@@ -14,8 +14,14 @@ module tb_xeno (
     output logic wdt,
     output logic [23:0] dbg_addr,
     output logic dbg_as, dbg_irq493, dbg_ptm_irq, dbg_iack,
-    output logic [15:0] dbg_palw, dbg_vramw
+    output logic [15:0] dbg_palw, dbg_vramw,
+    output logic dbg_phi1,
+    output logic dbg_wdt_kick,
+    output logic dbg_vsync30
 );
+    assign dbg_phi1 = phi1;
+    assign dbg_wdt_kick = main_board.sel_wdt & ~main_board.rw_n;
+    assign dbg_vsync30 = vsync30;
 
     // pixel enable 20 MHz
     logic ce_div = 0;
@@ -42,10 +48,8 @@ module tb_xeno (
     logic [17:1] rom_addr;
     logic        rom_req, rom_ack;
     logic [15:0] rom_q;
-    always_ff @(posedge clk) begin
-        rom_q   <= rom[rom_addr];
-        rom_ack <= rom_req;
-    end
+    assign rom_q   = rom[rom_addr];   // sim: combinational, zero wait states
+    assign rom_ack = rom_req;
 
     // sound board stub: status toggles at ~2 Hz-ish
     logic [23:0] st_cnt;

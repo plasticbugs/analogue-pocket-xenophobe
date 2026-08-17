@@ -105,10 +105,8 @@ module sounds_good (
         else if (sel_pia) cpu_din = {pia_dout, 8'hff};
     end
 
-    // RAM/PIA: dtack after one clk (registered read); ROM: wait for ack
-    logic ram_dtack;
-    always_ff @(posedge clk) ram_dtack <= sel_ram | sel_pia;
-    assign dtack_n = ~((sel_rom & rom_ack) | (ram_dtack & (sel_ram | sel_pia)));
+    // zero-wait-state DTACK for internal regions; ROM waits for ack
+    assign dtack_n = ~((sel_rom & rom_ack) | sel_ram | sel_pia);
     assign vpa_n   = ~iack;                // autovector all interrupts
 
 endmodule

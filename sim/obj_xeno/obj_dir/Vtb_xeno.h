@@ -43,6 +43,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno VL_NOT_FINAL : public VerilatedModel
     VL_OUT8(&dbg_irq493,0,0);
     VL_OUT8(&dbg_ptm_irq,0,0);
     VL_OUT8(&dbg_iack,0,0);
+    VL_OUT8(&dbg_phi1,0,0);
+    VL_OUT8(&dbg_wdt_kick,0,0);
+    VL_OUT8(&dbg_vsync30,0,0);
     VL_IN16(&in0,15,0);
     VL_IN16(&in1,15,0);
     VL_IN16(&dsw,15,0);

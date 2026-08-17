@@ -65,9 +65,10 @@ module mcr68_video (
     logic [9:0] vcnt;
     logic       field;                // toggles each 60 Hz frame -> 30 Hz game cadence
 
-    always_ff @(posedge clk) if (ce_pix) begin
-        hsync_pulse <= 1'b0;
-        vsync30     <= 1'b0;
+    always_ff @(posedge clk) begin
+        hsync_pulse <= 1'b0;      // single-clk pulses (cleared outside ce_pix
+        vsync30     <= 1'b0;      // gate so consumers never double-count)
+        if (ce_pix) begin
         if (hcnt == H_TOTAL-1) begin
             hcnt <= '0;
             hsync_pulse <= 1'b1;
@@ -79,6 +80,7 @@ module mcr68_video (
                 vcnt <= vcnt + 1'd1;
         end else
             hcnt <= hcnt + 1'd1;
+        end
     end
 
     assign vblank = (vcnt >= V_VIS);

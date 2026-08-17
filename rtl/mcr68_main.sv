@@ -166,19 +166,20 @@ module mcr68_main (
 
     // ---- 493 IRQ1 generator ----
     // Assert (256+16) E periods (~352us ~= 11 display lines) before the 30 Hz
-    // vblank; deassert one 30 Hz scanline (2 display lines) later.
+    // vblank; deassert one 30 Hz scanline (2 display lines) later. line_cnt
+    // counts the full 1050-display-line game frame (reset by vsync30).
+    localparam GAME_LINES   = 1050;
     localparam LINES_BEFORE = 11;
-    localparam ASSERT_LINE  = 480 - LINES_BEFORE;   // in second field
-    logic [9:0] line_cnt;
-    logic       irq493;
+    logic [10:0] line_cnt;
+    logic        irq493;
     always_ff @(posedge clk) begin
         if (reset) begin line_cnt <= '0; irq493 <= 1'b0; end
         else begin
             if (vsync30) line_cnt <= '0;
             else if (hsync_pulse) line_cnt <= line_cnt + 1'd1;
-            if (field && hsync_pulse) begin
-                if (line_cnt == ASSERT_LINE-1) irq493 <= 1'b1;
-                if (line_cnt == ASSERT_LINE+1) irq493 <= 1'b0;
+            if (hsync_pulse) begin
+                if (line_cnt == GAME_LINES - LINES_BEFORE - 1) irq493 <= 1'b1;
+                if (line_cnt == GAME_LINES - LINES_BEFORE + 1) irq493 <= 1'b0;
             end
         end
     end
@@ -207,11 +208,11 @@ module mcr68_main (
         else if (sel_ctl)  cpu_din = ctrl;
     end
 
-    logic slow_dtack;
-    always_ff @(posedge clk)
-        slow_dtack <= sel_ram | sel_vram | sel_spr | sel_ptm | sel_in0 | sel_in1
-                    | sel_dsw | sel_pal | sel_wdt | sel_ctl;
-    assign dtack_n = ~((sel_rom & rom_ack) | slow_dtack);
+    // zero-wait-state DTACK: decode is stable during the cycle and BRAM data
+    // arrives a clk later, well before the CPU's data latch point
+    assign dtack_n = ~((sel_rom & rom_ack) | sel_ram | sel_vram | sel_spr
+                     | sel_ptm | sel_in0 | sel_in1 | sel_dsw | sel_pal
+                     | sel_wdt | sel_ctl);
     assign vpa_n   = ~iack;
 
 endmodule
