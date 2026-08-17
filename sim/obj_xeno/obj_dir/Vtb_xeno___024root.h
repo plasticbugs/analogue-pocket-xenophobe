@@ -261,8 +261,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_xeno___024root final {
         CData/*0:0*/ tb_xeno__DOT__video__DOT__vs_d;
         CData/*7:0*/ tb_xeno__DOT__video__DOT__unnamedblk3__DOT__cls;
         CData/*5:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__idx;
-        CData/*7:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__eff;
-        CData/*0:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__eff_hi;
+        CData/*7:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__lo;
+        CData/*7:0*/ tb_xeno__DOT__video__DOT__unnamedblk4__DOT__hi;
         CData/*0:0*/ __Vtask_tb_xeno__DOT__main_board__DOT__cpu__DOT__excUnit__DOT__alu__DOT__mySubber__0__cout;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_2;
         CData/*1:0*/ __VdfgRegularize_hebeb780c_0_5;

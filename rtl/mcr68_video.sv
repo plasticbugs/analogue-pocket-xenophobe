@@ -18,12 +18,13 @@
 // [3]=X. screen_y=(241-Y)*2, screen_x=X*2-4. flags: 1:0=~color, 2=priority,
 // 3=code[8], 4=flipx, 5=flipy, 7:6=code[10:9].
 //
-// STATUS: first draft for simulation bring-up. Known pre-synthesis TODOs:
-//  - sprite line-buffer blend does same-cycle read-modify-write (fine in sim,
-//    must be pipelined addr/data for BRAM inference)
-//  - pen-8 mask semantics simplified vs MAME's per-priority-class handling;
-//    verify against MAME captures once frames render
-//  - verify bg_q0/bg_q1 fetch timing against emit window (px>=2 guard)
+// STATUS: pixel-validated 0.000% against MAME on ten states (attract,
+// credits, character select, gameplay with sprite overlaps) via
+// tools/render_model.py + sim/run_video.sh. Sprite priority is FIRST-WINS
+// per class (higher table offs = on top); pen 8 claims pixels invisibly.
+// Pre-synthesis TODO: sprite line-buffer blend and clear do same-cycle
+// read-modify-write / multi-write (fine in sim; needs a pipelined port or
+// LUTRAM mapping for synthesis - revisit at Quartus fitting).
 
 module mcr68_video (
     input  logic        clk,          // 40 MHz
@@ -43,7 +44,7 @@ module mcr68_video (
     input  logic        pal_we,
 
     // graphics ROM load port (during APF asset load)
-    input  logic [17:0] gfx_load_addr, // byte address: 0x00000-0x0ffff bg, 0x10000+ sprites
+    input  logic [18:0] gfx_load_addr, // byte address: 0x00000-0x0ffff bg, 0x10000-0x4ffff sprites
     input  logic [7:0]  gfx_load_data,
     input  logic        gfx_load_we,
 
@@ -54,7 +55,8 @@ module mcr68_video (
     // game-side timing (30 Hz cadence)
     output logic        vsync30,      // one-clk pulse at start of game vblank
     output logic        hsync_pulse,  // one-clk pulse per scanline
-    output logic        vblank
+    output logic        vblank,
+    output logic        field_o       // which 60 Hz frame of the 30 Hz pair
 );
 
     // ---------------- raster counters ----------------
@@ -84,6 +86,7 @@ module mcr68_video (
     end
 
     assign vblank = (vcnt >= V_VIS);
+    assign field_o = field;
     wire   hblank = (hcnt >= H_VIS);
 
     // ---------------- memories ----------------
@@ -123,7 +126,7 @@ module mcr68_video (
     logic [13:0] bg_raddr;            // {code, row} - both halves read in sequence
     logic        bg_rhalf;
     always_ff @(posedge clk) begin
-        if (gfx_load_we && gfx_load_addr[17:16] == 2'b00) begin
+        if (gfx_load_we && gfx_load_addr[18:16] == 3'b000) begin
             if (gfx_load_addr[0]) bg_rom[gfx_load_addr[15:1]][7:0]  <= ~gfx_load_data;
             else                  bg_rom[gfx_load_addr[15:1]][15:8] <= ~gfx_load_data;
         end
@@ -139,8 +142,8 @@ module mcr68_video (
     logic [15:0] spr_rom3 [0:32767];
     logic [15:0] spr_q [0:3];
     logic [14:0] spr_raddr;
-    wire  [1:0]  gl_bank = gfx_load_addr[17:16] - 2'd1;   // sprites start at 0x10000
-    wire         gl_spr  = gfx_load_we && gfx_load_addr[17:16] != 2'b00;
+    wire  [1:0]  gl_bank = 2'(gfx_load_addr[18:16] - 3'd1); // sprites start at 0x10000
+    wire         gl_spr  = gfx_load_we && gfx_load_addr[18:16] != 3'b000;
     always_ff @(posedge clk) begin
         if (gl_spr && gl_bank == 2'd0) begin
             if (gfx_load_addr[0]) spr_rom0[gfx_load_addr[15:1]][7:0]  <= gfx_load_data;
@@ -415,7 +418,7 @@ module mcr68_video (
     wire signed [10:0] sp_xs = sp_x0w + {5'b0, sp_px};
     wire        sp_xok = (sp_xs >= 0) && (sp_xs < 11'sd512);
 
-`ifdef SIM_GFX_INIT
+`ifdef SPTRACE
     always_ff @(posedge clk)
         if (sp_st == SP_BLEND && sp_px == 0 && sp_line == 9'd250)
             $display("SPTRACE line=%0d idx=%0d code=%03x x=%02x y=%02x fl_col=%0d row=%0d",
