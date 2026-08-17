@@ -116,6 +116,21 @@ int main(int argc, char** argv) {
             if (frame >= 480 && frame < 490) in0 &= ~0x1000;   // P1 BUTTON1
             if (frame >= 560 && frame < 570) in0 &= ~0x1000;   // confirm character
             tb->in0 = in0;
+            if (frame == 1100) {
+                // state dump in MAME statedump.lua format for model diffing
+                FILE* f = fopen("sim_state.txt", "w");
+                auto& vr = tb->rootp->tb_xeno__DOT__video__DOT__vram;
+                auto& sr = tb->rootp->tb_xeno__DOT__video__DOT__sprram;
+                auto& pl = tb->rootp->tb_xeno__DOT__video__DOT__palette;
+                fprintf(f, "VRAM\n");
+                for (int i = 0; i < 2048; i++) fprintf(f, "%04x\n", vr[i]);
+                fprintf(f, "SPRRAM\n");
+                for (int i = 0; i < 2048; i++) fprintf(f, "%04x\n", sr[i]);
+                fprintf(f, "PAL\n");
+                for (int i = 0; i < 64; i++) fprintf(f, "%04x\n", pl[i]);
+                fclose(f);
+                printf("wrote sim_state.txt\n");
+            }
             if (frame == 178) {
                 // decode the tilemap+palette state for forensics
                 FILE* f = fopen("vram_dump.txt", "w");

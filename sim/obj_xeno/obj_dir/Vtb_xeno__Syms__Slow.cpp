@@ -25,6 +25,7 @@ Vtb_xeno__Syms::Vtb_xeno__Syms(VerilatedContext* contextp, const char* namep, Vt
     // Setup export functions - final: 1
     // Setup public variables
     __Vscopep_tb_xeno__video->varInsert("palette", &(TOP.tb_xeno__DOT__video__DOT__palette), false, VLVT_UINT16, VLVD_NODIR|VLVF_PUB_RD, 1, 1 ,0,63 ,8,0);
+    __Vscopep_tb_xeno__video->varInsert("sprram", &(TOP.tb_xeno__DOT__video__DOT__sprram), false, VLVT_UINT16, VLVD_NODIR|VLVF_PUB_RD, 1, 1 ,0,4095 ,15,0);
     __Vscopep_tb_xeno__video->varInsert("vram", &(TOP.tb_xeno__DOT__video__DOT__vram), false, VLVT_UINT16, VLVD_NODIR|VLVF_PUB_RD, 1, 1 ,0,4095 ,15,0);
 }
 

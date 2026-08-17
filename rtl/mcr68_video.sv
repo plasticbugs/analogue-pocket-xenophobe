@@ -100,7 +100,7 @@ module mcr68_video (
     always_ff @(posedge clk) vram_rq <= vram[{1'b0, vram_raddr}];
 
     // sprite ram 4K x 16: first 2K words = 512 sprite entries, rest scratch
-    logic [15:0] sprram [0:4095];
+    logic [15:0] sprram [0:4095] /*verilator public_flat_rd*/;
     logic [15:0] sprram_rq;
     logic [10:0] sprram_raddr;
     always_ff @(posedge clk) begin
@@ -267,11 +267,15 @@ module mcr68_video (
     // NOTE: write path above emits each logical pixel twice (px[0] doubling).
 
     // ---------------- sprite renderer ----------------
-    // For the next line: scan 128 entries, blend hits into sprite line buffer.
-    // Buffer entry: {state[1:0], pri, color[1:0], pen[3:0]}  state:0 empty,
-    // 1 normal, 2 masked8
-    logic [8:0] sp_lbuf [0:1][0:511];
-    logic [8:0] sp_disp_q;
+    // For the next line: scan 512 entries, blend hits into the sprite line
+    // buffer. Each pixel holds BOTH priority classes (validated against MAME
+    // pixel-exactly by tools/render_model.py):
+    //   [15:8] hi class {state[1:0], color[1:0], pen[3:0]}
+    //   [7:0]  lo class {state[1:0], color[1:0], pen[3:0]}
+    // state: 0 empty, 1 normal, 2 masked8 (pen 8: blocks later sprites of the
+    // same class; visible only where the bg pen is 0, else bg shows).
+    logic [15:0] sp_lbuf [0:1][0:511];
+    logic [15:0] sp_disp_q;
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
@@ -358,7 +362,7 @@ module mcr68_video (
             end
             SP_FETCH: begin
                 if (sp_fetch_cnt == 0) sp_x <= sprram_rq[7:0]; // rq = word3
-                if (sp_fetch_cnt == 0 && sp_code == 0) sp_next(1'b0);
+                if (sp_fetch_cnt == 0 && sp_code[8:0] == 0) sp_next(1'b0);
                 else begin
                     // 2 sequential word reads shared by all 4 banks
                     spr_raddr <= {sp_code[8:0], sp_rowsel, sp_fetch_cnt[0]};
@@ -397,18 +401,22 @@ module mcr68_video (
 
     wire [5:0] sp_px_src = sp_flipx ? (6'd31 - sp_px) : sp_px;
     wire [3:0] sp_pval = sp_pen(sp_px_src);
-    wire [9:0] sp_xpos = ({2'b0, sp_x} << 1) - 10'd4 + {4'b0, sp_px};
-    wire [8:0] sp_cur; // current buffer content at target (read-modify-write)
+    // x = X*2 - 4, allowing wrap off the left edge (x > 0x1F0 -> x - 0x200)
+    wire signed [10:0] sp_x0 = {2'b0, sp_x, 1'b0} - 11'sd4;
+    wire signed [10:0] sp_x0w = (sp_x0 > 11'sd496) ? (sp_x0 - 11'sd512) : sp_x0;
+    wire signed [10:0] sp_xs = sp_x0w + {5'b0, sp_px};
+    wire        sp_xok = (sp_xs >= 0) && (sp_xs < 11'sd512);
 
     always_ff @(posedge clk) begin
-        if (sp_st == SP_BLEND && sp_pval != 0 && sp_xpos < 10'd512) begin
-            logic [8:0] cur;
-            cur = sp_lbuf[sp_wrbuf][sp_xpos[8:0]];
-            if (cur[8:7] != 2'd2) begin      // not masked
-                if (sp_pval == 4'd8)
-                    sp_lbuf[sp_wrbuf][sp_xpos[8:0]] <= {2'd2, sp_pri, sp_color, sp_pval};
-                else
-                    sp_lbuf[sp_wrbuf][sp_xpos[8:0]] <= {2'd1, sp_pri, sp_color, sp_pval};
+        if (sp_st == SP_BLEND && sp_pval != 0 && sp_xok) begin
+            logic [15:0] cur;
+            logic [7:0]  cls;
+            cur = sp_lbuf[sp_wrbuf][sp_xs[8:0]];
+            cls = sp_pri ? cur[15:8] : cur[7:0];
+            if (cls[7:6] != 2'd2) begin      // not masked in this class
+                cls = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, sp_color, sp_pval};
+                if (sp_pri) sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cls, cur[7:0]};
+                else        sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cur[15:8], cls};
             end
         end
     end
@@ -428,18 +436,21 @@ module mcr68_video (
 
         begin
             logic [5:0] idx;
-            logic       sp_norm, sp_msk;
-            sp_norm = (sp_disp_q[8:7] == 2'd1);
-            sp_msk  = (sp_disp_q[8:7] == 2'd2);
-            // priority resolve (see header): hi sprites > pri tiles > lo sprites > bg
-            if (sp_norm && sp_disp_q[6])                       // hi sprite
-                idx = {sp_disp_q[5:4], sp_disp_q[3:0]};
-            else if (bg_disp_q[6] && bg_disp_q[3:0] != 0)      // pri tile pen
-                idx = {bg_disp_q[5:4], bg_disp_q[3:0]};
-            else if (sp_norm)                                  // lo sprite
-                idx = {sp_disp_q[5:4], sp_disp_q[3:0]};
-            else
-                idx = {bg_disp_q[5:4], bg_disp_q[3:0]};
+            logic [7:0] eff;
+            logic       eff_hi;
+            // effective sprite pixel: hi class wins where present
+            eff_hi = (sp_disp_q[15:14] != 2'd0);
+            eff    = eff_hi ? sp_disp_q[15:8] : sp_disp_q[7:0];
+            idx = {bg_disp_q[5:4], bg_disp_q[3:0]};            // default bg
+            if (eff[7:6] == 2'd1) begin                        // normal sprite
+                if (eff_hi)                                    // hi: over all
+                    idx = {eff[5:4], eff[3:0]};
+                else if (!(bg_disp_q[6] && bg_disp_q[3:0] != 0)) // lo: pri tiles cover
+                    idx = {eff[5:4], eff[3:0]};
+            end else if (eff[7:6] == 2'd2) begin               // pen-8 mask
+                if (bg_disp_q[3:0] == 0)                       // visible only over bg pen 0
+                    idx = {eff[5:4], 4'd8};
+            end
             rgb9 <= palette[idx];
         end
     end

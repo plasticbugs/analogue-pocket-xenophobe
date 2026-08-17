@@ -35,7 +35,7 @@ module tb_xeno (
                 dbg_sprw <= dbg_sprw + 1'd1;
             if (video.sp_st == 4'd4) dbg_sphit <= dbg_sphit + 1'd1;      // SP_RD_FLAGS
             if (video.sp_st == 4'd8 && video.sp_pval != 0
-                && video.sp_xpos < 10'd512) dbg_spblend <= dbg_spblend + 1'd1;  // SP_BLEND
+                && video.sp_xok) dbg_spblend <= dbg_spblend + 1'd1;  // SP_BLEND
         end
     end
     assign dbg_phi1 = phi1;
