@@ -3,6 +3,22 @@
 #include "verilated.h"
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
+#include <vector>
+
+static void write_wav(const char* path, const std::vector<int16_t>& pcm, uint32_t rate) {
+    FILE* f = fopen(path, "wb");
+    uint32_t dlen = pcm.size() * 2, flen = 36 + dlen;
+    uint16_t ch = 1, bits = 16, blk = 2, fmt = 1;
+    uint32_t brate = rate * blk, fmtlen = 16;
+    fwrite("RIFF", 4, 1, f); fwrite(&flen, 4, 1, f); fwrite("WAVE", 4, 1, f);
+    fwrite("fmt ", 4, 1, f); fwrite(&fmtlen, 4, 1, f); fwrite(&fmt, 2, 1, f);
+    fwrite(&ch, 2, 1, f); fwrite(&rate, 4, 1, f); fwrite(&brate, 4, 1, f);
+    fwrite(&blk, 2, 1, f); fwrite(&bits, 2, 1, f);
+    fwrite("data", 4, 1, f); fwrite(&dlen, 4, 1, f);
+    fwrite(pcm.data(), 2, pcm.size(), f);
+    fclose(f);
+}
 
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
@@ -58,16 +74,31 @@ int main(int argc, char** argv) {
     }
     printf("boot phase: %d dac changes, %d status changes\n", dac_changes, status_changes);
 
-    // send a few command bytes and watch for a response
+    // send a few command bytes, capture DAC to WAV (48 kHz, 2s per command)
     for (uint8_t cmd : {0x01, 0x07, 0x12, 0x23}) {
         int before = dac_changes;
         tb->cmd = cmd; tb->cmd_send = 1; tick(); tb->cmd_send = 0;
         while (tb->busy) tick();
-        for (int64_t i = 0; i < 8'000'000; i++) {  // ~250ms
+
+        const int64_t WINDOW = 64'000'000;         // 2s
+        const int DECIM = 667;                     // 32MHz -> ~48kHz
+        std::vector<int16_t> pcm;
+        int64_t acc = 0; int accn = 0;
+        for (int64_t i = 0; i < WINDOW; i++) {
             tick();
             if (tb->dac != last_dac) { last_dac = tb->dac; dac_changes++; }
+            acc += tb->dac; accn++;
+            if (accn == DECIM) {
+                pcm.push_back((int16_t)(((acc / DECIM) - 512) * 64));
+                acc = 0; accn = 0;
+            }
         }
-        printf("cmd 0x%02x: %d dac changes in 250ms window\n", cmd, dac_changes - before);
+        char name[64];
+        snprintf(name, sizeof name, "sg_cmd_%02x.wav", cmd);
+        write_wav(name, pcm, 47976);
+        printf("cmd 0x%02x: %d dac changes in 2s window -> %s\n",
+               cmd, dac_changes - before, name);
+        fflush(stdout);
     }
 
     delete tb;
