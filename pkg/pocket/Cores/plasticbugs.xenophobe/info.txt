@@ -1,0 +1,5 @@
+Xenophobe (Bally Midway, 1987)
+MCR-68000 arcade hardware + Sounds Good audio board.
+
+Place your Xenophobe ROM set in Assets/xenophobe/common/.
+ROMs are not included with this core.

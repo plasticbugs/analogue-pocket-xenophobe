@@ -1,0 +1,58 @@
+{
+    "data": {
+        "magic": "APF_VER_1",
+        "data_slots": [
+            {
+                "name": "Slot A",
+                "id": 0,
+                "required": false,
+                "parameters": "0x109",
+                "extensions": [
+                    "rom"
+                ],
+                "address": "0x00000000"
+            },
+            {
+                "name": "Slot B",
+                "id": 1,
+                "required": false,
+                "parameters": "0x109",
+                "extensions": [
+                    "rom"
+                ],
+                "address": "0x00000000"
+            },
+            {
+                "id": 2,
+                "name": "Main BIOS",
+                "required": false,
+                "parameters": "0x109",
+                "extensions": [
+                    "rom"
+                ],
+                "address": "0x00000000"
+            },
+            {
+                "id": 5,
+                "name": "Sub (ext) ROM",
+                "required": false,
+                "parameters": "0x109",
+                "extensions": [
+                    "rom"
+                ],
+                "address": "0x00000000"
+            },
+            {
+                "id": 6,
+                "name": "Mapper DB",
+                "required": true,
+                "parameters": "0x8",
+                "filename": "mapperdb.bin",
+                "address": "0x00000000",
+                "extensions": [
+                    "bin"
+                ]
+            }
+        ]
+    }
+}

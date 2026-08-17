@@ -1,0 +1,77 @@
+################################################################################
+# Compile the Xenophobe Pocket core and upload the SD-card package as an artifact.
+# Runs on every push to main and on manual dispatch.
+################################################################################
+name: Compile Core
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Free runner disk space (Quartus image needs ~18GB)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/.ghcup \
+                      /usr/local/share/boost /usr/local/graalvm
+          sudo docker image prune --all --force
+          df -h /
+
+      - name: Compile with Quartus 18.1 (Docker)
+        run: |
+          docker run --rm -v "$PWD":/build -w /build \
+            raetro/quartus:pocket \
+            quartus_sh --flow compile projects/xeno_pocket.qpf
+
+      - name: Package for Pocket
+        run: python3 package-pocket.py
+
+      - name: Show resource summary
+        run: cat projects/output_files/xeno_pocket.fit.summary || true
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: xenophobe-pocket
+          path: release/pocket/
+          if-no-files-found: error
+
+      - name: Publish release (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # cut-release.sh publishes the hardware-verified branch build and, in
+          # doing so, creates the tag that triggers this run -- so a release
+          # usually exists already. Keep that artifact; only publish here when
+          # the tag was pushed without one (manual tag-driven release).
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            echo "release ${GITHUB_REF_NAME} already published; skipping"
+            exit 0
+          fi
+          cd release/pocket && zip -qr ../../xenophobe-pocket-sdcard.zip . && cd ../..
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "Xenophobe for Analogue Pocket ${GITHUB_REF_NAME}" \
+            --notes "Unzip onto the Pocket SD card root, overwriting previous files. ROM files go in Assets/xenophobe/common/." \
+            xenophobe-pocket-sdcard.zip
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: |
+            projects/output_files/*.rpt
+            projects/output_files/*.summary
+          if-no-files-found: ignore
