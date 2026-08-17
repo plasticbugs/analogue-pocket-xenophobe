@@ -3,6 +3,7 @@
 #include "Vtb_video.cpp"
 #include "Vtb_video___024root__0.cpp"
 #include "Vtb_video__Dpi.cpp"
+#include "Vtb_video__ConstPool__0__Slow.cpp"
 #include "Vtb_video___024root__Slow.cpp"
 #include "Vtb_video___024root__0__Slow.cpp"
 #include "Vtb_video__Syms__Slow.cpp"

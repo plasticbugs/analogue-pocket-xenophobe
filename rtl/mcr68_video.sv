@@ -179,7 +179,9 @@ module mcr68_video (
 
     // ---------------- background renderer ----------------
     // Renders one line ahead into bg line buffer (pen[3:0], color[1:0], pri).
-    logic [6:0] bg_lbuf [0:1][0:511];
+    // Flat dual-port BRAMs: {buffer, x} addressing. Port A = render write,
+    // port B = display read (sprite buffer: + trailing clear between reads).
+    logic [6:0] bg_lbuf [0:1023];
     logic       lbuf_sel;             // buffer being displayed
     logic       bg_wrbuf, sp_wrbuf;   // latched render targets
     logic [6:0] bg_disp_q;
@@ -264,7 +266,7 @@ module mcr68_video (
     always_ff @(posedge clk) begin
         if (bg_st == BG_EMIT)
             // position is linear; flipx applies only to the column selection
-            bg_lbuf[bg_wrbuf][{bg_cell, bg_px[3:1], bg_px[0]}]
+            bg_lbuf[{bg_wrbuf, bg_cell, bg_px[3:1], bg_px[0]}]
                 <= {bg_pri, bg_color, bg_pen(bg_q0, bg_q1, bg_px[3:1] ^ {3{bg_flipx}})};
     end
     // NOTE: write path above emits each logical pixel twice (px[0] doubling).
@@ -277,8 +279,12 @@ module mcr68_video (
     //   [7:0]  lo class {state[1:0], color[1:0], pen[3:0]}
     // state: 0 empty, 1 normal, 2 masked8 (pen 8: blocks later sprites of the
     // same class; visible only where the bg pen is 0, else bg shows).
-    logic [15:0] sp_lbuf [0:1][0:511];
-    logic [15:0] sp_disp_q;
+    // Data: {hi[7:0], lo[7:0]} per pixel, each {valid, ~unused, color2, pen4};
+    // written only on claim (byte lanes per class), self-cleared by the
+    // display port between pixel reads. Claim bits live in registers and
+    // reset in a single cycle at line start.
+    logic [15:0] sp_lbuf [0:1023];
+    logic [511:0] sp_claim_lo, sp_claim_hi;
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
@@ -333,15 +339,11 @@ module mcr68_video (
                 sp_st <= SP_CLR;
             end
             SP_CLR: begin
-                // 4 entries per clk -> 128 clks
-                for (int i = 0; i < 4; i++)
-                    sp_lbuf[sp_wrbuf][{sp_clr_addr[6:0], i[1:0]}] <= '0;
-                sp_clr_addr <= sp_clr_addr + 1'd1;
-                if (sp_clr_addr == 9'd127) begin
-                    sp_idx <= 9'd511;      // highest offs first = lowest priority
-                    sprram_raddr <= {9'd511, 2'd0};
-                    sp_st <= SP_Y_REQ;
-                end
+                // claim regs reset (in the claim block); data self-clears
+                // at the display port
+                sp_idx <= 9'd511;          // highest offs first = drawn first
+                sprram_raddr <= {9'd511, 2'd0};
+                sp_st <= SP_Y_REQ;
             end
             SP_Y_REQ: begin                  // rq valid next cycle
                 sprram_raddr <= {sp_idx - 1'd1, 2'd0};   // prefetch next entry
@@ -396,22 +398,27 @@ module mcr68_video (
         endcase
     end
 
-    // sprite pixel value from the 4 bank words
-    function automatic [3:0] sp_pen(input [5:0] x);
-        logic [1:0] bank;
-        logic       g;      // x[4:3] = group, but layout: g=x/8 (2 groups per word)
-        logic [3:0] nib;
-        logic [15:0] w;
-        bank = x[2:1];
-        w = sp_row[bank][x[4]];       // word = group g>=2
-        // within word: group parity x[3] selects byte, x[0] selects nibble
-        nib = x[3] ? (x[0] ? w[3:0] : w[7:4])
-                   : (x[0] ? w[11:8] : w[15:12]);
-        return nib;
-    endfunction
+    // sprite pixel value from the 4 bank words (explicit selects: Quartus
+    // 18.1 dead-strips module-scope arrays read only inside functions)
+    logic [15:0] sp_row_w;
+    logic [3:0]  sp_pen_v;
+    always_comb begin
+        unique case ({sp_px_src[4], sp_px_src[2:1]})
+            3'b000: sp_row_w = sp_row[0][0];
+            3'b001: sp_row_w = sp_row[1][0];
+            3'b010: sp_row_w = sp_row[2][0];
+            3'b011: sp_row_w = sp_row[3][0];
+            3'b100: sp_row_w = sp_row[0][1];
+            3'b101: sp_row_w = sp_row[1][1];
+            3'b110: sp_row_w = sp_row[2][1];
+            3'b111: sp_row_w = sp_row[3][1];
+        endcase
+        sp_pen_v = sp_px_src[3] ? (sp_px_src[0] ? sp_row_w[3:0]  : sp_row_w[7:4])
+                                : (sp_px_src[0] ? sp_row_w[11:8] : sp_row_w[15:12]);
+    end
 
     wire [5:0] sp_px_src = sp_flipx ? (6'd31 - sp_px) : sp_px;
-    wire [3:0] sp_pval = sp_pen(sp_px_src);
+    wire [3:0] sp_pval = sp_pen_v;
     // x = X*2 - 4, allowing wrap off the left edge (x > 0x1F0 -> x - 0x200)
     wire signed [10:0] sp_x0 = {2'b0, sp_x, 1'b0} - 11'sd4;
     wire signed [10:0] sp_x0w = (sp_x0 > 11'sd496) ? (sp_x0 - 11'sd512) : sp_x0;
@@ -427,18 +434,35 @@ module mcr68_video (
 
     // First-wins per class (MAME drawgfx PIXEL_OP_..._PRIORITY, validated
     // 0.000% on ten MAME states): a pixel once claimed is never rewritten.
-    // Pen 8 claims invisibly (state 2 renders as background downstream).
+    // Pen 8 claims invisibly (claim bit set, no data write -> renders as bg).
+    wire sp_claimed = sp_pri ? sp_claim_hi[sp_xs[8:0]] : sp_claim_lo[sp_xs[8:0]];
+    wire sp_blend_go = (sp_st == SP_BLEND) && sp_pval != 0 && sp_xok && !sp_claimed;
     always_ff @(posedge clk) begin
-        if (sp_st == SP_BLEND && sp_pval != 0 && sp_xok) begin
-            logic [15:0] cur;
-            logic [7:0]  cls;
-            cur = sp_lbuf[sp_wrbuf][sp_xs[8:0]];
-            cls = sp_pri ? cur[15:8] : cur[7:0];
-            if (cls[7:6] == 2'd0) begin      // unclaimed only
-                cls = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, sp_color, sp_pval};
-                if (sp_pri) sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cls, cur[7:0]};
-                else        sp_lbuf[sp_wrbuf][sp_xs[8:0]] <= {cur[15:8], cls};
-            end
+        if (sp_st == SP_CLR) begin
+            sp_claim_lo <= '0;
+            sp_claim_hi <= '0;
+        end else if (sp_blend_go) begin
+            if (sp_pri) sp_claim_hi[sp_xs[8:0]] <= 1'b1;
+            else        sp_claim_lo[sp_xs[8:0]] <= 1'b1;
+        end
+    end
+    always_ff @(posedge clk) begin
+        if (sp_blend_go && sp_pval != 4'd8) begin
+            if (sp_pri) sp_lbuf[{sp_wrbuf, sp_xs[8:0]}][15:8] <= {2'd1, sp_color, sp_pval};
+            else        sp_lbuf[{sp_wrbuf, sp_xs[8:0]}][7:0]  <= {2'd1, sp_color, sp_pval};
+        end
+    end
+
+    // Sprite buffer port B: read {sel, hcnt} on ce_pix, clear the entry just
+    // consumed on the off cycle. One address/one write -> clean dual-port BRAM.
+    logic [15:0] sp_lbuf_bq;
+    logic [9:0]  sp_rd_addr_q;
+    always_ff @(posedge clk) begin
+        if (ce_pix) begin
+            sp_lbuf_bq   <= sp_lbuf[{lbuf_sel, hcnt[8:0]}];
+            sp_rd_addr_q <= {lbuf_sel, hcnt[8:0]};
+        end else begin
+            sp_lbuf[sp_rd_addr_q] <= '0;
         end
     end
 
@@ -449,8 +473,7 @@ module mcr68_video (
         if (hcnt == H_TOTAL-1 && vcnt == V_TOTAL-1) lbuf_sel <= ~lbuf_sel;
         else if (hcnt == H_TOTAL-1 && vcnt < V_VIS) lbuf_sel <= ~lbuf_sel;
 
-        bg_disp_q <= bg_lbuf[lbuf_sel][hcnt[8:0]];
-        sp_disp_q <= sp_lbuf[lbuf_sel][hcnt[8:0]];
+        bg_disp_q <= bg_lbuf[{lbuf_sel, hcnt[8:0]}];
 
         // rgb9 lags the counters by two ce_pix stages (disp_q, then palette
         // lookup) - delay syncs to match
@@ -464,8 +487,8 @@ module mcr68_video (
         begin
             logic [5:0] idx;
             logic [7:0] lo, hi;
-            lo = sp_disp_q[7:0];
-            hi = sp_disp_q[15:8];
+            lo = sp_lbuf_bq[7:0];
+            hi = sp_lbuf_bq[15:8];
             // bg -> lo sprites (covered by cat-1 tiles) -> hi sprites;
             // state 2 (pen-8 claim) always falls through to bg
             idx = {bg_disp_q[5:4], bg_disp_q[3:0]};

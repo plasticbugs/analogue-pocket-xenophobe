@@ -987,8 +987,8 @@ module core_top
         dc_acc <= dc_acc + {{9{dc_diff[16]}}, dc_diff[16:0]};
     end
     wire signed [16:0] ac = dc_diff;   // already the AC term
-    assign core_snd_l = (ac > 17'sd32767)  ? 16'sd32767  :
-                        (ac < -17'sd32768) ? -16'sd32768 : ac[15:0];
+    assign core_snd_l = (ac > 17'sd32767)  ? 16'h7FFF :
+                        (ac < -17'sd32768) ? 16'h8000 : ac[15:0];
     assign core_snd_r = core_snd_l;
 
 endmodule
