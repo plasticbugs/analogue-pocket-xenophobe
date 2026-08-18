@@ -995,12 +995,65 @@ module core_top
         .watchdog_expired (            )
     );
 
+    //! ------------------------------------------------------------------
+    //! DEBUG OVERLAY (bring-up build): top rows show status squares and a
+    //! test gradient so a dead machine is distinguishable from a dead
+    //! video path. Remove after hardware bring-up.
+    //! ------------------------------------------------------------------
+    reg [9:0] dbg_x;
+    reg [9:0] dbg_y;
+    reg       xde_q1;
+    always @(posedge clk_sys) begin
+        xde_q1 <= xde;
+        if (xde) dbg_x <= dbg_x + 1'd1;
+        else begin
+            dbg_x <= 0;
+            if (xde_q1) dbg_y <= dbg_y + 1'd1;
+        end
+        if (xvs) dbg_y <= 0;
+    end
+
+    // liveness counters
+    reg [23:0] hb_cnt;
+    reg [15:0] mrom_cnt, srom_cnt, palw_cnt, sprb_cnt;
+    reg        rom_loaded;
+    reg        mreq_q, sreq_q, sbrd_q;
+    always @(posedge clk_sys) begin
+        hb_cnt <= hb_cnt + 1'd1;
+        mreq_q <= main_rom_req;  if (main_rom_req & ~mreq_q) mrom_cnt <= mrom_cnt + 1'd1;
+        sreq_q <= snd_rom_req;   if (snd_rom_req  & ~sreq_q) srom_cnt <= srom_cnt + 1'd1;
+        sbrd_q <= spr_fetch_req; if (spr_fetch_req & ~sbrd_q) sprb_cnt <= sprb_cnt + 1'd1;
+        if (ioctl_isROM) rom_loaded <= 1'b1;   // download seen since power-up
+    end
+
+    wire [7:0] dbg_stat = {
+        pll_core_locked_s,          // 0 (leftmost)
+        dataslot_allcomplete,       // 1
+        rom_loaded,                 // 2
+        sd_ready,                   // 3
+        mrom_cnt[10],               // 4 main CPU fetch activity (blinks)
+        srom_cnt[10],               // 5 sound CPU fetch activity
+        sprb_cnt[6],                // 6 sprite burst activity
+        hb_cnt[23]                  // 7 heartbeat (~2.4 Hz blink)
+    };
+    wire [2:0] dbg_idx = dbg_x[8:6];
+    wire       dbg_bit = dbg_stat[3'd7 - dbg_idx];
+    wire       in_squares  = (dbg_y < 10'd16);
+    wire       in_gradient = (dbg_y >= 10'd16 && dbg_y < 10'd32);
+
+    wire [7:0] ovl_r = in_squares ? (dbg_bit ? 8'h00 : 8'hFF)
+                     : in_gradient ? dbg_x[7:0] : xr;
+    wire [7:0] ovl_g = in_squares ? (dbg_bit ? 8'hFF : 8'h00)
+                     : in_gradient ? dbg_x[7:0] : xg;
+    wire [7:0] ovl_b = in_squares ? 8'h00
+                     : in_gradient ? 8'hFF : xb;
+
     //! Video: capture the 20 MHz-rate pixel stream on clk_vid for the mixer
     //! (same-PLL related clocks; the crossing is STA-timed)
     reg [7:0] vr_q, vg_q, vb_q;
     reg       vhs_q, vvs_q, vde_q;
     always @(posedge clk_vid) begin
-        vr_q  <= xr;  vg_q <= xg;  vb_q <= xb;
+        vr_q  <= ovl_r; vg_q <= ovl_g; vb_q <= ovl_b;
         vhs_q <= xhs; vvs_q <= xvs; vde_q <= xde;
     end
     assign core_r  = vr_q;
