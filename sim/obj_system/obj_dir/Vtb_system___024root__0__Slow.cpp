@@ -508,6 +508,18 @@ VL_ATTR_COLD void Vtb_system___024root___stl_sequent__TOP__0(Vtb_system___024roo
     vlSelfRef.tb_system__DOT__main_board__DOT__ptm_stb 
         = ((~ (IData)(vlSelfRef.tb_system__DOT__main_board__DOT__ptm_cs_q)) 
            & (IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ptm));
+    vlSelfRef.tb_system__DOT__main_board__DOT__sel_any 
+        = ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_rom) 
+           | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ram) 
+              | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_vram) 
+                 | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_spr) 
+                    | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_pal) 
+                       | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ptm) 
+                          | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_wdt) 
+                             | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ctl) 
+                                | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_in0) 
+                                   | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_dsw) 
+                                      | (IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_in1)))))))))));
     vlSelfRef.tb_system__DOT__main_board__DOT__cpu_din = 0xffffU;
     if (vlSelfRef.tb_system__DOT__main_board__DOT__sel_rom) {
         vlSelfRef.tb_system__DOT__main_board__DOT__cpu_din 
@@ -967,6 +979,7 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->tb_system__DOT__main_board__DOT__wdt_cnt = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 16982720508543715228ull);
     vlSelf->tb_system__DOT__main_board__DOT__line_cnt = VL_SCOPED_RAND_RESET_I(11, __VscopeHash, 1445167289189712924ull);
     vlSelf->tb_system__DOT__main_board__DOT__irq493 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7424209764758125317ull);
+    vlSelf->tb_system__DOT__main_board__DOT__sel_any = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18098277013387374528ull);
     for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {
         vlSelf->tb_system__DOT__main_board__DOT__ptm__DOT__cr[__Vi0] = VL_SCOPED_RAND_RESET_I(8, __VscopeHash, 11312057283436279720ull);
     }

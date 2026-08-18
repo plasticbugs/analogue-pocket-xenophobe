@@ -1005,13 +1005,16 @@ module core_top
         .dbg_strobes   ( dbg_strobes   ),
         .dbg_halted    ( dbg_halted    ),
         .dbg_bus_stuck ( dbg_bus_stuck ),
-        .dbg_stuck_addr( dbg_stuck_addr )
+        .dbg_stuck_addr( dbg_stuck_addr ),
+        .dbg_unmapped  ( dbg_unmapped   ),
+        .dbg_fault_pc  ( dbg_fault_pc   )
     );
 
     wire        wdt_expired;
     wire  [5:0] dbg_strobes;
-    wire        dbg_halted, dbg_bus_stuck;
+    wire        dbg_halted, dbg_bus_stuck, dbg_unmapped;
     wire [23:1] dbg_stuck_addr;
+    wire [17:1] dbg_fault_pc;
 
     //! ------------------------------------------------------------------
     //! DEBUG OVERLAY (bring-up build): top rows show status squares and a
@@ -1109,12 +1112,14 @@ module core_top
         c_wdt[3],                   // 4 watchdog kick activity
         ~wdt_expired,               // 5 green = watchdog healthy
         ~dbg_halted,                // 6 green = CPU not halted
-        ~dbg_bus_stuck              // 7 green = no stalled bus cycle
+        ~dbg_unmapped               // 7 green = never touched an undecoded addr
     };
 
-    // Rows 3 and 4: the address the main CPU stalled on (zero if it never did)
-    wire [7:0] dbg_stat3 = dbg_stuck_addr[23:16];
-    wire [7:0] dbg_stat4 = {dbg_stuck_addr[15:9], 1'b0};
+    // Rows 3 and 4: the PROGRAM COUNTER at the moment the CPU first accessed
+    // an undecoded address - i.e. the code responsible. Full address is
+    // {row3, row4} << 1, so row3=0x50 row4=0xAA reads as PC 0xA154.
+    wire [7:0] dbg_stat3 = dbg_fault_pc[16:9];
+    wire [7:0] dbg_stat4 = dbg_fault_pc[8:1];
 
     wire [2:0] dbg_idx = dbg_x[8:6];
     wire       bit1 = dbg_stat [3'd7 - dbg_idx];

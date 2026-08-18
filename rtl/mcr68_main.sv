@@ -62,7 +62,9 @@ module mcr68_main (
     output logic        dbg_ptm_irq,
     output logic        dbg_halted,      // CPU took a double fault
     output logic        dbg_bus_stuck,   // bus cycle without DTACK for ages
-    output logic [23:1] dbg_stuck_addr   // the address it died on
+    output logic [23:1] dbg_stuck_addr,  // the address it died on
+    output logic        dbg_unmapped,    // touched an undecoded address
+    output logic [17:1] dbg_fault_pc     // last ROM fetch before that
 );
 
     // ---- CPU ----
@@ -240,10 +242,31 @@ module mcr68_main (
     end
 
     // zero-wait-state DTACK: decode is stable during the cycle and BRAM data
-    // arrives a clk later, well before the CPU's data latch point
-    assign dtack_n = ~((sel_rom & rom_ack) | sel_ram | sel_vram | sel_spr
-                     | sel_ptm | sel_in0 | sel_in1 | sel_dsw | sel_pal
-                     | sel_wdt | sel_ctl);
+    // arrives a clk later, well before the CPU's data latch point.
+    //
+    // The catch-all matters: the decode only covers 0x60000-0xFFFFF plus ROM,
+    // so anything else (e.g. the stack running below RAM) previously got NO
+    // acknowledge and wedged the CPU forever. Terminate those cycles instead -
+    // reads return 0xFFFF, writes go nowhere, and the machine keeps running.
+    wire sel_any  = sel_rom | sel_ram | sel_vram | sel_spr | sel_pal | sel_ptm
+                  | sel_wdt | sel_ctl | sel_in0  | sel_in1 | sel_dsw;
+    wire sel_none = bus_cycle & ~iack & ~sel_any;
+
+    assign dtack_n = ~((sel_rom & rom_ack) | (sel_any & ~sel_rom) | sel_none);
+
+    // Record where the program was when it first went off-map: the last
+    // completed ROM fetch is effectively the PC.
+    logic [17:1] last_fetch;
+    always_ff @(posedge clk) begin
+        if (sel_rom & rom_ack) last_fetch <= cpu_addr[17:1];
+        if (reset) begin
+            dbg_unmapped <= 1'b0;
+            dbg_fault_pc <= '0;
+        end else if (sel_none && !dbg_unmapped) begin
+            dbg_unmapped <= 1'b1;
+            dbg_fault_pc <= last_fetch;
+        end
+    end
     assign vpa_n   = ~iack;
 
 endmodule

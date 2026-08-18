@@ -2919,6 +2919,18 @@ void Vtb_system___024root___eval_nba(Vtb_system___024root* vlSelf) {
                                    ? (IData)(vlSymsp->TOP__tb_system__DOT__main_board__DOT__cpu.__PVT__excUnit__DOT__dataIo__DOT__dob)
                                    : ((IData)(vlSymsp->TOP__tb_system__DOT__main_board__DOT__cpu.__PVT__excUnit__DOT__dataIo__DOT__dob) 
                                       >> 8U)));
+            vlSelfRef.tb_system__DOT__main_board__DOT__sel_any 
+                = ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_rom) 
+                   | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ram) 
+                      | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_vram) 
+                         | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_spr) 
+                            | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_pal) 
+                               | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ptm) 
+                                  | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_wdt) 
+                                     | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_ctl) 
+                                        | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_in0) 
+                                           | ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_dsw) 
+                                              | (IData)(vlSelfRef.tb_system__DOT__main_board__DOT__sel_in1)))))))))));
         }
     }
     if ((0x0000000000000180ULL & vlSelfRef.__VnbaTriggered[0U])) {

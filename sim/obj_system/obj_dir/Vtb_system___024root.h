@@ -95,6 +95,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*7:0*/ tb_system__DOT__main_board__DOT____Vcellinp__ptm__din;
         CData/*3:0*/ tb_system__DOT__main_board__DOT__wdt_cnt;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__irq493;
+        CData/*0:0*/ tb_system__DOT__main_board__DOT__sel_any;
         CData/*2:0*/ tb_system__DOT__main_board__DOT__ptm__DOT__flag;
         CData/*2:0*/ tb_system__DOT__main_board__DOT__ptm__DOT__flag_read;
         CData/*7:0*/ tb_system__DOT__main_board__DOT__ptm__DOT__msb_buf;
@@ -151,9 +152,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*2:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
         CData/*7:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
         CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
-        CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
     };
     struct {
+        CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
         CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
         CData/*0:0*/ __VdfgRegularize_hebeb780c_0_0;
         CData/*7:0*/ __VdfgRegularize_hebeb780c_0_6;
@@ -217,9 +218,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         SData/*8:0*/ tb_system__DOT__rom_srv__DOT__wcnt;
         SData/*12:0*/ tb_system__DOT__sdram_chip__DOT__row_open;
         SData/*15:0*/ tb_system__DOT__sdram_chip__DOT__pipe_q1;
-        SData/*15:0*/ tb_system__DOT__sdram_chip__DOT__dq_out;
     };
     struct {
+        SData/*15:0*/ tb_system__DOT__sdram_chip__DOT__dq_out;
         SData/*13:0*/ tb_system__DOT__sdram16__DOT__refresh_count;
         SData/*15:0*/ tb_system__DOT__sdram16__DOT__data;
         SData/*15:0*/ tb_system__DOT__sdram16__DOT__SDRAM_DQ__out__strong__out1;

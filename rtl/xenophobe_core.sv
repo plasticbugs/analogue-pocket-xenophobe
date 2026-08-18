@@ -50,7 +50,9 @@ module xenophobe_core (
     output logic [5:0]  dbg_strobes,
     output logic        dbg_halted,
     output logic        dbg_bus_stuck,
-    output logic [23:1] dbg_stuck_addr
+    output logic [23:1] dbg_stuck_addr,
+    output logic        dbg_unmapped,
+    output logic [17:1] dbg_fault_pc
 );
 
     // ---- pixel enable ----
@@ -114,7 +116,8 @@ module xenophobe_core (
         .watchdog_expired(watchdog_expired),
         .dbg_wdt_kick(dbg_wdt_kick), .dbg_irq493(dbg_irq493), .dbg_ptm_irq(dbg_ptm_irq),
         .dbg_halted(dbg_halted), .dbg_bus_stuck(dbg_bus_stuck),
-        .dbg_stuck_addr(dbg_stuck_addr)
+        .dbg_stuck_addr(dbg_stuck_addr),
+        .dbg_unmapped(dbg_unmapped), .dbg_fault_pc(dbg_fault_pc)
     );
 
     logic dbg_wdt_kick, dbg_irq493, dbg_ptm_irq;

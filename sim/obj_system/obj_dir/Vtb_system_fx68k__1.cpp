@@ -2412,18 +2412,12 @@ void Vtb_system_fx68k___nba_sequent__TOP__tb_system__DOT__main_board__DOT__cpu__
             }
         }
         if (vlSelfRef.__PVT__Clks.__PVT__enPhi2) {
-            vlSelfRef.__PVT__rDtack = (1U & (~ ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_ram) 
-                                                | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_vram) 
-                                                   | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_spr) 
-                                                      | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_ptm) 
-                                                         | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_in0) 
-                                                            | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_in1) 
-                                                               | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_dsw) 
-                                                                  | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_pal) 
-                                                                     | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_wdt) 
-                                                                        | (((IData)(vlSymsp->TOP.tb_system__DOT__mrom_ack) 
-                                                                            & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom)) 
-                                                                           | (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_ctl)))))))))))));
+            vlSelfRef.__PVT__rDtack = (1U & (~ (((~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_any)) 
+                                                 & (IData)(vlSymsp->TOP.__VdfgRegularize_hebeb780c_0_0)) 
+                                                | (((~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom)) 
+                                                    & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_any)) 
+                                                   | ((IData)(vlSymsp->TOP.tb_system__DOT__mrom_ack) 
+                                                      & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom))))));
         }
         if (((IData)(vlSelfRef.__PVT__enT3) & vlSelfRef.__PVT__Nanod
              .__PVT__abd2Dcr)) {
