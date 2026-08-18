@@ -2,49 +2,119 @@
     "interact": {
         "magic": "APF_VER_1",
         "variables": [
-            { "name": "Reset Core", "id": 0, "type": "action", "enabled": true, "address": "0xF0000000", "value": 1 },
+            {
+                "name": "Reset Core",
+                "id": 0,
+                "type": "action",
+                "enabled": true,
+                "address": "0xF0000000",
+                "value": 1
+            },
             {
                 "name": "Free Play",
-                "id": 10, "type": "check", "enabled": true, "persist": true,
-                "address": "0xF1000000", "defaultval": 0,
-                "mask": "0xFFFFFFFB", "value": "0x00000004"
+                "id": 10,
+                "type": "check",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFFFB",
+                "value": "0x00000004"
             },
             {
                 "name": "Coins per Life Unit",
-                "id": 11, "type": "list", "enabled": true, "persist": true,
-                "address": "0xF1000000", "defaultval": 0, "mask": "0xFFFFFFF7",
+                "id": 11,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFFF7",
                 "options": [
-                    { "name": "1", "value": "0x00" },
-                    { "name": "2", "value": "0x08" }
+                    {
+                        "name": "1",
+                        "value": "0x00"
+                    },
+                    {
+                        "name": "2",
+                        "value": "0x08"
+                    }
                 ]
             },
             {
                 "name": "Life Unit",
-                "id": 12, "type": "list", "enabled": true, "persist": true,
-                "address": "0xF1000000", "defaultval": 0, "mask": "0xFFFFFFEF",
+                "id": 12,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFFEF",
                 "options": [
-                    { "name": "1000", "value": "0x00" },
-                    { "name": "2000", "value": "0x10" }
+                    {
+                        "name": "1000",
+                        "value": "0x00"
+                    },
+                    {
+                        "name": "2000",
+                        "value": "0x10"
+                    }
                 ]
             },
             {
                 "name": "Demo Sounds",
-                "id": 13, "type": "list", "enabled": true, "persist": true,
-                "address": "0xF1000000", "defaultval": 0, "mask": "0xFFFFFFDF",
+                "id": 13,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFFDF",
                 "options": [
-                    { "name": "On", "value": "0x00" },
-                    { "name": "Off", "value": "0x20" }
+                    {
+                        "name": "On",
+                        "value": "0x00"
+                    },
+                    {
+                        "name": "Off",
+                        "value": "0x20"
+                    }
                 ]
             },
             {
                 "name": "Difficulty",
-                "id": 14, "type": "list", "enabled": true, "persist": true,
-                "address": "0xF1000000", "defaultval": 0, "mask": "0xFFFFFF3F",
+                "id": 14,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFF3F",
                 "options": [
-                    { "name": "Medium", "value": "0x00" },
-                    { "name": "Easy", "value": "0x40" },
-                    { "name": "Hard", "value": "0x80" }
+                    {
+                        "name": "Medium",
+                        "value": "0x00"
+                    },
+                    {
+                        "name": "Easy",
+                        "value": "0x40"
+                    },
+                    {
+                        "name": "Hard",
+                        "value": "0x80"
+                    }
                 ]
+            },
+            {
+                "name": "Debug: Disable Sprite Fetch",
+                "id": 20,
+                "type": "check",
+                "enabled": true,
+                "persist": false,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFEFF",
+                "value": "0x00000100"
             }
         ],
         "messages": []

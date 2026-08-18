@@ -862,8 +862,17 @@ module core_top
     wire        sd_brd, sd_bready;
     wire [127:0] sd_bdata;
     wire [13:0] spr_fetch_addr;
-    wire        spr_fetch_req, spr_fetch_done;
-    wire [127:0] spr_fetch_data;
+    wire        spr_fetch_req;
+    wire [127:0] spr_srv_data;
+    wire        spr_srv_done;
+
+    // Debug DIP (Interact menu): drop sprite fetches entirely. The burst path
+    // is the least-proven logic in the design, so being able to take it out of
+    // circuit on real hardware isolates it in one boot.
+    wire         spr_disable   = dip_sw1[0];
+    wire         spr_req_gated = spr_fetch_req & ~spr_disable;
+    wire         spr_fetch_done = spr_disable ? spr_fetch_req : spr_srv_done;
+    wire [127:0] spr_fetch_data = spr_disable ? 128'd0 : spr_srv_data;
 
     sdram16 sdram16
     (
@@ -915,9 +924,9 @@ module core_top
         .dl_data   ( ioctl_data     ),
         .dl_wr     ( cpu_load_wr    ),
         .spr_baddr ( 21'h9000 + {7'b0, spr_fetch_addr} ),
-        .spr_req   ( spr_fetch_req  ),
-        .spr_data  ( spr_fetch_data ),
-        .spr_done  ( spr_fetch_done ),
+        .spr_req   ( spr_req_gated  ),
+        .spr_data  ( spr_srv_data   ),
+        .spr_done  ( spr_srv_done   ),
         .sd_baddr  ( sd_baddr       ),
         .sd_brd    ( sd_brd         ),
         .sd_bdata  ( sd_bdata       ),
@@ -1064,6 +1073,17 @@ module core_top
             endcase
         end
     end
+    // Second check at 0xA154 (the reset entry point, opcode 4E70). This lives
+    // in a DIFFERENT sdram row than the vector, so it proves reads outside
+    // row 0 return good data.
+    reg rv_hi_got, rv_hi_ok;
+    always @(posedge clk_sys) begin
+        if (main_rom_done && !mrdone_q && main_rom_addr == 17'h50aa) begin
+            rv_hi_got <= 1'b1;
+            rv_hi_ok  <= (main_rom_q == 16'h4e70);
+        end
+    end
+
     wire rom_seen = &rv_got;
     wire rom_ok   = rom_seen && rv0 == 16'h0006 && rv1 == 16'h4000
                              && rv2 == 16'h0000 && rv3 == 16'ha154;
@@ -1083,13 +1103,13 @@ module core_top
 
     wire [7:0] dbg_stat2 = {
         rom_seen,                   // 0 reset vector reads captured
-        rom_ok,                     // 1 ROM DATA CORRECT
-        |c_pal,                     // 2 palette ever written
-        c_wdt[3],                   // 3 watchdog kick activity
-        ~wdt_expired,               // 4 green = watchdog healthy
-        ~dbg_halted,                // 5 green = CPU not halted
-        ~dbg_bus_stuck,             // 6 green = no stalled bus cycle
-        c_vram[6]                   // 7 video RAM write activity
+        rom_ok,                     // 1 vector reads correct (row 0)
+        rv_hi_ok,                   // 2 read at 0xA154 correct (other row)
+        |c_pal,                     // 3 palette ever written
+        c_wdt[3],                   // 4 watchdog kick activity
+        ~wdt_expired,               // 5 green = watchdog healthy
+        ~dbg_halted,                // 6 green = CPU not halted
+        ~dbg_bus_stuck              // 7 green = no stalled bus cycle
     };
 
     // Rows 3 and 4: the address the main CPU stalled on (zero if it never did)
