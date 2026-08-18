@@ -72,7 +72,7 @@ module mcr68_main (
     logic [15:0] cpu_dout, cpu_din;
     logic        as_n, uds_n, lds_n, rw_n, dtack_n, vpa_n;
     logic        fc0, fc1, fc2, e_clk;
-    logic        ipl0_n, ipl1_n;
+    logic        ipl0_n, ipl1_n, ipl2_n;
 
     fx68k cpu (
         .clk(clk), .HALTn(1'b1),
@@ -84,7 +84,7 @@ module mcr68_main (
         .BGn(), .oRESETn(),
         .DTACKn(dtack_n), .VPAn(vpa_n), .BERRn(1'b1),
         .BRn(1'b1), .BGACKn(1'b1),
-        .IPL0n(ipl0_n), .IPL1n(ipl1_n), .IPL2n(1'b1),
+        .IPL0n(ipl0_n), .IPL1n(ipl1_n), .IPL2n(ipl2_n),
         .iEdb(cpu_din), .oEdb(cpu_dout), .eab(cpu_addr),
         .oHALTEDn(cpu_haltedn)
     );
@@ -217,8 +217,20 @@ module mcr68_main (
     assign dbg_irq493   = irq493;
     assign dbg_ptm_irq  = ptm_irq;
 
-    assign ipl0_n = ~irq493;
-    assign ipl1_n = ~ptm_irq;
+    // The two sources are separate LEVELS (493 = 1, PTM = 2), not raw pins:
+    // driving IPL0/IPL1 independently encodes level 3 whenever both are
+    // pending, vectoring somewhere the game never intended and returning
+    // through a path that does not balance the stack. Encode the highest
+    // pending level, which is what the real board's priority encoder does.
+    logic [2:0] ipl_level;
+    always_comb begin
+        if (ptm_irq)      ipl_level = 3'd2;
+        else if (irq493)  ipl_level = 3'd1;
+        else              ipl_level = 3'd0;
+    end
+    assign ipl0_n = ~ipl_level[0];
+    assign ipl1_n = ~ipl_level[1];
+    assign ipl2_n = ~ipl_level[2];
 
     // ---- ROM ----
     assign rom_addr = cpu_addr[17:1];
@@ -252,7 +264,10 @@ module mcr68_main (
                   | sel_wdt | sel_ctl | sel_in0  | sel_in1 | sel_dsw;
     wire sel_none = bus_cycle & ~iack & ~sel_any;
 
-    assign dtack_n = ~((sel_rom & rom_ack) | (sel_any & ~sel_rom) | sel_none);
+    // ROM space: reads wait for the fetch, writes are simply ignored (a ROM
+    // that never acknowledges a write wedges the bus just like an unmapped
+    // address - which is where a runaway stack ends up next).
+    assign dtack_n = ~((sel_rom & (rom_ack | ~rw_n)) | (sel_any & ~sel_rom) | sel_none);
 
     // Record where the program was when it first went off-map: the last
     // completed ROM fetch is effectively the PC.

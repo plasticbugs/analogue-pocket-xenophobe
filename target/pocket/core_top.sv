@@ -833,7 +833,7 @@ module core_top
     // Reset: user switch, asset download, PLL lock
     wire reset_sw_s;
     synch_3 sync_rst(reset_sw, reset_sw_s, clk_sys);
-    wire xeno_reset = reset_sw_s | ioctl_download | ~pll_core_locked_s;
+    wire xeno_reset = reset_sw_s | ioctl_download | ~pll_core_locked_s | ver_busy;
 
     //! ROM routing: single slot (xenophobe.rom)
     //!   0x00000-0x7FFFF CPU ROMs -> SDRAM  |  0x80000-0xCFFFF gfx -> BRAM
@@ -931,8 +931,8 @@ module core_top
         .sd_brd    ( sd_brd         ),
         .sd_bdata  ( sd_bdata       ),
         .sd_bready ( sd_bready      ),
-        .rd0_addr  ( main_rom_addr  ),
-        .rd0_req   ( main_rom_req   ),
+        .rd0_addr  ( ver_busy ? ver_addr : main_rom_addr ),
+        .rd0_req   ( ver_busy ? ver_req  : main_rom_req  ),
         .rd0_q     ( main_rom_q     ),
         .rd0_done  ( main_rom_done  ),
         .rd1_addr  ( snd_rom_addr   ),
@@ -1067,8 +1067,8 @@ module core_top
     reg        mrdone_q;
     always @(posedge clk_sys) begin
         mrdone_q <= main_rom_done;
-        if (main_rom_done && !mrdone_q && main_rom_addr[17:3] == 15'd0) begin
-            case (main_rom_addr[2:1])
+        if (main_rom_done && !mrdone_q && main_rom_addr[17:2] == 16'd0) begin
+            case (main_rom_addr[1:0])
                 2'd0: begin rv0 <= main_rom_q; rv_got[0] <= 1'b1; end
                 2'd1: begin rv1 <= main_rom_q; rv_got[1] <= 1'b1; end
                 2'd2: begin rv2 <= main_rom_q; rv_got[2] <= 1'b1; end
@@ -1091,6 +1091,46 @@ module core_top
     wire rom_ok   = rom_seen && rv0 == 16'h0006 && rv1 == 16'h4000
                              && rv2 == 16'h0000 && rv3 == 16'ha154;
 
+    //! ---- full ROM verifier ---------------------------------------------
+    //! Once the download finishes, hold the machine in reset and read EVERY
+    //! word of main ROM back through the same path the CPU uses, checksumming
+    //! as we go. A few spot checks cannot catch a controller that mishandles
+    //! particular rows or banks; this exercises all of them.
+    localparam [31:0] ROM_SUM_EXPECT = 32'h546a99ab;
+    reg [17:1] ver_addr;
+    reg [31:0] ver_sum;
+    reg        ver_busy, ver_done, ver_ok, ver_req, ver_started, dl_q;
+
+    always @(posedge clk_sys) begin
+        if (~pll_core_locked_s) begin
+            ver_busy <= 1'b0; ver_done <= 1'b0; ver_ok <= 1'b0;
+            ver_req  <= 1'b0; ver_started <= 1'b0;
+        end else begin
+            dl_q <= ioctl_download;
+            if (dl_q && !ioctl_download && !ver_started) begin
+                ver_started <= 1'b1;
+                ver_busy    <= 1'b1;
+                ver_addr    <= '0;
+                ver_sum     <= '0;
+                ver_req     <= 1'b1;
+            end else if (ver_busy) begin
+                if (ver_req && main_rom_done) begin
+                    ver_sum <= ver_sum + {16'd0, main_rom_q};
+                    ver_req <= 1'b0;
+                end else if (!ver_req && !main_rom_done) begin
+                    if (&ver_addr) begin
+                        ver_busy <= 1'b0;
+                        ver_done <= 1'b1;
+                        ver_ok   <= (ver_sum == ROM_SUM_EXPECT);
+                    end else begin
+                        ver_addr <= ver_addr + 1'd1;
+                        ver_req  <= 1'b1;
+                    end
+                end
+            end
+        end
+    end
+
     //! ---- machine activity strobes --------------------------------------
     reg [15:0] c_pal, c_vram, c_spr, c_wdt, c_493, c_ptm;
     reg  [5:0] dbgs_q;
@@ -1105,9 +1145,9 @@ module core_top
     end
 
     wire [7:0] dbg_stat2 = {
-        rom_seen,                   // 0 reset vector reads captured
-        rom_ok,                     // 1 vector reads correct (row 0)
-        rv_hi_ok,                   // 2 read at 0xA154 correct (other row)
+        ver_done,                   // 0 whole-ROM verify finished
+        ver_ok,                     // 1 WHOLE ROM READS BACK CORRECT
+        rv_hi_ok,                   // 2 spot check at 0xA154
         |c_pal,                     // 3 palette ever written
         c_wdt[3],                   // 4 watchdog kick activity
         ~wdt_expired,               // 5 green = watchdog healthy
