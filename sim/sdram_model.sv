@@ -17,11 +17,13 @@ module sdram_model (
     logic [15:0] mem [0:2097151] /*verilator public_flat_rw*/;
 
     logic [12:0] row_open;
+    logic        row_active;   // protocol checking: is a row currently open?
     logic [15:0] pipe_q1;
     logic        pipe_v1;
 
     wire [3:0] cmd = {cs_n, ras_n, cas_n, we_n};
-    localparam CMD_ACT = 4'b0011, CMD_READ = 4'b0101, CMD_WRIT = 4'b0100;
+    localparam CMD_ACT = 4'b0011, CMD_READ = 4'b0101, CMD_WRIT = 4'b0100,
+               CMD_PRE = 4'b0010;
 
     // CL2 read pipe: data driven 2 cycles after READ
     logic [15:0] dq_out;
@@ -41,15 +43,29 @@ module sdram_model (
         pipe_v1 <= 1'b0;
 
         case (cmd)
-            CMD_ACT:  row_open <= a;
+            CMD_ACT: begin
+                // Real chips require PRECHARGE before re-ACTIVATING a bank.
+                if (row_active)
+                    $display("SDRAM-PROTOCOL-ERROR: ACTIVATE row %0d while row %0d still open",
+                             a, row_open);
+                row_open   <= a;
+                row_active <= 1'b1;
+            end
             CMD_READ: begin
+                if (!row_active)
+                    $display("SDRAM-PROTOCOL-ERROR: READ with no open row");
                 pipe_q1 <= mem[widx];
                 pipe_v1 <= 1'b1;
+                if (a[10]) row_active <= 1'b0;      // auto-precharge
             end
             CMD_WRIT: begin
+                if (!row_active)
+                    $display("SDRAM-PROTOCOL-ERROR: WRITE with no open row");
                 if (!dqml) mem[widx][7:0]  <= dq[7:0];
                 if (!dqmh) mem[widx][15:8] <= dq[15:8];
+                if (a[10]) row_active <= 1'b0;      // auto-precharge
             end
+            CMD_PRE: row_active <= 1'b0;
             default: ;
         endcase
     end

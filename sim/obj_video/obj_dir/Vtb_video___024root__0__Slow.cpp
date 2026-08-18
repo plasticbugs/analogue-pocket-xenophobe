@@ -504,6 +504,7 @@ VL_ATTR_COLD void Vtb_video___024root___ctor_var_reset(Vtb_video___024root* vlSe
         vlSelf->tb_video__DOT__sdram_chip__DOT__mem[__Vi0] = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 5716939771695955249ull);
     }
     vlSelf->tb_video__DOT__sdram_chip__DOT__row_open = VL_SCOPED_RAND_RESET_I(13, __VscopeHash, 2212582315131693845ull);
+    vlSelf->tb_video__DOT__sdram_chip__DOT__row_active = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14840285450480374111ull);
     vlSelf->tb_video__DOT__sdram_chip__DOT__pipe_q1 = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 2167691352617542807ull);
     vlSelf->tb_video__DOT__sdram_chip__DOT__pipe_v1 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 15071538322613017190ull);
     vlSelf->tb_video__DOT__sdram_chip__DOT__dq_out = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 13668606846076236809ull);

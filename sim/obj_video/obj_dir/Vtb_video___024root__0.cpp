@@ -78,6 +78,8 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     __Vdly__tb_video__DOT__rom_server__DOT__st = 0;
     VlWide<4>/*127:0*/ __Vdly__tb_video__DOT__spr_fetch_data;
     VL_ZERO_W(128, __Vdly__tb_video__DOT__spr_fetch_data);
+    CData/*0:0*/ __Vdly__tb_video__DOT__sdram_chip__DOT__row_active;
+    __Vdly__tb_video__DOT__sdram_chip__DOT__row_active = 0;
     SData/*13:0*/ __Vdly__tb_video__DOT__sdram16__DOT__refresh_count;
     __Vdly__tb_video__DOT__sdram16__DOT__refresh_count = 0;
     CData/*2:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay;
@@ -203,6 +205,8 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
         = vlSelfRef.tb_video__DOT__sdram16__DOT__save_addr;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd 
         = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
+    __Vdly__tb_video__DOT__sdram_chip__DOT__row_active 
+        = vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_active;
     __VdlySet__tb_video__DOT__sdram_chip__DOT__mem__v0 = 0U;
     __VdlySet__tb_video__DOT__sdram_chip__DOT__mem__v1 = 0U;
     __Vdly__tb_video__DOT__ce_div = (1U & (~ (IData)(vlSelfRef.tb_video__DOT__ce_div)));
@@ -362,14 +366,10 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
                            << 4U) | (IData)(vlSelfRef.tb_video__DOT__video__DOT__bg_px)));
         __VdlySet__tb_video__DOT__video__DOT__bg_lbuf__v0 = 1U;
     }
-    vlSelfRef.tb_video__DOT__sdram_chip__DOT__dq_oe 
-        = vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_v1;
     vlSelfRef.tb_video__DOT__sdram_chip__DOT__dq_out 
         = vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_q1;
-    if ((3U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
-        vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_open 
-            = vlSelfRef.tb_video__DOT__sd_a;
-    }
+    vlSelfRef.tb_video__DOT__sdram_chip__DOT__dq_oe 
+        = vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_v1;
     if (__VdlySet__tb_video__DOT__video__DOT__sp_lbuf_lo__v0) {
         vlSelfRef.tb_video__DOT__video__DOT__sp_lbuf_lo[__VdlyDim0__tb_video__DOT__video__DOT__sp_lbuf_lo__v0] 
             = __VdlyVal__tb_video__DOT__video__DOT__sp_lbuf_lo__v0;
@@ -468,9 +468,21 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
             << 8U) | ((IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_bq_lo) 
                       & (- (IData)((IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_bv_lo)))));
     vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_v1 = 0U;
-    if ((3U != (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
-        if ((5U != (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
-            if ((4U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
+    if ((4U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
+        if ((1U & (~ ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command) 
+                      >> 1U)))) {
+            if ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
+                if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_active)))))) {
+                    VL_WRITEF_NX("SDRAM-PROTOCOL-ERROR: READ with no open row\n",0);
+                }
+                vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_q1 
+                    = vlSelfRef.tb_video__DOT__sdram_chip__DOT__mem
+                    [(0x001fffffU & vlSelfRef.tb_video__DOT__sdram_chip__DOT__widx)];
+                vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_v1 = 1U;
+            } else {
+                if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_active)))))) {
+                    VL_WRITEF_NX("SDRAM-PROTOCOL-ERROR: WRITE with no open row\n",0);
+                }
                 if ((1U & (~ ((IData)(vlSelfRef.tb_video__DOT__sd_a) 
                               >> 0x0000000bU)))) {
                     __VdlyVal__tb_video__DOT__sdram_chip__DOT__mem__v0 
@@ -489,18 +501,30 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
                     __VdlySet__tb_video__DOT__sdram_chip__DOT__mem__v1 = 1U;
                 }
             }
+            if ((0x00000400U & (IData)(vlSelfRef.tb_video__DOT__sd_a))) {
+                __Vdly__tb_video__DOT__sdram_chip__DOT__row_active = 0U;
+            }
         }
-        if ((5U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
-            vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_v1 = 1U;
-            vlSelfRef.tb_video__DOT__sdram_chip__DOT__pipe_q1 
-                = vlSelfRef.tb_video__DOT__sdram_chip__DOT__mem
-                [(0x001fffffU & vlSelfRef.tb_video__DOT__sdram_chip__DOT__widx)];
+    } else if ((2U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
+        if ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__command))) {
+            if (VL_UNLIKELY((vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_active))) {
+                VL_WRITEF_NX("SDRAM-PROTOCOL-ERROR: ACTIVATE row %0d while row %0d still open\n",2
+                             , '#',13,vlSelfRef.tb_video__DOT__sd_a
+                             , '#',13,(IData)(vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_open));
+            }
+            vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_open 
+                = vlSelfRef.tb_video__DOT__sd_a;
+            __Vdly__tb_video__DOT__sdram_chip__DOT__row_active = 1U;
+        } else {
+            __Vdly__tb_video__DOT__sdram_chip__DOT__row_active = 0U;
         }
     }
     if (__VdlySet__tb_video__DOT__video__DOT__bg_lbuf__v0) {
         vlSelfRef.tb_video__DOT__video__DOT__bg_lbuf[__VdlyDim0__tb_video__DOT__video__DOT__bg_lbuf__v0] 
             = __VdlyVal__tb_video__DOT__video__DOT__bg_lbuf__v0;
     }
+    vlSelfRef.tb_video__DOT__sdram_chip__DOT__row_active 
+        = __Vdly__tb_video__DOT__sdram_chip__DOT__row_active;
     if (__VdlySet__tb_video__DOT__sdram_chip__DOT__mem__v0) {
         vlSelfRef.tb_video__DOT__sdram_chip__DOT__mem[__VdlyDim0__tb_video__DOT__sdram_chip__DOT__mem__v0] 
             = ((0xff00U & vlSelfRef.tb_video__DOT__sdram_chip__DOT__mem

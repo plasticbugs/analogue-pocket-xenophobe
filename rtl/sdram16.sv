@@ -179,7 +179,9 @@ module sdram16
                 // the last one. Data arrives CL2 later; capture via delay.
                 if (bcol <= 4'd7) begin
                     command <= CMD_READ;
-                    SDRAM_A <= {2'b00, 1'b0, (bcol == 4'd7), baddr[9:4], bcol[2:0]};
+                    // A10 (bit 10) = auto-precharge, asserted on the LAST
+                    // read of the burst so the row closes behind us
+                    SDRAM_A <= {2'b00, (bcol == 4'd7), 1'b0, baddr[9:4], bcol[2:0]};
                 end
                 if (bcol <= 4'd8) bcol <= bcol + 1'd1;
                 bready_delay <= {(bcol <= 4'd7), bready_delay[CAS_LATENCY:1]};

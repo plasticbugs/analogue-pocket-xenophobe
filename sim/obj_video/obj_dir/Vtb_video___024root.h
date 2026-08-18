@@ -66,6 +66,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*2:0*/ tb_video__DOT__rom_server__DOT__st;
         CData/*0:0*/ tb_video__DOT__rom_server__DOT__ready_q;
         CData/*0:0*/ tb_video__DOT__rom_server__DOT__bready_q;
+        CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__row_active;
         CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__pipe_v1;
         CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__dq_oe;
         CData/*2:0*/ tb_video__DOT__sdram16__DOT__command;
@@ -79,9 +80,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
         CData/*7:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
-        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
     };
     struct {
+        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_0;
         CData/*0:0*/ __VstlFirstIteration;
