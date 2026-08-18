@@ -1196,7 +1196,7 @@ VL_ATTR_COLD void Vtb_system_fx68k___ctor_var_reset(Vtb_system_fx68k* vlSelf) {
     vlSelf->FC2 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8272433485309414617ull);
     vlSelf->__PVT__BGn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3277206689328664760ull);
     vlSelf->__PVT__oRESETn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13847733961560949196ull);
-    vlSelf->__PVT__oHALTEDn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2602387927842805283ull);
+    vlSelf->oHALTEDn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2602387927842805283ull);
     vlSelf->DTACKn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16231648768065167506ull);
     vlSelf->VPAn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14309238469969814955ull);
     vlSelf->BERRn = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 10728684054510727944ull);

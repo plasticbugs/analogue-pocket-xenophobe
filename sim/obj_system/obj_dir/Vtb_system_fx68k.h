@@ -34,7 +34,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system_fx68k final {
         CData/*0:0*/ FC2;
         CData/*0:0*/ __PVT__BGn;
         CData/*0:0*/ __PVT__oRESETn;
-        CData/*0:0*/ __PVT__oHALTEDn;
+        CData/*0:0*/ oHALTEDn;
         CData/*0:0*/ DTACKn;
         CData/*0:0*/ VPAn;
         CData/*0:0*/ BERRn;

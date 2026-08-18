@@ -993,11 +993,16 @@ module core_top
         .audio_dac     ( xdac          ),
         .control_word  (               ),
         .watchdog_expired ( wdt_expired ),
-        .dbg_strobes   ( dbg_strobes   )
+        .dbg_strobes   ( dbg_strobes   ),
+        .dbg_halted    ( dbg_halted    ),
+        .dbg_bus_stuck ( dbg_bus_stuck ),
+        .dbg_stuck_addr( dbg_stuck_addr )
     );
 
-    wire       wdt_expired;
-    wire [5:0] dbg_strobes;
+    wire        wdt_expired;
+    wire  [5:0] dbg_strobes;
+    wire        dbg_halted, dbg_bus_stuck;
+    wire [23:1] dbg_stuck_addr;
 
     //! ------------------------------------------------------------------
     //! DEBUG OVERLAY (bring-up build): top rows show status squares and a
@@ -1078,29 +1083,42 @@ module core_top
 
     wire [7:0] dbg_stat2 = {
         rom_seen,                   // 0 reset vector reads captured
-        rom_ok,                     // 1 <== ROM DATA CORRECT (decisive)
+        rom_ok,                     // 1 ROM DATA CORRECT
         |c_pal,                     // 2 palette ever written
-        c_vram[6],                  // 3 video RAM write activity
-        c_spr[6],                   // 4 sprite RAM write activity
-        c_wdt[3],                   // 5 watchdog kick activity
-        ~wdt_expired,               // 6 green = watchdog healthy
-        c_493[3]                    // 7 frame IRQ activity
+        c_wdt[3],                   // 3 watchdog kick activity
+        ~wdt_expired,               // 4 green = watchdog healthy
+        ~dbg_halted,                // 5 green = CPU not halted
+        ~dbg_bus_stuck,             // 6 green = no stalled bus cycle
+        c_vram[6]                   // 7 video RAM write activity
     };
+
+    // Rows 3 and 4: the address the main CPU stalled on (zero if it never did)
+    wire [7:0] dbg_stat3 = dbg_stuck_addr[23:16];
+    wire [7:0] dbg_stat4 = {dbg_stuck_addr[15:9], 1'b0};
 
     wire [2:0] dbg_idx = dbg_x[8:6];
     wire       bit1 = dbg_stat [3'd7 - dbg_idx];
     wire       bit2 = dbg_stat2[3'd7 - dbg_idx];
+    wire       bit3 = dbg_stat3[3'd7 - dbg_idx];
+    wire       bit4 = dbg_stat4[3'd7 - dbg_idx];
     wire       in_row1 = (dbg_y < 10'd16);
     wire       in_row2 = (dbg_y >= 10'd16 && dbg_y < 10'd32);
-    wire       in_grad = (dbg_y >= 10'd32 && dbg_y < 10'd48);
+    wire       in_row3 = (dbg_y >= 10'd32 && dbg_y < 10'd48);
+    wire       in_row4 = (dbg_y >= 10'd48 && dbg_y < 10'd64);
+    wire       in_grad = (dbg_y >= 10'd64 && dbg_y < 10'd80);
+    wire       in_bits = in_row1 || in_row2 || in_row3 || in_row4;
+    wire       cur_bit = in_row1 ? bit1 : in_row2 ? bit2 : in_row3 ? bit3 : bit4;
 
-    wire [7:0] ovl_r = in_row1 ? (bit1 ? 8'h00 : 8'hFF)
-                     : in_row2 ? (bit2 ? 8'h00 : 8'hFF)
+    // address rows are drawn blue-on-black so they read differently from the
+    // red/green status rows
+    wire [7:0] ovl_r = in_row1 || in_row2 ? (cur_bit ? 8'h00 : 8'hFF)
+                     : in_row3 || in_row4 ? 8'h00
                      : in_grad ? dbg_x[7:0] : xr;
-    wire [7:0] ovl_g = in_row1 ? (bit1 ? 8'hFF : 8'h00)
-                     : in_row2 ? (bit2 ? 8'hFF : 8'h00)
+    wire [7:0] ovl_g = in_row1 || in_row2 ? (cur_bit ? 8'hFF : 8'h00)
+                     : in_row3 || in_row4 ? (cur_bit ? 8'hFF : 8'h00)
                      : in_grad ? dbg_x[7:0] : xg;
-    wire [7:0] ovl_b = (in_row1 || in_row2) ? 8'h00
+    wire [7:0] ovl_b = in_row1 || in_row2 ? 8'h00
+                     : in_row3 || in_row4 ? (cur_bit ? 8'hFF : 8'h40)
                      : in_grad ? 8'hFF : xb;
 
     //! Video: capture the 20 MHz-rate pixel stream on clk_vid for the mixer

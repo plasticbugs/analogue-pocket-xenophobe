@@ -59,7 +59,10 @@ module mcr68_main (
     // bring-up diagnostics
     output logic        dbg_wdt_kick,
     output logic        dbg_irq493,
-    output logic        dbg_ptm_irq
+    output logic        dbg_ptm_irq,
+    output logic        dbg_halted,      // CPU took a double fault
+    output logic        dbg_bus_stuck,   // bus cycle without DTACK for ages
+    output logic [23:1] dbg_stuck_addr   // the address it died on
 );
 
     // ---- CPU ----
@@ -76,12 +79,31 @@ module mcr68_main (
         .eRWn(rw_n), .ASn(as_n), .LDSn(lds_n), .UDSn(uds_n),
         .E(e_clk), .VMAn(),
         .FC0(fc0), .FC1(fc1), .FC2(fc2),
-        .BGn(), .oRESETn(), .oHALTEDn(),
+        .BGn(), .oRESETn(),
         .DTACKn(dtack_n), .VPAn(vpa_n), .BERRn(1'b1),
         .BRn(1'b1), .BGACKn(1'b1),
         .IPL0n(ipl0_n), .IPL1n(ipl1_n), .IPL2n(1'b1),
-        .iEdb(cpu_din), .oEdb(cpu_dout), .eab(cpu_addr)
+        .iEdb(cpu_din), .oEdb(cpu_dout), .eab(cpu_addr),
+        .oHALTEDn(cpu_haltedn)
     );
+    logic cpu_haltedn;
+
+    // Bus-hang detector: a 68000 that stops fetching is nearly always waiting
+    // on DTACK. Latch the offending address the first time a cycle runs long.
+    logic [12:0] stuck_cnt;
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            stuck_cnt <= '0; dbg_bus_stuck <= 1'b0; dbg_stuck_addr <= '0;
+        end else begin
+            if (bus_cycle & dtack_n) stuck_cnt <= stuck_cnt + 1'd1;
+            else stuck_cnt <= '0;
+            if (stuck_cnt == 13'h1FFE && !dbg_bus_stuck) begin
+                dbg_bus_stuck  <= 1'b1;
+                dbg_stuck_addr <= cpu_addr;
+            end
+        end
+    end
+    assign dbg_halted = ~cpu_haltedn;
 
     // E tick for the PTM (rising edge of E)
     logic e_q, e_tick;
