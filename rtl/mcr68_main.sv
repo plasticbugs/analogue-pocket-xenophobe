@@ -54,7 +54,12 @@ module mcr68_main (
     input  logic        vsync30,       // pulse at 30 Hz game vblank
     input  logic        field,         // which 60 Hz frame of the 30 Hz pair
 
-    output logic        watchdog_expired
+    output logic        watchdog_expired,
+
+    // bring-up diagnostics
+    output logic        dbg_wdt_kick,
+    output logic        dbg_irq493,
+    output logic        dbg_ptm_irq
 );
 
     // ---- CPU ----
@@ -183,6 +188,10 @@ module mcr68_main (
             end
         end
     end
+
+    assign dbg_wdt_kick = sel_wdt & ~rw_n;
+    assign dbg_irq493   = irq493;
+    assign dbg_ptm_irq  = ptm_irq;
 
     assign ipl0_n = ~irq493;
     assign ipl1_n = ~ptm_irq;

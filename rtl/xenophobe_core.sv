@@ -44,7 +44,10 @@ module xenophobe_core (
     output logic [9:0]  audio_dac,
 
     output logic [15:0] control_word,  // coin counters etc. for the platform top
-    output logic        watchdog_expired
+    output logic        watchdog_expired,
+
+    // bring-up diagnostics: {pal_we, vram_we, spr_we, wdt_kick, irq493, ptm_irq}
+    output logic [5:0]  dbg_strobes
 );
 
     // ---- pixel enable ----
@@ -105,8 +108,13 @@ module xenophobe_core (
         .sprram_addr(sprram_addr), .sprram_din(sprram_din), .sprram_we(sprram_we), .sprram_q(sprram_q),
         .pal_addr(pal_addr), .pal_din(pal_din), .pal_we(pal_we),
         .hsync_pulse(hsync_pulse), .vsync30(vsync30), .field(vid_field),
-        .watchdog_expired(watchdog_expired)
+        .watchdog_expired(watchdog_expired),
+        .dbg_wdt_kick(dbg_wdt_kick), .dbg_irq493(dbg_irq493), .dbg_ptm_irq(dbg_ptm_irq)
     );
+
+    logic dbg_wdt_kick, dbg_irq493, dbg_ptm_irq;
+    assign dbg_strobes = {pal_we, |vram_we, |sprram_we,
+                          dbg_wdt_kick, dbg_irq493, dbg_ptm_irq};
 
     // ---- Sounds Good ----
     sounds_good snd (

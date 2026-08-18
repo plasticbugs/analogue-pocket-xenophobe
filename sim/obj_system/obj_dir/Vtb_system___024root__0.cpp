@@ -278,10 +278,12 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
     __Vdly__tb_system__DOT__video__DOT__sprram_raddr = 0;
     CData/*0:0*/ __Vdly__tb_system__DOT__video__DOT__lbuf_sel;
     __Vdly__tb_system__DOT__video__DOT__lbuf_sel = 0;
-    CData/*2:0*/ __Vdly__tb_system__DOT__rom_srv__DOT__st;
+    CData/*1:0*/ __Vdly__tb_system__DOT__rom_srv__DOT__st;
     __Vdly__tb_system__DOT__rom_srv__DOT__st = 0;
     CData/*0:0*/ __Vdly__tb_system__DOT__spr_fetch_done;
     __Vdly__tb_system__DOT__spr_fetch_done = 0;
+    SData/*8:0*/ __Vdly__tb_system__DOT__rom_srv__DOT__wcnt;
+    __Vdly__tb_system__DOT__rom_srv__DOT__wcnt = 0;
     CData/*0:0*/ __Vdly__tb_system__DOT__rom_srv__DOT__cur;
     __Vdly__tb_system__DOT__rom_srv__DOT__cur = 0;
     VlWide<4>/*127:0*/ __Vdly__tb_system__DOT__spr_fetch_data;
@@ -581,6 +583,7 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
     vlSelfRef.__Vdly__tb_system__DOT__mrom_ack = vlSelfRef.tb_system__DOT__mrom_ack;
     vlSelfRef.__Vdly__tb_system__DOT__srom_ack = vlSelfRef.tb_system__DOT__srom_ack;
     __Vdly__tb_system__DOT__spr_fetch_done = vlSelfRef.tb_system__DOT__spr_fetch_done;
+    __Vdly__tb_system__DOT__rom_srv__DOT__wcnt = vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt;
     __Vdly__tb_system__DOT__rom_srv__DOT__cur = vlSelfRef.tb_system__DOT__rom_srv__DOT__cur;
     __Vdly__tb_system__DOT__spr_fetch_data[0U] = vlSelfRef.tb_system__DOT__spr_fetch_data[0U];
     __Vdly__tb_system__DOT__spr_fetch_data[1U] = vlSelfRef.tb_system__DOT__spr_fetch_data[1U];
@@ -1855,13 +1858,16 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
         }
         if ((0U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
             vlSelfRef.tb_system__DOT__sd_we = 0U;
+            vlSelfRef.tb_system__DOT__sd_rd = 0U;
+            __Vdly__tb_system__DOT__rom_srv__DOT__wcnt = 0U;
+            vlSelfRef.tb_system__DOT__sd_brd = 0U;
             if (((IData)(vlSelfRef.tb_system__DOT__spr_fetch_req) 
                  & (~ (IData)(vlSelfRef.tb_system__DOT__spr_fetch_done)))) {
                 vlSelfRef.tb_system__DOT__sd_baddr 
                     = (0x001fffffU & ((IData)(0x00009000U) 
                                       + (IData)(vlSelfRef.tb_system__DOT__spr_fetch_addr)));
                 vlSelfRef.tb_system__DOT__sd_brd = 1U;
-                __Vdly__tb_system__DOT__rom_srv__DOT__st = 3U;
+                __Vdly__tb_system__DOT__rom_srv__DOT__st = 2U;
             } else if (((IData)(vlSelfRef.tb_system__DOT__mrom_req) 
                         & (~ (IData)(vlSelfRef.tb_system__DOT__mrom_ack)))) {
                 __Vdly__tb_system__DOT__rom_srv__DOT__cur = 0U;
@@ -1878,32 +1884,11 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
                 __Vdly__tb_system__DOT__rom_srv__DOT__st = 1U;
             }
         } else if ((1U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
-            if ((1U & (~ (IData)(vlSelfRef.tb_system__DOT__sd_ready)))) {
-                vlSelfRef.tb_system__DOT__sd_rd = 0U;
-                __Vdly__tb_system__DOT__rom_srv__DOT__st = 2U;
-            }
-        } else if ((3U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
-            if ((1U & (~ (IData)(vlSelfRef.tb_system__DOT__sd_bready)))) {
-                vlSelfRef.tb_system__DOT__sd_brd = 0U;
-                __Vdly__tb_system__DOT__rom_srv__DOT__st = 4U;
-            }
-        } else if ((4U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
-            if (((IData)(vlSelfRef.tb_system__DOT__sd_bready) 
-                 & (~ (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__bready_q)))) {
-                __Vdly__tb_system__DOT__spr_fetch_data[0U] 
-                    = vlSelfRef.tb_system__DOT__sd_bdata[0U];
-                __Vdly__tb_system__DOT__spr_fetch_data[1U] 
-                    = vlSelfRef.tb_system__DOT__sd_bdata[1U];
-                __Vdly__tb_system__DOT__spr_fetch_data[2U] 
-                    = vlSelfRef.tb_system__DOT__sd_bdata[2U];
-                __Vdly__tb_system__DOT__spr_fetch_data[3U] 
-                    = vlSelfRef.tb_system__DOT__sd_bdata[3U];
-                __Vdly__tb_system__DOT__spr_fetch_done = 1U;
-                __Vdly__tb_system__DOT__rom_srv__DOT__st = 0U;
-            }
-        } else if ((2U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
-            if (((IData)(vlSelfRef.tb_system__DOT__sd_ready) 
-                 & (~ (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__ready_q)))) {
+            vlSelfRef.tb_system__DOT__sd_rd = 0U;
+            __Vdly__tb_system__DOT__rom_srv__DOT__wcnt 
+                = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt)));
+            if (((2U <= (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt)) 
+                 & (IData)(vlSelfRef.tb_system__DOT__sd_ready))) {
                 if (vlSelfRef.tb_system__DOT__rom_srv__DOT__cur) {
                     vlSelfRef.tb_system__DOT__srom_q 
                         = ((0x0000ff00U & ((IData)(vlSelfRef.tb_system__DOT__sdram16__DOT__data) 
@@ -1920,6 +1905,29 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
                     vlSelfRef.__Vdly__tb_system__DOT__mrom_ack = 1U;
                 }
                 __Vdly__tb_system__DOT__rom_srv__DOT__st = 0U;
+            } else if ((0x0190U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt))) {
+                vlSelfRef.tb_system__DOT__sd_rd = 1U;
+                __Vdly__tb_system__DOT__rom_srv__DOT__wcnt = 0U;
+            }
+        } else if ((2U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__st))) {
+            vlSelfRef.tb_system__DOT__sd_brd = 0U;
+            __Vdly__tb_system__DOT__rom_srv__DOT__wcnt 
+                = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt)));
+            if (((2U <= (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt)) 
+                 & (IData)(vlSelfRef.tb_system__DOT__sd_bready))) {
+                __Vdly__tb_system__DOT__spr_fetch_data[0U] 
+                    = vlSelfRef.tb_system__DOT__sd_bdata[0U];
+                __Vdly__tb_system__DOT__spr_fetch_data[1U] 
+                    = vlSelfRef.tb_system__DOT__sd_bdata[1U];
+                __Vdly__tb_system__DOT__spr_fetch_data[2U] 
+                    = vlSelfRef.tb_system__DOT__sd_bdata[2U];
+                __Vdly__tb_system__DOT__spr_fetch_data[3U] 
+                    = vlSelfRef.tb_system__DOT__sd_bdata[3U];
+                __Vdly__tb_system__DOT__spr_fetch_done = 1U;
+                __Vdly__tb_system__DOT__rom_srv__DOT__st = 0U;
+            } else if ((0x0190U == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt))) {
+                vlSelfRef.tb_system__DOT__sd_brd = 1U;
+                __Vdly__tb_system__DOT__rom_srv__DOT__wcnt = 0U;
             }
         }
     }
@@ -1994,19 +2002,18 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
     vlSelfRef.tb_system__DOT__video__DOT__bg_px = __Vdly__tb_system__DOT__video__DOT__bg_px;
     vlSelfRef.tb_system__DOT__video__DOT__bg_cell = __Vdly__tb_system__DOT__video__DOT__bg_cell;
     vlSelfRef.tb_system__DOT__video__DOT__bg_st = __Vdly__tb_system__DOT__video__DOT__bg_st;
+    vlSelfRef.tb_system__DOT__sdram16__DOT__data = __Vdly__tb_system__DOT__sdram16__DOT__data;
+    vlSelfRef.tb_system__DOT__sd_bready = __Vdly__tb_system__DOT__sd_bready;
     vlSelfRef.tb_system__DOT__sd_bdata[0U] = __Vdly__tb_system__DOT__sd_bdata[0U];
     vlSelfRef.tb_system__DOT__sd_bdata[1U] = __Vdly__tb_system__DOT__sd_bdata[1U];
     vlSelfRef.tb_system__DOT__sd_bdata[2U] = __Vdly__tb_system__DOT__sd_bdata[2U];
     vlSelfRef.tb_system__DOT__sd_bdata[3U] = __Vdly__tb_system__DOT__sd_bdata[3U];
-    vlSelfRef.tb_system__DOT__sdram16__DOT__data = __Vdly__tb_system__DOT__sdram16__DOT__data;
     vlSelfRef.tb_system__DOT__rom_srv__DOT__st = __Vdly__tb_system__DOT__rom_srv__DOT__st;
+    vlSelfRef.tb_system__DOT__rom_srv__DOT__wcnt = __Vdly__tb_system__DOT__rom_srv__DOT__wcnt;
     vlSelfRef.tb_system__DOT__rom_srv__DOT__cur = __Vdly__tb_system__DOT__rom_srv__DOT__cur;
+    vlSelfRef.tb_system__DOT__sd_ready = __Vdly__tb_system__DOT__sd_ready;
     vlSelfRef.tb_system__DOT__video__DOT__vram_rq = vlSelfRef.tb_system__DOT__video__DOT__vram
         [vlSelfRef.tb_system__DOT__video__DOT__vram_raddr];
-    vlSelfRef.tb_system__DOT__rom_srv__DOT__bready_q 
-        = vlSelfRef.tb_system__DOT__sd_bready;
-    vlSelfRef.tb_system__DOT__rom_srv__DOT__ready_q 
-        = vlSelfRef.tb_system__DOT__sd_ready;
     if ((8U & (IData)(vlSelfRef.tb_system__DOT__video__DOT__sp_st))) {
         if ((4U & (IData)(vlSelfRef.tb_system__DOT__video__DOT__sp_st))) {
             __Vdly__tb_system__DOT__video__DOT__sp_st = 0U;
@@ -2217,8 +2224,6 @@ void Vtb_system___024root___nba_sequent__TOP__0(Vtb_system___024root* vlSelf) {
                | ((SData)((IData)(__VdlyVal__tb_system__DOT__video__DOT__vram__v1)) 
                   << 8U));
     }
-    vlSelfRef.tb_system__DOT__sd_bready = __Vdly__tb_system__DOT__sd_bready;
-    vlSelfRef.tb_system__DOT__sd_ready = __Vdly__tb_system__DOT__sd_ready;
     vlSelfRef.tb_system__DOT__spr_fetch_data[0U] = __Vdly__tb_system__DOT__spr_fetch_data[0U];
     vlSelfRef.tb_system__DOT__spr_fetch_data[1U] = __Vdly__tb_system__DOT__spr_fetch_data[1U];
     vlSelfRef.tb_system__DOT__spr_fetch_data[2U] = __Vdly__tb_system__DOT__spr_fetch_data[2U];

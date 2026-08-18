@@ -59,15 +59,19 @@ int main(int argc, char** argv) {
             stream.push_back({dst, spr[bank * 0x10000 + i]});
         }
 
-    printf("loading %zu bytes through the APF path...\n", stream.size());
+    unsigned gapseq = 0;
+    printf("loading %zu bytes through the APF path (phase-swept)...\n", stream.size());
     tb->dl_active = 1;
     for (auto& w : stream) {
         tb->dl_addr = w.addr;
         tb->dl_data = w.data;
         tb->dl_wr = 1;
-        tick(4);                 // data_io holds ioctl_wr for DIO_HOLD cycles
+        tick(4);                 // data_loader: write_en high for DIO_HOLD=4
         tb->dl_wr = 0;
-        tick(36);                // APF pacing: ~one byte per microsecond
+        // On hardware bytes arrive through a clk_74a->clk_memory FIFO, so the
+        // gap jitters instead of being a fixed 4. Sweep the phase to expose
+        // any collision with the controller's refresh/servicing window.
+        tick(4 + (gapseq++ % 9));
     }
     tb->dl_active = 0;
     tick(50);

@@ -1065,10 +1065,9 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->tb_system__DOT__video__DOT__de_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 17839508826807321809ull);
     vlSelf->tb_system__DOT__video__DOT__hs_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 10315056890493379961ull);
     vlSelf->tb_system__DOT__video__DOT__vs_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6112137849318822880ull);
-    vlSelf->tb_system__DOT__rom_srv__DOT__st = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 5463323251651204176ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__st = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 5463323251651204176ull);
     vlSelf->tb_system__DOT__rom_srv__DOT__cur = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1473323691154953446ull);
-    vlSelf->tb_system__DOT__rom_srv__DOT__ready_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 10875529511571430466ull);
-    vlSelf->tb_system__DOT__rom_srv__DOT__bready_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14358429749516348051ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__wcnt = VL_SCOPED_RAND_RESET_I(9, __VscopeHash, 1924194539253288179ull);
     for (int __Vi0 = 0; __Vi0 < 2097152; ++__Vi0) {
         vlSelf->tb_system__DOT__sdram_chip__DOT__mem[__Vi0] = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 9534511665973444821ull);
     }

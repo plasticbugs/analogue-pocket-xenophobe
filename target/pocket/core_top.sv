@@ -992,8 +992,12 @@ module core_top
         .de            ( xde           ),
         .audio_dac     ( xdac          ),
         .control_word  (               ),
-        .watchdog_expired (            )
+        .watchdog_expired ( wdt_expired ),
+        .dbg_strobes   ( dbg_strobes   )
     );
+
+    wire       wdt_expired;
+    wire [5:0] dbg_strobes;
 
     //! ------------------------------------------------------------------
     //! DEBUG OVERLAY (bring-up build): top rows show status squares and a
@@ -1031,22 +1035,73 @@ module core_top
         dataslot_allcomplete,       // 1
         rom_loaded,                 // 2
         sd_ready,                   // 3
-        mrom_cnt[10],               // 4 main CPU fetch activity (blinks)
+        mrom_cnt[10],               // 4 main CPU fetch activity
         srom_cnt[10],               // 5 sound CPU fetch activity
         sprb_cnt[6],                // 6 sprite burst activity
-        hb_cnt[23]                  // 7 heartbeat (~2.4 Hz blink)
+        hb_cnt[23]                  // 7 heartbeat
     };
-    wire [2:0] dbg_idx = dbg_x[8:6];
-    wire       dbg_bit = dbg_stat[3'd7 - dbg_idx];
-    wire       in_squares  = (dbg_y < 10'd16);
-    wire       in_gradient = (dbg_y >= 10'd16 && dbg_y < 10'd32);
 
-    wire [7:0] ovl_r = in_squares ? (dbg_bit ? 8'h00 : 8'hFF)
-                     : in_gradient ? dbg_x[7:0] : xr;
-    wire [7:0] ovl_g = in_squares ? (dbg_bit ? 8'hFF : 8'h00)
-                     : in_gradient ? dbg_x[7:0] : xg;
-    wire [7:0] ovl_b = in_squares ? 8'h00
-                     : in_gradient ? 8'hFF : xb;
+    //! ---- passive ROM integrity check -----------------------------------
+    //! The 68000's first four reads ARE its reset vector, and we know exactly
+    //! what those words must be, so capturing them verifies the data the CPU
+    //! actually receives from SDRAM: 0006 4000 0000 A154 (SP 0x64000, PC 0xA154).
+    reg [15:0] rv0, rv1, rv2, rv3;
+    reg  [3:0] rv_got;
+    reg        mrdone_q;
+    always @(posedge clk_sys) begin
+        mrdone_q <= main_rom_done;
+        if (main_rom_done && !mrdone_q && main_rom_addr[17:3] == 15'd0) begin
+            case (main_rom_addr[2:1])
+                2'd0: begin rv0 <= main_rom_q; rv_got[0] <= 1'b1; end
+                2'd1: begin rv1 <= main_rom_q; rv_got[1] <= 1'b1; end
+                2'd2: begin rv2 <= main_rom_q; rv_got[2] <= 1'b1; end
+                2'd3: begin rv3 <= main_rom_q; rv_got[3] <= 1'b1; end
+            endcase
+        end
+    end
+    wire rom_seen = &rv_got;
+    wire rom_ok   = rom_seen && rv0 == 16'h0006 && rv1 == 16'h4000
+                             && rv2 == 16'h0000 && rv3 == 16'ha154;
+
+    //! ---- machine activity strobes --------------------------------------
+    reg [15:0] c_pal, c_vram, c_spr, c_wdt, c_493, c_ptm;
+    reg  [5:0] dbgs_q;
+    always @(posedge clk_sys) begin
+        dbgs_q <= dbg_strobes;
+        if (dbg_strobes[5] & ~dbgs_q[5]) c_pal  <= c_pal  + 1'd1;
+        if (dbg_strobes[4] & ~dbgs_q[4]) c_vram <= c_vram + 1'd1;
+        if (dbg_strobes[3] & ~dbgs_q[3]) c_spr  <= c_spr  + 1'd1;
+        if (dbg_strobes[2] & ~dbgs_q[2]) c_wdt  <= c_wdt  + 1'd1;
+        if (dbg_strobes[1] & ~dbgs_q[1]) c_493  <= c_493  + 1'd1;
+        if (dbg_strobes[0] & ~dbgs_q[0]) c_ptm  <= c_ptm  + 1'd1;
+    end
+
+    wire [7:0] dbg_stat2 = {
+        rom_seen,                   // 0 reset vector reads captured
+        rom_ok,                     // 1 <== ROM DATA CORRECT (decisive)
+        |c_pal,                     // 2 palette ever written
+        c_vram[6],                  // 3 video RAM write activity
+        c_spr[6],                   // 4 sprite RAM write activity
+        c_wdt[3],                   // 5 watchdog kick activity
+        ~wdt_expired,               // 6 green = watchdog healthy
+        c_493[3]                    // 7 frame IRQ activity
+    };
+
+    wire [2:0] dbg_idx = dbg_x[8:6];
+    wire       bit1 = dbg_stat [3'd7 - dbg_idx];
+    wire       bit2 = dbg_stat2[3'd7 - dbg_idx];
+    wire       in_row1 = (dbg_y < 10'd16);
+    wire       in_row2 = (dbg_y >= 10'd16 && dbg_y < 10'd32);
+    wire       in_grad = (dbg_y >= 10'd32 && dbg_y < 10'd48);
+
+    wire [7:0] ovl_r = in_row1 ? (bit1 ? 8'h00 : 8'hFF)
+                     : in_row2 ? (bit2 ? 8'h00 : 8'hFF)
+                     : in_grad ? dbg_x[7:0] : xr;
+    wire [7:0] ovl_g = in_row1 ? (bit1 ? 8'hFF : 8'h00)
+                     : in_row2 ? (bit2 ? 8'hFF : 8'h00)
+                     : in_grad ? dbg_x[7:0] : xg;
+    wire [7:0] ovl_b = (in_row1 || in_row2) ? 8'h00
+                     : in_grad ? 8'hFF : xb;
 
     //! Video: capture the 20 MHz-rate pixel stream on clk_vid for the mixer
     //! (same-PLL related clocks; the crossing is STA-timed)
