@@ -119,8 +119,11 @@ module mcr68_video (
     end
     always_ff @(posedge clk) sprram_rq <= sprram[{1'b0, sprram_raddr}];
 
-    // palette 64 x 9
-    logic [8:0] palette [0:63] /*verilator public_flat_rd*/;
+    // palette 64 x 9 - forced to logic: a 64-entry table is cheap as
+    // registers+mux, and an inferred M10K here drew a read-during-write
+    // feed-through Critical Warning (read port sampled under ce_pix), i.e.
+    // exactly the kind of ambiguity that returns zeros = black screen.
+    (* ramstyle = "logic" *) logic [8:0] palette [0:63] /*verilator public_flat_rd*/;
     always_ff @(posedge clk) if (pal_we) palette[pal_addr] <= pal_din;
 
     // bg tile ROM: 32K x 16 = 64KB. word addr {half, code[10:0], row[2:0]}
