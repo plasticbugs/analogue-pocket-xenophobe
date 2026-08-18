@@ -1067,8 +1067,8 @@ module core_top
     reg        mrdone_q;
     always @(posedge clk_sys) begin
         mrdone_q <= main_rom_done;
-        if (main_rom_done && !mrdone_q && main_rom_addr[17:2] == 16'd0) begin
-            case (main_rom_addr[1:0])
+        if (main_rom_done && !mrdone_q && main_rom_addr[17:3] == 15'd0) begin
+            case (main_rom_addr[2:1])
                 2'd0: begin rv0 <= main_rom_q; rv_got[0] <= 1'b1; end
                 2'd1: begin rv1 <= main_rom_q; rv_got[1] <= 1'b1; end
                 2'd2: begin rv2 <= main_rom_q; rv_got[2] <= 1'b1; end
