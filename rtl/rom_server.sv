@@ -51,14 +51,21 @@ module rom_server (
     output logic        rd1_done
 );
 
-    typedef enum logic [2:0] {IDLE, WAIT_BUSY, WAIT_DONE, BWAIT_BUSY, BWAIT_DONE} st_e;
+    // Handshake note: sdram16 has a same-address read cache - re-reading the
+    // previously read word leaves `ready` HIGH and starts no bus cycle. Any
+    // handshake that waits for a ready edge deadlocks there (and both CPUs
+    // stall forever on DTACK). So this is level-based: pulse the request,
+    // then accept data once ready is high and enough cycles have passed for
+    // a real access to have cleared it. A timeout re-issues rather than hangs.
+    typedef enum logic [1:0] {IDLE, RD_WAIT, BWAIT} st_e;
     st_e  st;
     logic cur;                        // which CPU client
-    logic ready_q, bready_q;
+    logic [8:0] wcnt;
+
+    wire [24:0] a_main = {7'b0, rd0_addr, 1'b0};            // 0x00000..0x3FFFE
+    wire [24:0] a_snd  = {6'b0, 1'b1, rd1_addr, 1'b0};      // 0x40000..0x7FFFE
 
     always_ff @(posedge clk) begin
-        ready_q <= sd_ready;
-        bready_q <= sd_bready;
         if (reset) begin
             st <= IDLE; sd_we <= 1'b0; sd_rd <= 1'b0; sd_brd <= 1'b0;
             rd0_done <= 1'b0; rd1_done <= 1'b0; spr_done <= 1'b0;
@@ -78,47 +85,58 @@ module rom_server (
                 case (st)
                     IDLE: begin
                         sd_we <= 1'b0;
+                        sd_rd <= 1'b0;
+                        sd_brd <= 1'b0;
+                        wcnt <= '0;
                         if (spr_req && !spr_done) begin
                             sd_baddr <= spr_baddr;
                             sd_brd <= 1'b1;
-                            st <= BWAIT_BUSY;
+                            st <= BWAIT;
                         end else if (rd0_req && !rd0_done) begin
                             cur <= 1'b0;
-                            sd_addr <= {7'b0, rd0_addr, 1'b0};
+                            sd_addr <= a_main;
                             sd_rd <= 1'b1;
-                            st <= WAIT_BUSY;
+                            st <= RD_WAIT;
                         end else if (rd1_req && !rd1_done) begin
                             cur <= 1'b1;
-                            sd_addr <= {6'b0, 1'b1, rd1_addr, 1'b0};  // +0x40000
+                            sd_addr <= a_snd;
                             sd_rd <= 1'b1;
-                            st <= WAIT_BUSY;
+                            st <= RD_WAIT;
                         end
                     end
-                    WAIT_BUSY: if (!sd_ready) begin      // controller accepted
-                        sd_rd <= 1'b0;
-                        st <= WAIT_DONE;
+
+                    RD_WAIT: begin
+                        sd_rd <= 1'b0;             // single-cycle request pulse
+                        wcnt  <= wcnt + 1'd1;
+                        if (wcnt >= 9'd2 && sd_ready) begin
+                            // 68k byte order: even byte (sdram bits 7:0) -> D15:8
+                            if (!cur) begin
+                                rd0_q <= {sd_dout16[7:0], sd_dout16[15:8]};
+                                rd0_done <= 1'b1;
+                            end else begin
+                                rd1_q <= {sd_dout16[7:0], sd_dout16[15:8]};
+                                rd1_done <= 1'b1;
+                            end
+                            st <= IDLE;
+                        end else if (wcnt == 9'd400) begin
+                            sd_rd <= 1'b1;         // recovery: re-issue
+                            wcnt  <= '0;
+                        end
                     end
-                    BWAIT_BUSY: if (!sd_bready) begin
+
+                    BWAIT: begin
                         sd_brd <= 1'b0;
-                        st <= BWAIT_DONE;
-                    end
-                    BWAIT_DONE: if (sd_bready && !bready_q) begin
-                        spr_data <= sd_bdata;
-                        spr_done <= 1'b1;
-                        st <= IDLE;
-                    end
-                    WAIT_DONE: if (sd_ready && !ready_q) begin
-                        // 68k byte order: even byte (bits 7:0 in sdram) -> D15:8
-                        if (!cur) begin
-                            rd0_q <= {sd_dout16[7:0], sd_dout16[15:8]};
-                            rd0_done <= 1'b1;
-                        end else begin
-                            rd1_q <= {sd_dout16[7:0], sd_dout16[15:8]};
-                            rd1_done <= 1'b1;
+                        wcnt   <= wcnt + 1'd1;
+                        if (wcnt >= 9'd2 && sd_bready) begin
+                            spr_data <= sd_bdata;
+                            spr_done <= 1'b1;
+                            st <= IDLE;
+                        end else if (wcnt == 9'd400) begin
+                            sd_brd <= 1'b1;
+                            wcnt   <= '0;
                         end
-                        st <= IDLE;
                     end
-                endcase
+                                endcase
             end
         end
     end

@@ -39,6 +39,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*0:0*/ tb_system__DOT__tog_s;
         CData/*0:0*/ tb_system__DOT__s_phi1;
         CData/*0:0*/ tb_system__DOT__s_phi2;
+        CData/*0:0*/ tb_system__DOT__mrom_req;
+        CData/*0:0*/ tb_system__DOT__mrom_ack;
+        CData/*0:0*/ tb_system__DOT__srom_req;
+        CData/*0:0*/ tb_system__DOT__srom_ack;
         CData/*1:0*/ tb_system__DOT__vram_we;
         CData/*1:0*/ tb_system__DOT__sprram_we;
         CData/*0:0*/ tb_system__DOT__hsync_pulse;
@@ -82,12 +86,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*0:0*/ tb_system__DOT__main_board__DOT__sel_in0;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__sel_in1;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__sel_dsw;
+    };
+    struct {
         CData/*0:0*/ tb_system__DOT__main_board__DOT__wr_q;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__ptm_irq;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__ptm_cs_q;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__ptm_stb;
-    };
-    struct {
         CData/*7:0*/ tb_system__DOT__main_board__DOT____Vcellinp__ptm__din;
         CData/*3:0*/ tb_system__DOT__main_board__DOT__wdt_cnt;
         CData/*0:0*/ tb_system__DOT__main_board__DOT__irq493;
@@ -119,11 +123,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*2:0*/ tb_system__DOT__video__DOT__sp_fetch_cnt;
         CData/*5:0*/ tb_system__DOT__video__DOT__sp_px;
         CData/*0:0*/ tb_system__DOT__video__DOT__yt_hit;
-        CData/*3:0*/ tb_system__DOT__video__DOT__sp_pen_v;
         CData/*0:0*/ tb_system__DOT__video__DOT__sp_blend_go;
         CData/*7:0*/ tb_system__DOT__video__DOT__sp_wr_data;
         CData/*7:0*/ tb_system__DOT__video__DOT__sp_bq_lo;
         CData/*7:0*/ tb_system__DOT__video__DOT__sp_bq_hi;
+        CData/*0:0*/ tb_system__DOT__video__DOT__sp_bv_lo;
+        CData/*0:0*/ tb_system__DOT__video__DOT__sp_bv_hi;
         CData/*0:0*/ tb_system__DOT__video__DOT__de_d;
         CData/*0:0*/ tb_system__DOT__video__DOT__hs_d;
         CData/*0:0*/ tb_system__DOT__video__DOT__vs_d;
@@ -131,8 +136,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*7:0*/ tb_system__DOT__video__DOT__unnamedblk3__DOT__lo;
         CData/*7:0*/ tb_system__DOT__video__DOT__unnamedblk3__DOT__hi;
         CData/*2:0*/ tb_system__DOT__rom_srv__DOT__st;
+        CData/*0:0*/ tb_system__DOT__rom_srv__DOT__cur;
         CData/*0:0*/ tb_system__DOT__rom_srv__DOT__ready_q;
         CData/*0:0*/ tb_system__DOT__rom_srv__DOT__bready_q;
+        CData/*0:0*/ tb_system__DOT__sdram_chip__DOT__row_active;
         CData/*0:0*/ tb_system__DOT__sdram_chip__DOT__pipe_v1;
         CData/*0:0*/ tb_system__DOT__sdram_chip__DOT__dq_oe;
         CData/*2:0*/ tb_system__DOT__sdram16__DOT__command;
@@ -145,6 +152,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*2:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay;
         CData/*2:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
         CData/*7:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
+    };
+    struct {
         CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
         CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
         CData/*0:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
@@ -152,9 +161,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         CData/*7:0*/ __VdfgRegularize_hebeb780c_0_6;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_15;
         CData/*0:0*/ __Vdly__tb_system__DOT__ce_div;
-    };
-    struct {
         CData/*0:0*/ __Vdly__tb_system__DOT__video__DOT__field;
+        CData/*0:0*/ __Vdly__tb_system__DOT__mrom_ack;
+        CData/*0:0*/ __Vdly__tb_system__DOT__srom_ack;
         CData/*0:0*/ __VstlDidInit;
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __VstlPhaseResult;
@@ -175,6 +184,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         VL_IN16(dsw,15,0);
         VL_OUT16(ctrl,15,0);
         VL_OUT16(dac,9,0);
+        SData/*15:0*/ tb_system__DOT__mrom_q;
+        SData/*15:0*/ tb_system__DOT__srom_q;
         SData/*15:0*/ tb_system__DOT__vram_q;
         SData/*15:0*/ tb_system__DOT__sprram_q;
         SData/*15:0*/ tb_system__DOT__sdq;
@@ -204,13 +215,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         SData/*10:0*/ tb_system__DOT__video__DOT__sp_xs;
         SData/*9:0*/ tb_system__DOT__video__DOT__sp_wr_addr;
         SData/*15:0*/ tb_system__DOT__video__DOT__sp_lbuf_bq;
-        SData/*9:0*/ tb_system__DOT__video__DOT__sp_rd_addr_q;
-        SData/*9:0*/ tb_system__DOT__video__DOT__sp_rd_addr;
         SData/*8:0*/ tb_system__DOT__video__DOT__rgb9;
         SData/*12:0*/ tb_system__DOT__sdram_chip__DOT__row_open;
         SData/*15:0*/ tb_system__DOT__sdram_chip__DOT__pipe_q1;
+    };
+    struct {
         SData/*15:0*/ tb_system__DOT__sdram_chip__DOT__dq_out;
         SData/*13:0*/ tb_system__DOT__sdram16__DOT__refresh_count;
+        SData/*15:0*/ tb_system__DOT__sdram16__DOT__data;
         SData/*15:0*/ tb_system__DOT__sdram16__DOT__SDRAM_DQ__out__strong__out1;
         SData/*10:0*/ __Vdly__tb_system__DOT__main_board__DOT__line_cnt;
         SData/*9:0*/ __Vdly__tb_system__DOT__video__DOT__hcnt;
@@ -218,23 +230,21 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system___024root final {
         SData/*15:0*/ __Vtrigprevexpr___TOP__in0__0;
         SData/*15:0*/ __Vtrigprevexpr___TOP__in1__0;
         SData/*15:0*/ __Vtrigprevexpr___TOP__dsw__0;
-    };
-    struct {
         IData/*16:0*/ tb_system__DOT__acc_m;
         IData/*16:0*/ tb_system__DOT__acc_s;
         IData/*20:0*/ tb_system__DOT__sd_baddr;
         VlWide<4>/*127:0*/ tb_system__DOT__sd_bdata;
         IData/*24:0*/ tb_system__DOT__sd_addr;
         VlWide<4>/*127:0*/ tb_system__DOT__spr_fetch_data;
-        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_lo;
-        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_hi;
+        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_lo0;
+        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_lo1;
+        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_hi0;
+        VlWide<16>/*511:0*/ tb_system__DOT__video__DOT__sp_claim_hi1;
         IData/*21:0*/ tb_system__DOT__sdram_chip__DOT__widx;
         IData/*24:0*/ tb_system__DOT__sdram16__DOT__save_addr;
         IData/*24:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__new_waddr;
         IData/*31:0*/ tb_system__DOT__sdram16__DOT__unnamedblk1__DOT__state;
         IData/*31:0*/ __VactIterCount;
-        VlUnpacked<SData/*15:0*/, 131072> tb_system__DOT__mrom;
-        VlUnpacked<SData/*15:0*/, 131072> tb_system__DOT__srom;
         VlUnpacked<SData/*15:0*/, 2048> tb_system__DOT__snd__DOT__ram;
         VlUnpacked<SData/*15:0*/, 8192> tb_system__DOT__main_board__DOT__ram;
         VlUnpacked<CData/*7:0*/, 3> tb_system__DOT__main_board__DOT__ptm__DOT__cr;

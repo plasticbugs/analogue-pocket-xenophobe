@@ -43,17 +43,12 @@ module tb_system (
         end
     end
 
-    // program ROMs
-    logic [15:0] mrom [0:131071];
-    logic [15:0] srom [0:131071];
-    initial begin
-        $readmemh("xeno_main.hex", mrom);
-        $readmemh("xeno_snd.hex", srom);
-    end
-    logic [17:1] mrom_addr;  logic mrom_req;
-    logic [17:1] srom_addr;  logic srom_req;
-    wire  [15:0] mrom_q = mrom[mrom_addr];
-    wire  [15:0] srom_q = srom[srom_addr];
+    // Program ROMs are served from the REAL controller path (sdram16 +
+    // behavioral chip), so CPU fetches see true latency and the actual
+    // handshake - the instant-ack arrays this bench used before could not
+    // expose controller-level bugs.
+    logic [17:1] mrom_addr;  logic mrom_req;  logic [15:0] mrom_q;  logic mrom_ack;
+    logic [17:1] srom_addr;  logic srom_req;  logic [15:0] srom_q;  logic srom_ack;
 
     // video <-> main wiring
     logic [11:0] vram_addr;  logic [15:0] vram_din, vram_q;  logic [1:0] vram_we;
@@ -95,8 +90,8 @@ module tb_system (
         .spr_baddr(21'h9000 + {7'b0, spr_fetch_addr}),
         .spr_req(spr_fetch_req), .spr_data(spr_fetch_data), .spr_done(spr_fetch_done),
         .sd_baddr(sd_baddr), .sd_brd(sd_brd), .sd_bdata(sd_bdata), .sd_bready(sd_bready),
-        .rd0_addr('0), .rd0_req(1'b0), .rd0_q(), .rd0_done(),
-        .rd1_addr('0), .rd1_req(1'b0), .rd1_q(), .rd1_done()
+        .rd0_addr(mrom_addr), .rd0_req(mrom_req), .rd0_q(mrom_q), .rd0_done(mrom_ack),
+        .rd1_addr(srom_addr), .rd1_req(srom_req), .rd1_q(srom_q), .rd1_done(srom_ack)
     );
     initial $readmemh("sdram_init.hex", sdram_chip.mem);
 
@@ -114,7 +109,7 @@ module tb_system (
 
     mcr68_main main_board (
         .clk(clk), .phi1(m_phi1), .phi2(m_phi2), .reset(reset),
-        .rom_addr(mrom_addr), .rom_req(mrom_req), .rom_q(mrom_q), .rom_ack(mrom_req),
+        .rom_addr(mrom_addr), .rom_req(mrom_req), .rom_q(mrom_q), .rom_ack(mrom_ack),
         .in0(in0), .in1(in1), .dsw(dsw), .snd_status(snd_status),
         .ctrl(ctrl),
         .vram_addr(vram_addr), .vram_din(vram_din), .vram_we(vram_we), .vram_q(vram_q),
@@ -130,7 +125,7 @@ module tb_system (
         .clk(clk), .phi1(s_phi1), .phi2(s_phi2),
         .reset(reset | ~ctrl[5]),
         .cmd_data(ctrl[3:0]), .cmd_strobe(ctrl[4]), .status(snd_status),
-        .rom_addr(srom_addr), .rom_req(srom_req), .rom_q(srom_q), .rom_ack(srom_req),
+        .rom_addr(srom_addr), .rom_req(srom_req), .rom_q(srom_q), .rom_ack(srom_ack),
         .dac(dac)
     );
 

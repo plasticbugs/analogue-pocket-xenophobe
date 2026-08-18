@@ -2183,7 +2183,7 @@ void Vtb_system_fx68k___nba_sequent__TOP__tb_system__DOT__snd__DOT__cpu__0(Vtb_s
             vlSelfRef.__PVT__rDtack = (1U & (~ ((IData)(vlSymsp->TOP.tb_system__DOT__snd__DOT__sel_ram) 
                                                 | ((IData)(vlSymsp->TOP.tb_system__DOT__snd__DOT__sel_pia) 
                                                    | ((IData)(vlSymsp->TOP.tb_system__DOT__snd__DOT__sel_rom) 
-                                                      & (IData)(vlSelfRef.__PVT__busControl__DOT__rRWn))))));
+                                                      & (IData)(vlSymsp->TOP.tb_system__DOT__srom_ack))))));
         }
         if (((IData)(vlSelfRef.__PVT__enT3) & vlSelfRef.__PVT__Nanod
              .__PVT__abd2Dcr)) {

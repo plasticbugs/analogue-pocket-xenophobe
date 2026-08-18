@@ -2421,7 +2421,7 @@ void Vtb_system_fx68k___nba_sequent__TOP__tb_system__DOT__main_board__DOT__cpu__
                                                                | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_dsw) 
                                                                   | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_pal) 
                                                                      | ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_wdt) 
-                                                                        | (((IData)(vlSelfRef.__PVT__busControl__DOT__rRWn) 
+                                                                        | (((IData)(vlSymsp->TOP.tb_system__DOT__mrom_ack) 
                                                                             & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom)) 
                                                                            | (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_ctl)))))))))))));
         }
