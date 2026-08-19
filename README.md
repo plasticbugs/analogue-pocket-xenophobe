@@ -9,7 +9,7 @@ Video is verified pixel-exact against MAME: every frozen gameplay state in
 
 ## Installing
 
-Copy `Cores`, `Platforms`, and `Assets` to the root of your Pocket's SD card,
+Copy the contents of `Cores`, `Platforms`, and `Assets` to those directories on your Pocket's SD card,
 then add the ROM as described below.
 
 ## Adding the ROM
