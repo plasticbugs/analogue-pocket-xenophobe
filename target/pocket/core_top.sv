@@ -1008,7 +1008,11 @@ module core_top
         .dbg_bus_stuck ( dbg_bus_stuck ),
         .dbg_stuck_addr( dbg_stuck_addr ),
         .dbg_unmapped  ( dbg_unmapped   ),
-        .dbg_fault_pc  ( dbg_fault_pc   )
+        .dbg_fault_pc  ( dbg_fault_pc   ),
+        .dbg_spr_overrun      ( dbg_spr_overrun      ),
+        .dbg_spr_overrun_line ( dbg_spr_overrun_line ),
+        .dbg_spr_overrun_cnt  ( dbg_spr_overrun_cnt  ),
+        .dbg_spr_wr_active    ( dbg_spr_wr_active    )
     );
 
     wire        wdt_expired;
@@ -1016,6 +1020,9 @@ module core_top
     wire        dbg_halted, dbg_bus_stuck, dbg_unmapped;
     wire [23:1] dbg_stuck_addr;
     wire [17:1] dbg_fault_pc;
+    wire        dbg_spr_overrun, dbg_spr_wr_active;
+    wire  [8:0] dbg_spr_overrun_line;
+    wire  [7:0] dbg_spr_overrun_cnt;
 
     //! ------------------------------------------------------------------
     //! DEBUG OVERLAY (bring-up build): top rows show status squares and a
@@ -1160,9 +1167,9 @@ module core_top
     end
 
     wire [7:0] dbg_stat2 = {
-        ver_done,                   // 0 whole-ROM verify finished
-        ver_ok,                     // 1 ROM matches expected checksum
-        ver_stable,                 // 2 both read passes agree
+        ver_ok,                     // 0 ROM verified good
+        ~dbg_spr_overrun,           // 1 green = sprite engine always met deadline
+        ~dbg_spr_wr_active,         // 2 green = sprite RAM never written mid-frame
         |c_pal,                     // 3 palette ever written
         c_wdt[3],                   // 4 watchdog kick activity
         ~wdt_expired,               // 5 green = watchdog healthy
@@ -1170,11 +1177,11 @@ module core_top
         ~dbg_unmapped               // 7 green = never touched an undecoded addr
     };
 
-    // Rows 3 and 4: the PROGRAM COUNTER at the moment the CPU first accessed
-    // an undecoded address - i.e. the code responsible. Full address is
-    // {row3, row4} << 1, so row3=0x50 row4=0xAA reads as PC 0xA154.
-    wire [7:0] dbg_stat3 = dbg_fault_pc[16:9];
-    wire [7:0] dbg_stat4 = dbg_fault_pc[8:1];
+    // Row 3: scanline where the sprite engine FIRST missed its deadline
+    //        (value << 1 gives the line number, 0..479).
+    // Row 4: how many lines have overrun, saturating at 255.
+    wire [7:0] dbg_stat3 = dbg_spr_overrun_line[8:1];
+    wire [7:0] dbg_stat4 = dbg_spr_overrun_cnt;
 
     wire [2:0] dbg_idx = dbg_x[8:6];
     wire       bit1 = dbg_stat [3'd7 - dbg_idx];

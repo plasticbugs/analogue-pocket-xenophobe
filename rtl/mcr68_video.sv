@@ -62,7 +62,13 @@ module mcr68_video (
     output logic        vsync30,      // one-clk pulse at start of game vblank
     output logic        hsync_pulse,  // one-clk pulse per scanline
     output logic        vblank,
-    output logic        field_o       // which 60 Hz frame of the 30 Hz pair
+    output logic        field_o,      // which 60 Hz frame of the 30 Hz pair
+
+    // bandwidth / tearing instrumentation
+    output logic        dbg_spr_overrun,      // engine missed a line deadline
+    output logic [8:0]  dbg_spr_overrun_line, // where it first happened
+    output logic [7:0]  dbg_spr_overrun_cnt,  // how often (saturating)
+    output logic        dbg_spr_wr_active     // sprite RAM written mid-frame
 );
 
     // ---------------- raster counters ----------------
@@ -472,6 +478,28 @@ module mcr68_video (
             sp_bv_lo <= lbuf_sel ? sp_claim_lo1[hcnt[8:0]] : sp_claim_lo0[hcnt[8:0]];
             sp_bv_hi <= lbuf_sel ? sp_claim_hi1[hcnt[8:0]] : sp_claim_hi0[hcnt[8:0]];
         end
+    end
+
+    // ---- instrumentation -------------------------------------------------
+    // The sprite engine has one scanline to prepare the next line. Record
+    // whether it ever fails to finish, the first line where that happened,
+    // and how often - that distinguishes "ran out of bandwidth" from other
+    // causes, and shows whether the shortfall is position-dependent.
+    // Separately, note any CPU write to sprite RAM during visible lines: this
+    // renderer reads sprite RAM live, so mid-frame edits tear, where MAME
+    // effectively snapshots the whole frame at once.
+    always_ff @(posedge clk) begin
+        if (ce_pix && hcnt == 10'd0) begin
+            if (sp_st != SP_IDLE) begin
+                if (!dbg_spr_overrun) begin
+                    dbg_spr_overrun      <= 1'b1;
+                    dbg_spr_overrun_line <= vcnt[8:0];
+                end
+                if (~&dbg_spr_overrun_cnt)
+                    dbg_spr_overrun_cnt <= dbg_spr_overrun_cnt + 1'd1;
+            end
+        end
+        if (|sprram_we && vcnt < V_VIS) dbg_spr_wr_active <= 1'b1;
     end
 
     // ---------------- compositor ----------------

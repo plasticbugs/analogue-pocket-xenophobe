@@ -52,7 +52,11 @@ module xenophobe_core (
     output logic        dbg_bus_stuck,
     output logic [23:1] dbg_stuck_addr,
     output logic        dbg_unmapped,
-    output logic [17:1] dbg_fault_pc
+    output logic [17:1] dbg_fault_pc,
+    output logic        dbg_spr_overrun,
+    output logic [8:0]  dbg_spr_overrun_line,
+    output logic [7:0]  dbg_spr_overrun_cnt,
+    output logic        dbg_spr_wr_active
 );
 
     // ---- pixel enable ----
@@ -99,7 +103,11 @@ module xenophobe_core (
         .spr_fetch_data(spr_fetch_data), .spr_fetch_done(spr_fetch_done),
         .r(r), .g(g), .b(b), .hs(hs), .vs(vs), .de(de),
         .vsync30(vsync30), .hsync_pulse(hsync_pulse), .vblank(vblank),
-        .field_o(vid_field)
+        .field_o(vid_field),
+        .dbg_spr_overrun(dbg_spr_overrun),
+        .dbg_spr_overrun_line(dbg_spr_overrun_line),
+        .dbg_spr_overrun_cnt(dbg_spr_overrun_cnt),
+        .dbg_spr_wr_active(dbg_spr_wr_active)
     );
 
     // ---- main board ----
