@@ -22,10 +22,8 @@ VL_ATTR_COLD void Vtb_video___024root___eval_static(Vtb_video___024root* vlSelf)
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__old_brd = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4578600304165187859ull);
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_brd = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4318982908502428360ull);
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 16684219290164330225ull);
-        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bissued = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14238077815905985869ull);
-        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bp0 = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 9716815474483745775ull);
-        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bp1 = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 2889274909430316832ull);
-        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bp2 = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 8186567999901532816ull);
+        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11989883020361136213ull);
+        vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 15038642756461077191ull);
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 12223611924059243838ull);
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_data = VL_SCOPED_RAND_RESET_I(8, __VscopeHash, 18424310703193263112ull);
         vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16952207318200859614ull);

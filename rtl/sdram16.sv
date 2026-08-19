@@ -106,8 +106,8 @@ module sdram16
     always @(posedge clk) begin
         reg old_we, old_rd, old_brd, new_brd;
         reg [2:0] bcol;
-        reg       bissued;
-        reg [3:0] bp0, bp1, bp2;   // {valid, dest index} travelling with data
+        reg       bphase;
+        reg [2:0] bdelay;
         reg [CAS_LATENCY:0] data_ready_delay;
 
         reg  [7:0] new_data;
@@ -172,47 +172,44 @@ module sdram16
             end
 
             STATE_BOPEN: begin
-                bcol    <= '0;
-                bissued <= 1'b0;
-                bp0     <= '0;
-                bp1     <= '0;
-                bp2     <= '0;
-                state   <= STATE_BREAD;
+                bcol   <= '0;
+                bphase <= 1'b0;
+                state  <= STATE_BREAD;
             end
 
             STATE_BREAD: begin
-                // One read issued per cycle inside the open row. The
-                // destination index travels down the pipeline WITH the valid
-                // flag, so capture can never drift out of step with issue -
-                // separate issue/capture counters were what scrambled word
-                // order on real silicon and rendered sprites mirrored.
-                if (!bissued) begin
+                // One read at a time inside the open row. This is PROVEN on
+                // hardware; issuing reads back-to-back instead (even carrying
+                // the destination index down the pipeline) reproduces the
+                // mirrored-sprite corruption, because with only one read in
+                // flight the data stays on the bus long enough for the
+                // capture to land correctly regardless of exact latency.
+                // Speed must come from the renderer, not from pipelining this.
+                if (!bphase) begin
                     command <= CMD_READ;
                     SDRAM_A <= {2'b00, (bcol == 3'd7), 1'b0, baddr[9:4], bcol};
-                    bp2     <= {1'b1, bcol};
-                    if (bcol == 3'd7) bissued <= 1'b1;
-                    else              bcol    <= bcol + 1'd1;
+                    bdelay  <= 3'b100;
+                    bphase  <= 1'b1;
                 end else begin
-                    bp2 <= '0;
-                end
-
-                bp1 <= bp2;
-                bp0 <= bp1;
-
-                if (bp0[3]) begin
-                    case (bp0[2:0])
-                        3'd0: bdata[ 15:  0] <= SDRAM_DQ;
-                        3'd1: bdata[ 31: 16] <= SDRAM_DQ;
-                        3'd2: bdata[ 47: 32] <= SDRAM_DQ;
-                        3'd3: bdata[ 63: 48] <= SDRAM_DQ;
-                        3'd4: bdata[ 79: 64] <= SDRAM_DQ;
-                        3'd5: bdata[ 95: 80] <= SDRAM_DQ;
-                        3'd6: bdata[111: 96] <= SDRAM_DQ;
-                        3'd7: bdata[127:112] <= SDRAM_DQ;
-                    endcase
-                    if (bp0[2:0] == 3'd7) begin
-                        bready <= 1'b1;
-                        state  <= STATE_IDLE_2;   // tRP after auto-precharge
+                    bdelay <= {1'b0, bdelay[2:1]};
+                    if (bdelay[0]) begin
+                        case (bcol)
+                            3'd0: bdata[ 15:  0] <= SDRAM_DQ;
+                            3'd1: bdata[ 31: 16] <= SDRAM_DQ;
+                            3'd2: bdata[ 47: 32] <= SDRAM_DQ;
+                            3'd3: bdata[ 63: 48] <= SDRAM_DQ;
+                            3'd4: bdata[ 79: 64] <= SDRAM_DQ;
+                            3'd5: bdata[ 95: 80] <= SDRAM_DQ;
+                            3'd6: bdata[111: 96] <= SDRAM_DQ;
+                            3'd7: bdata[127:112] <= SDRAM_DQ;
+                        endcase
+                        if (bcol == 3'd7) begin
+                            bready <= 1'b1;
+                            state  <= STATE_IDLE_2;
+                        end else begin
+                            bcol   <= bcol + 1'd1;
+                            bphase <= 1'b0;
+                        end
                     end
                 end
             end
