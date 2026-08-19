@@ -7,18 +7,18 @@
                 "mappings": [
                     {
                         "id": 0,
+                        "name": "Jump (Right Button)",
+                        "key": "pad_btn_a"
+                    },
+                    {
+                        "id": 1,
                         "name": "Fire",
                         "key": "pad_btn_b"
                     },
                     {
-                        "id": 1,
+                        "id": 2,
                         "name": "Action (Left Button)",
                         "key": "pad_btn_x"
-                    },
-                    {
-                        "id": 2,
-                        "name": "Jump (Right Button)",
-                        "key": "pad_btn_a"
                     },
                     {
                         "id": 3,

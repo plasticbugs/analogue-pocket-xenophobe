@@ -62,7 +62,7 @@
         ]
       },
       {
-        "name": "Demo Sounds",
+        "name": "Attract Sounds",
         "id": 13,
         "type": "list",
         "enabled": true,
@@ -104,28 +104,6 @@
             "value": "0x80"
           }
         ]
-      },
-      {
-        "name": "Debug: Sprite Single-Read",
-        "id": 20,
-        "type": "check",
-        "enabled": true,
-        "persist": false,
-        "address": "0xF1000000",
-        "defaultval": 0,
-        "mask": "0xFFFFFEFF",
-        "value": "0x00000100"
-      },
-      {
-        "name": "Debug: Show Overlay",
-        "id": 21,
-        "type": "check",
-        "enabled": true,
-        "persist": false,
-        "address": "0xF1000000",
-        "defaultval": 0,
-        "mask": "0xFFFFFDFF",
-        "value": "0x00000200"
       }
     ],
     "messages": []
