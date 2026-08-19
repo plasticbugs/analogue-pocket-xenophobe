@@ -88,8 +88,18 @@ whenever the layout changes.
 
 In the Pocket's Interact menu:
 
-- **Free Play**, **Coins per Life Unit**, **Life Unit**, **Demo Sounds**,
-  **Difficulty** — the original DIP switches.
+- **Player Position** — which of the three cabinet stations you play. The game
+  is a three-station cockpit and the stations are the three rows on screen, each
+  with its own coin slot, so your stick, buttons and coin all follow this
+  setting. Choose before inserting a coin: a credit belongs to the station it
+  was inserted into.
+- **Free Play**, **Coins per Life Unit**, **Life Unit**, **Difficulty** — the
+  original DIP switches.
+
+SW1:6 (Demo Sounds / "ATTRACT MUSIC" on the game's own option screen) is not
+exposed, because it does nothing audible: three minutes of attract mode
+recorded from MAME with the switch on and off are both pure DC, with a peak
+deviation of 0.2 from the rest level. It stays at its hardware default.
 - **Debug: Show Overlay** — off by default. Draws four rows of status squares
   across the bottom 32 scanlines (ROM verify, sprite engine overruns, watchdog,
   bus faults). Useful only when reporting a problem.
