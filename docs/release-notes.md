@@ -31,6 +31,15 @@ while here the fetch crosses SDRAM, which measured about 20% fewer DAC updates
 per second. The sound CPU now fetches through a cache -- the ROM is read-only,
 so entries can never go stale -- restoring 99.6% to 99.9% of hardware rate.
 
+**Clean audio.** Samples are now handed to the Pocket's mixer across the clock
+boundary with a proper synchroniser. The two run on different PLLs, and the
+16-bit bus was crossing between them unsynchronised, so the audio side could
+latch a mix of old and new bits -- a torn sample throws one value across the
+range, heard as clicks and static. Most cores never hit this because their
+audio only changes at the sound chip's sample rate; this one carries a filtered
+value that moves every 40 MHz cycle, so the bus was never still. Output level
+is also corrected, and now matches MAME within 3% on the same material.
+
 **Controls**
 
 | Pocket | Function |
