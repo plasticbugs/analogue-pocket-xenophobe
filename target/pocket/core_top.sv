@@ -945,9 +945,9 @@ module core_top
     //! Inputs (active low). IN0: coins/service + P1; IN1: P2 (P3 idle).
     //! Xenophobe: 8-way stick + BTN1 (fire), BTN2 (jump/action), BTN3.
     wire [15:0] xeno_in0 = ~{ 1'b0,                       // 15 unused
-                              p1_btn_b,                   // 14 BTN2
-                              p1_btn_x,                   // 13 BTN3
-                              p1_btn_a,                   // 12 BTN1 (fire)
+                              p1_btn_x,                   // 14 BTN2 = left thumb
+                              p1_btn_a,                   // 13 BTN3 = right thumb
+                              p1_btn_b,                   // 12 BTN1 = trigger
                               p1_right, p1_left, p1_down, p1_up,  // 11..8
                               1'b0,                       // 7 service mode (off)
                               svc_sw,                     // 6 service credit
@@ -959,9 +959,9 @@ module core_top
     wire [15:0] xeno_in1 = ~{ 1'b0,
                               4'b0000, 4'b0000,           // P3 idle (bits 14..8 pattern below)
                               1'b0,
-                              p2_btn_b,                   // 6 P2 BTN2
-                              p2_btn_x,                   // 5 P2 BTN3
-                              p2_btn_a,                   // 4 P2 BTN1
+                              p2_btn_x,                   // 6 P2 BTN2 = left thumb
+                              p2_btn_a,                   // 5 P2 BTN3 = right thumb
+                              p2_btn_b,                   // 4 P2 BTN1 = trigger
                               p2_right, p2_left, p2_down, p2_up }; // 3..0
 
     //! DIPs: interact switches XOR factory defaults (0 = default)

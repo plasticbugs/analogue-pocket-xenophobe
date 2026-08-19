@@ -50,6 +50,22 @@ If you have the ROMs as loose files rather than a zip:
 python3 tools/make_rom.py /path/to/romset xenophobe.rom
 ```
 
+## Controls
+
+The cabinet has an aiming joystick with a trigger plus two thumb buttons, which
+the game's own switch test calls TRIGGER and BUTTONS LEFT / RIGHT.
+
+| Pocket | Function |
+|---|---|
+| B | Fire |
+| X | Action (left button) |
+| A | Jump (right button) |
+| Select | Insert coin |
+
+There is no separate start button — the game starts when you pull the trigger
+after inserting a coin, as it did in the arcade ("SQUEEZE TRIGGER TO START
+GAME"). All buttons can be reassigned from the Pocket's Controls menu.
+
 ## Options
 
 In the Pocket's Interact menu:
