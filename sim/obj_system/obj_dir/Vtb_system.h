@@ -47,6 +47,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_system VL_NOT_FINAL : public VerilatedMod
     VL_IN16(&dsw,15,0);
     VL_OUT16(&ctrl,15,0);
     VL_OUT16(&dac,9,0);
+    VL_OUT16(&pcm,15,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.

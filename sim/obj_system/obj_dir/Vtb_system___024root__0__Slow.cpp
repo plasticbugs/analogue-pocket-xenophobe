@@ -21,6 +21,10 @@ VL_ATTR_COLD void Vtb_system___024root___eval_static(Vtb_system___024root* vlSel
         vlSelfRef.tb_system__DOT__acc_s = 0U;
         vlSelfRef.tb_system__DOT__tog_s = 0U;
         __Vinline_0__eval_static__TOP_tb_system__DOT__main_board__DOT__ptm__DOT__unnamedblk1__DOT__unnamedblk2__DOT__src = 0;
+        vlSelfRef.tb_system__DOT__audio_cond__DOT__dc_acc = 0ULL;
+        vlSelfRef.tb_system__DOT__audio_cond__DOT__lp1 = 0ULL;
+        vlSelfRef.tb_system__DOT__audio_cond__DOT__lp2 = 0ULL;
+        vlSelfRef.tb_system__DOT__audio_cond__DOT__lp3 = 0ULL;
         const uint64_t __VscopeHash = VL_MURMUR64_HASH(vlSelf->vlNamep);
         vlSelfRef.tb_system__DOT__video__DOT__unnamedblk3__DOT__idx = VL_SCOPED_RAND_RESET_I(6, __VscopeHash, 5327923038731643963ull);
         vlSelfRef.tb_system__DOT__video__DOT__unnamedblk3__DOT__lo = VL_SCOPED_RAND_RESET_I(8, __VscopeHash, 12223209200829293157ull);
@@ -213,6 +217,17 @@ VL_ATTR_COLD void Vtb_system___024root___stl_sequent__TOP__0(Vtb_system___024roo
                                               | (3U 
                                                  & ((IData)(vlSelfRef.tb_system__DOT__video__DOT__rgb9) 
                                                     >> 4U))));
+    vlSelfRef.pcm = (VL_LTS_IQQ(34, 0x0000000000007fffULL, 
+                                (0x00000003ffffffffULL 
+                                 & VL_SHIFTRS_QQI(34,34,32, vlSelfRef.tb_system__DOT__audio_cond__DOT__lp3, 0x0000000bU)))
+                      ? 0x00007fffU : (VL_GTS_IQQ(34, 0x00000003ffff8000ULL, 
+                                                  (0x00000003ffffffffULL 
+                                                   & VL_SHIFTRS_QQI(34,34,32, vlSelfRef.tb_system__DOT__audio_cond__DOT__lp3, 0x0000000bU)))
+                                        ? 0x00008000U
+                                        : (0x0000ffffU 
+                                           & (IData)(
+                                                     (0x00000003ffffffffULL 
+                                                      & VL_SHIFTRS_QQI(34,34,32, vlSelfRef.tb_system__DOT__audio_cond__DOT__lp3, 0x0000000bU))))));
     vlSelfRef.dac = (((IData)(vlSelfRef.tb_system__DOT__snd__DOT__pia__DOT__ora) 
                       << 2U) | (3U & ((IData)(vlSelfRef.tb_system__DOT__snd__DOT__pia__DOT__orb) 
                                       >> 6U)));
@@ -235,6 +250,9 @@ VL_ATTR_COLD void Vtb_system___024root___stl_sequent__TOP__0(Vtb_system___024roo
                                        - (0x000000ffU 
                                           & (IData)(vlSelfRef.tb_system__DOT__video__DOT__sprram_rq))) 
                                       << 1U))));
+    vlSelfRef.tb_system__DOT__rom_srv__DOT__wf_empty 
+        = ((IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wf_wp) 
+           == (IData)(vlSelfRef.tb_system__DOT__rom_srv__DOT__wf_rp));
     vlSelfRef.__VdfgRegularize_hebeb780c_0_15 = (0x0000001fU 
                                                  & ((IData)(vlSelfRef.tb_system__DOT__video__DOT__sp_line) 
                                                     - 
@@ -379,6 +397,9 @@ VL_ATTR_COLD void Vtb_system___024root___stl_sequent__TOP__0(Vtb_system___024roo
                                                     : 
                                                    ((IData)(tb_system__DOT__video__DOT__sp_row_w) 
                                                     >> 0x0cU))));
+    vlSelfRef.tb_system__DOT__main_board__DOT__ipl_level 
+        = ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__ptm_irq)
+            ? 2U : (1U & (- (IData)((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__irq493)))));
     vlSelfRef.snd_status = (1U & ((IData)(vlSelfRef.__VdfgRegularize_hebeb780c_0_6) 
                                   >> 4U));
     vlSelfRef.__VdfgRegularize_hebeb780c_0_0 = ((IData)(vlSelfRef.tb_system__DOT__main_board__DOT__vpa_n) 
@@ -898,6 +919,7 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->ctrl = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 10440442894316637683ull);
     vlSelf->wdt = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14173959881752473474ull);
     vlSelf->dac = VL_SCOPED_RAND_RESET_I(10, __VscopeHash, 11786998382292935251ull);
+    vlSelf->pcm = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 3914038367846259686ull);
     vlSelf->snd_status = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13995713652470280958ull);
     vlSelf->tb_system__DOT__m_phi1 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2644012631706062247ull);
     vlSelf->tb_system__DOT__m_phi2 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14242335630766919023ull);
@@ -979,6 +1001,7 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->tb_system__DOT__main_board__DOT__wdt_cnt = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 16982720508543715228ull);
     vlSelf->tb_system__DOT__main_board__DOT__line_cnt = VL_SCOPED_RAND_RESET_I(11, __VscopeHash, 1445167289189712924ull);
     vlSelf->tb_system__DOT__main_board__DOT__irq493 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7424209764758125317ull);
+    vlSelf->tb_system__DOT__main_board__DOT__ipl_level = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 120699364213595046ull);
     vlSelf->tb_system__DOT__main_board__DOT__sel_any = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18098277013387374528ull);
     for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {
         vlSelf->tb_system__DOT__main_board__DOT__ptm__DOT__cr[__Vi0] = VL_SCOPED_RAND_RESET_I(8, __VscopeHash, 11312057283436279720ull);
@@ -1078,9 +1101,19 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->tb_system__DOT__video__DOT__de_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 17839508826807321809ull);
     vlSelf->tb_system__DOT__video__DOT__hs_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 10315056890493379961ull);
     vlSelf->tb_system__DOT__video__DOT__vs_d = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6112137849318822880ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__spr_single = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2283104402006851009ull);
     vlSelf->tb_system__DOT__rom_srv__DOT__st = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 5463323251651204176ull);
     vlSelf->tb_system__DOT__rom_srv__DOT__cur = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1473323691154953446ull);
     vlSelf->tb_system__DOT__rom_srv__DOT__wcnt = VL_SCOPED_RAND_RESET_I(9, __VscopeHash, 1924194539253288179ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__sw_idx = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 2841766738371447577ull);
+    for (int __Vi0 = 0; __Vi0 < 64; ++__Vi0) {
+        vlSelf->tb_system__DOT__rom_srv__DOT__wfifo[__Vi0] = VL_SCOPED_RAND_RESET_Q(33, __VscopeHash, 6078951454042158273ull);
+    }
+    vlSelf->tb_system__DOT__rom_srv__DOT__wf_wp = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 9012619846157528849ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__wf_rp = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 16401778807654539079ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__wf_empty = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7452653365214226053ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__dl_st = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 664545591931211360ull);
+    vlSelf->tb_system__DOT__rom_srv__DOT__dl_cnt = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 2772720131022163407ull);
     for (int __Vi0 = 0; __Vi0 < 2097152; ++__Vi0) {
         vlSelf->tb_system__DOT__sdram_chip__DOT__mem[__Vi0] = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 9534511665973444821ull);
     }
@@ -1098,11 +1131,6 @@ VL_ATTR_COLD void Vtb_system___024root___ctor_var_reset(Vtb_system___024root* vl
     vlSelf->__VdfgRegularize_hebeb780c_0_0 = 0;
     vlSelf->__VdfgRegularize_hebeb780c_0_6 = 0;
     vlSelf->__VdfgRegularize_hebeb780c_0_15 = 0;
-    vlSelf->__Vdly__tb_system__DOT__ce_div = 0;
-    vlSelf->__Vdly__tb_system__DOT__main_board__DOT__line_cnt = 0;
-    vlSelf->__Vdly__tb_system__DOT__video__DOT__hcnt = 0;
-    vlSelf->__Vdly__tb_system__DOT__video__DOT__field = 0;
-    vlSelf->__Vdly__tb_system__DOT__video__DOT__vcnt = 0;
     vlSelf->__Vdly__tb_system__DOT__mrom_ack = 0;
     vlSelf->__Vdly__tb_system__DOT__srom_ack = 0;
     for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {

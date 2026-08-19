@@ -45,13 +45,10 @@ int main(int argc, char** argv) {
         tb->clk = 1; tb->eval();
         t++;
         // audio: average 40MHz DAC samples down to ~48kHz
-        acc += tb->dac; accn++;
+        accn++;
         if (accn == 833) {                        // 40e6/833 = 48019 Hz
-            int v = (int)(acc / accn);
-            dc_acc += v; dc_n++;
-            int dc = dc_n ? (int)(dc_acc / dc_n) : 512;
-            pcm.push_back((int16_t)((v - dc) * 48));
-            acc = 0; accn = 0;
+            pcm.push_back((int16_t)tb->pcm);      // already conditioned in RTL
+            accn = 0;
         }
         if (!(t & 1)) continue;
         if (tb->de) {

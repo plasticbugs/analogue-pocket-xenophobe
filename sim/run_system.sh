@@ -38,7 +38,7 @@ verilator --cc --build --exe -j 4 -O2 --no-assert-case --top-module tb_system \
     -Wno-PINMISSING -Wno-UNOPTFLAT -Wno-TIMESCALEMOD \
     -Wno-BLKANDNBLK -Wno-MULTIDRIVEN -Wno-LATCH -Wno-ALWCOMBORDER -Wno-IMPLICITSTATIC \
     -I../../rtl -I../../modules/cpu-fx68k \
-    ../tb_system.sv ../sdram_model.sv ../../rtl/mcr68_main.sv ../../rtl/mcr68_video.sv \
+    ../tb_system.sv ../sdram_model.sv ../../rtl/audio_cond.sv ../../rtl/mcr68_main.sv ../../rtl/mcr68_video.sv \
     ../../rtl/ptm6840.sv ../../rtl/sounds_good.sv ../../rtl/pia6821.sv \
     ../../rtl/sdram16.sv ../../rtl/rom_server.sv \
     ../../modules/cpu-fx68k/fx68k.sv ../../modules/cpu-fx68k/fx68kAlu.sv \

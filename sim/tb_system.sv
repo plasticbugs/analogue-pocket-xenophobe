@@ -13,6 +13,7 @@ module tb_system (
     output logic [15:0] ctrl,
     output logic wdt,
     output logic [9:0] dac,
+    output logic signed [15:0] pcm,
     output logic snd_status
 );
     logic ce_div = 0;
@@ -121,6 +122,8 @@ module tb_system (
 
     // Sounds Good, wired to the control latch like the real PCB:
     // bits 3:0 data, bit 4 strobe, bit 5 = /RESET (low = hold in reset)
+    audio_cond audio_cond (.clk(clk), .dac(dac), .snd(pcm));
+
     sounds_good snd (
         .clk(clk), .phi1(s_phi1), .phi2(s_phi2),
         .reset(reset | ~ctrl[5]),

@@ -869,10 +869,10 @@ module core_top
     // Debug DIP (Interact menu): drop sprite fetches entirely. The burst path
     // is the least-proven logic in the design, so being able to take it out of
     // circuit on real hardware isolates it in one boot.
-    wire         spr_disable   = dip_sw1[0];
-    wire         spr_req_gated = spr_fetch_req & ~spr_disable;
-    wire         spr_fetch_done = spr_disable ? spr_fetch_req : spr_srv_done;
-    wire [127:0] spr_fetch_data = spr_disable ? 128'd0 : spr_srv_data;
+    wire         spr_single    = dip_sw1[0];
+    wire         spr_req_gated  = spr_fetch_req;
+    wire         spr_fetch_done = spr_srv_done;
+    wire [127:0] spr_fetch_data = spr_srv_data;
 
     sdram16 sdram16
     (
@@ -924,6 +924,7 @@ module core_top
         .dl_data   ( ioctl_data     ),
         .dl_wr     ( cpu_load_wr    ),
         .spr_baddr ( 21'h9000 + {7'b0, spr_fetch_addr} ),
+        .spr_single( spr_single     ),
         .spr_req   ( spr_req_gated  ),
         .spr_data  ( spr_srv_data   ),
         .spr_done  ( spr_srv_done   ),
@@ -1216,17 +1217,14 @@ module core_top
     assign core_de = vde_q;
     assign video_preset = 3'd0;
 
-    //! Audio: DC-block the unsigned DAC stream (idle level is not midscale),
-    //! leaky integrator tau ~13 ms at 40 MHz
-    reg  [25:0] dc_acc = {1'b1, 25'b0};
-    wire [15:0] dac_x64 = {xdac, 6'b0};
-    wire signed [16:0] dc_diff = $signed({1'b0, dac_x64}) - $signed({1'b0, dc_acc[25:10]});
-    always @(posedge clk_sys) begin
-        dc_acc <= dc_acc + {{9{dc_diff[16]}}, dc_diff[16:0]};
-    end
-    wire signed [16:0] ac = dc_diff;   // already the AC term
-    assign core_snd_l = (ac > 17'sd32767)  ? 16'h7FFF :
-                        (ac < -17'sd32768) ? 16'h8000 : ac[15:0];
-    assign core_snd_r = core_snd_l;
+    //! Audio: DC-block and low-pass the DAC stream (see rtl/audio_cond.sv).
+    wire signed [15:0] snd_pcm;
+    audio_cond audio_cond (
+        .clk ( clk_sys ),
+        .dac ( xdac    ),
+        .snd ( snd_pcm )
+    );
+    assign core_snd_l = snd_pcm;
+    assign core_snd_r = snd_pcm;
 
 endmodule

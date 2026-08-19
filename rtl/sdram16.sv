@@ -189,7 +189,20 @@ module sdram16
                 if (bcol <= 4'd8) bcol <= bcol + 1'd1;
                 bready_delay <= {(bcol <= 4'd7), bready_delay[CAS_LATENCY:1]};
                 if (bready_delay[0]) begin
-                    bdata[bcap*16 +: 16] <= SDRAM_DQ;
+                    // explicit decode rather than a variable part-select:
+                    // Quartus has mis-synthesised indexed writes in this
+                    // design before, and a scrambled word order here shows
+                    // up as mirrored sprites
+                    case (bcap)
+                        3'd0: bdata[ 15:  0] <= SDRAM_DQ;
+                        3'd1: bdata[ 31: 16] <= SDRAM_DQ;
+                        3'd2: bdata[ 47: 32] <= SDRAM_DQ;
+                        3'd3: bdata[ 63: 48] <= SDRAM_DQ;
+                        3'd4: bdata[ 79: 64] <= SDRAM_DQ;
+                        3'd5: bdata[ 95: 80] <= SDRAM_DQ;
+                        3'd6: bdata[111: 96] <= SDRAM_DQ;
+                        3'd7: bdata[127:112] <= SDRAM_DQ;
+                    endcase
                     bcap <= bcap + 1'd1;
                     if (bcap == 3'd7) begin
                         bready <= 1'b1;

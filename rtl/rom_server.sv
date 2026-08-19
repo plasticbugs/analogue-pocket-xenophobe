@@ -28,6 +28,11 @@ module rom_server (
     input  logic [7:0]  dl_data,
     input  logic        dl_wr,         // pulse (held a few clks by data_io)
 
+    // Debug: fetch sprite rows with eight ordinary single reads instead of a
+    // burst. Single reads are proven correct (the whole-ROM verify uses them),
+    // so this isolates the burst engine on hardware.
+    input  logic        spr_single,
+
     // sprite row burst client (highest priority; 16-byte blocks)
     input  logic [24:4] spr_baddr,
     input  logic        spr_req,       // level; hold until done
@@ -57,10 +62,11 @@ module rom_server (
     // stall forever on DTACK). So this is level-based: pulse the request,
     // then accept data once ready is high and enough cycles have passed for
     // a real access to have cleared it. A timeout re-issues rather than hangs.
-    typedef enum logic [1:0] {IDLE, RD_WAIT, BWAIT} st_e;
+    typedef enum logic [1:0] {IDLE, RD_WAIT, BWAIT, SWAIT} st_e;
     st_e  st;
     logic cur;                        // which CPU client
     logic [8:0] wcnt;
+    logic [2:0] sw_idx;          // word counter for the single-read fallback
 
     wire [24:0] a_main = {7'b0, rd0_addr, 1'b0};            // 0x00000..0x3FFFE
     wire [24:0] a_snd  = {6'b0, 1'b1, rd1_addr, 1'b0};      // 0x40000..0x7FFFE
@@ -119,7 +125,14 @@ module rom_server (
                         sd_rd <= 1'b0;
                         sd_brd <= 1'b0;
                         wcnt <= '0;
-                        if (spr_req && !spr_done) begin
+                        if (spr_req && !spr_done && spr_single) begin
+                            // eight ordinary reads, word 0 first
+                            sw_idx  <= '0;
+                            sd_addr <= {spr_baddr, 4'd0};
+                            sd_rd   <= 1'b1;
+                            cur     <= 1'b0;
+                            st      <= SWAIT;
+                        end else if (spr_req && !spr_done) begin
                             sd_baddr <= spr_baddr;
                             sd_brd <= 1'b1;
                             st <= BWAIT;
@@ -151,6 +164,35 @@ module rom_server (
                             st <= IDLE;
                         end else if (wcnt == 9'd400) begin
                             sd_rd <= 1'b1;         // recovery: re-issue
+                            wcnt  <= '0;
+                        end
+                    end
+
+                    SWAIT: begin
+                        sd_rd <= 1'b0;
+                        wcnt  <= wcnt + 1'd1;
+                        if (wcnt >= 9'd2 && sd_ready) begin
+                            case (sw_idx)
+                                3'd0: spr_data[ 15:  0] <= sd_dout16;
+                                3'd1: spr_data[ 31: 16] <= sd_dout16;
+                                3'd2: spr_data[ 47: 32] <= sd_dout16;
+                                3'd3: spr_data[ 63: 48] <= sd_dout16;
+                                3'd4: spr_data[ 79: 64] <= sd_dout16;
+                                3'd5: spr_data[ 95: 80] <= sd_dout16;
+                                3'd6: spr_data[111: 96] <= sd_dout16;
+                                3'd7: spr_data[127:112] <= sd_dout16;
+                            endcase
+                            if (sw_idx == 3'd7) begin
+                                spr_done <= 1'b1;
+                                st <= IDLE;
+                            end else begin
+                                sw_idx  <= sw_idx + 1'd1;
+                                sd_addr <= {spr_baddr, 4'd0} + {sw_idx + 3'd1, 1'b0};
+                                sd_rd   <= 1'b1;
+                                wcnt    <= '0;
+                            end
+                        end else if (wcnt == 9'd400) begin
+                            sd_rd <= 1'b1;
                             wcnt  <= '0;
                         end
                     end

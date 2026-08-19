@@ -11,7 +11,7 @@ Vtb_system__Syms::Vtb_system__Syms(VerilatedContext* contextp, const char* namep
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(5771);
+    Verilated::stackCheck(5841);
     // Setup sub module instances
     TOP__tb_system__DOT__main_board__DOT__cpu.ctor(this, "tb_system.main_board.cpu");
     TOP__tb_system__DOT__snd__DOT__cpu.ctor(this, "tb_system.snd.cpu");

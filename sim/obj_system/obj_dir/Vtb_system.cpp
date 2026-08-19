@@ -24,6 +24,7 @@ Vtb_system::Vtb_system(VerilatedContext* _vcontextp__, const char* _vcname__)
     , dsw{vlSymsp->TOP.dsw}
     , ctrl{vlSymsp->TOP.ctrl}
     , dac{vlSymsp->TOP.dac}
+    , pcm{vlSymsp->TOP.pcm}
     , __PVT____024unit{vlSymsp->TOP.__PVT____024unit}
     , __PVT__tb_system__DOT__snd__DOT__cpu{vlSymsp->TOP.__PVT__tb_system__DOT__snd__DOT__cpu}
     , __PVT__tb_system__DOT__main_board__DOT__cpu{vlSymsp->TOP.__PVT__tb_system__DOT__main_board__DOT__cpu}

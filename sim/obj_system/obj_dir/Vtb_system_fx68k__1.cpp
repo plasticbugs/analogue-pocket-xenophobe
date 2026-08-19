@@ -2416,7 +2416,8 @@ void Vtb_system_fx68k___nba_sequent__TOP__tb_system__DOT__main_board__DOT__cpu__
                                                  & (IData)(vlSymsp->TOP.__VdfgRegularize_hebeb780c_0_0)) 
                                                 | (((~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom)) 
                                                     & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_any)) 
-                                                   | ((IData)(vlSymsp->TOP.tb_system__DOT__mrom_ack) 
+                                                   | (((~ (IData)(vlSelfRef.__PVT__busControl__DOT__rRWn)) 
+                                                       | (IData)(vlSymsp->TOP.tb_system__DOT__mrom_ack)) 
                                                       & (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__sel_rom))))));
         }
         if (((IData)(vlSelfRef.__PVT__enT3) & vlSelfRef.__PVT__Nanod
@@ -2477,12 +2478,18 @@ void Vtb_system_fx68k___nba_sequent__TOP__tb_system__DOT__main_board__DOT__cpu__
     if ((1U & (~ vlSelfRef.__PVT__Clks.__PVT__pwrUp))) {
         if (vlSelfRef.__PVT__Clks.__PVT__enPhi2) {
             vlSelfRef.__PVT__iIpl = vlSelfRef.__PVT__rIpl;
-            vlSelfRef.__PVT__rIpl = (7U & (~ (4U | 
-                                              ((2U 
-                                                & ((~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__ptm_irq)) 
-                                                   << 1U)) 
-                                               | (1U 
-                                                  & (~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__irq493)))))));
+            vlSelfRef.__PVT__rIpl = (7U & (~ ((4U & 
+                                               ((~ 
+                                                 ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__ipl_level) 
+                                                  >> 2U)) 
+                                                << 2U)) 
+                                              | ((2U 
+                                                  & ((~ 
+                                                      ((IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__ipl_level) 
+                                                       >> 1U)) 
+                                                     << 1U)) 
+                                                 | (1U 
+                                                    & (~ (IData)(vlSymsp->TOP.tb_system__DOT__main_board__DOT__ipl_level)))))));
         }
     }
     vlSelfRef.__PVT__sequencer__DOT__grp1Nma = 0x01c0U;
