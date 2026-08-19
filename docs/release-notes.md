@@ -17,6 +17,20 @@ wrong or corrupted romset is reported rather than silently built into a core
 that mysteriously fails to boot. `xenophobe.mra` is a standard MRA description,
 so existing arcade tooling such as pupdate works with it too.
 
+**Choose your station.** The cabinet is a three-station cockpit and the stations
+are the three rows on screen, each with its own coin slot. The new **Player
+Position** option (Left/Top, Center/Middle, Right/Bottom) sends your stick,
+buttons and coin to the station you pick. Choose before inserting a coin, since
+a credit belongs to the station it went into. With a second pad connected, it
+takes the next station along, so docked two-player still works.
+
+**Music runs at the right speed.** The Sounds Good board has no timer, so the
+sound CPU's execution rate *is* the DAC output rate: bandwidth it loses becomes
+pitch and tempo error. On the real board its ROM answers with no wait states,
+while here the fetch crosses SDRAM, which measured about 20% fewer DAC updates
+per second. The sound CPU now fetches through a cache -- the ROM is read-only,
+so entries can never go stale -- restoring 99.6% to 99.9% of hardware rate.
+
 **Controls**
 
 | Pocket | Function |
