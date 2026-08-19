@@ -77,3 +77,7 @@ _tmp
 # MAME reference sources (GPL, reference-only) and analysis outputs
 /ref/
 /artifacts/
+
+# Python bytecode
+__pycache__/
+*.pyc

@@ -22,7 +22,7 @@ reversed_rbf = bytes(REV[b] for b in data)
 
 if os.path.exists(OUT):
     shutil.rmtree(OUT)
-shutil.copytree(PKG, OUT)
+shutil.copytree(PKG, OUT, ignore=shutil.ignore_patterns('.DS_Store'))
 
 core_dir = os.path.join(OUT, "Cores", "plasticbugs.xenophobe")
 with open(os.path.join(core_dir, "bitstream.rbf_r"), "wb") as f:
