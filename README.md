@@ -7,6 +7,8 @@ Midway MCR-68000 arcade board: a 68000 main CPU with a 6840 timer, and the
 Video is verified pixel-exact against MAME: every frozen gameplay state in
 `tools/regress_video.sh` renders with zero differing pixels.
 
+https://www.youtube.com/watch?v=9imqe7zYqzw
+
 ## Installing
 
 Copy the contents of `Cores`, `Platforms`, and `Assets` to those directories on your Pocket's SD card,
