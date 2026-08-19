@@ -58,13 +58,29 @@ the game's own switch test calls TRIGGER and BUTTONS LEFT / RIGHT.
 | Pocket | Function |
 |---|---|
 | B | Fire |
-| X | Jump (right button) |
-| A | Action (left button) |
+| A | Jump (right button) |
+| X | Action (left button) |
 | Select | Insert coin |
 
 There is no separate start button — the game starts when you pull the trigger
 after inserting a coin, as it did in the arcade ("SQUEEZE TRIGGER TO START
 GAME"). All buttons can be reassigned from the Pocket's Controls menu.
+
+If you edit `input.json`, note how the Pocket resolves it, because it is not
+what the field names suggest. **List position picks the physical button, in the
+order B, A, X** (Game Boy convention, not A first); an entry whose key is
+`pad_btn_select` goes to Select. The `key` field does *not* choose the physical
+button — it names the `cont1_key` bit the core reads when that button is
+pressed. So position 2 declaring `pad_btn_x` is correct and deliberate: A sits
+in position 2 and asserts the bit `core_top` routes to the jump switch. Swapping
+two entries changes which pad does what; changing a key changes which game
+switch it fires.
+
+The Pocket also persists a per-id remap in
+`/Settings/<core>/Input/_core/input_persist.json`, binding entry **ids** to
+physical buttons. If you reuse an id whose meaning changed, that saved file
+silently overrides the default and the buttons rotate. Give entries fresh ids
+whenever the layout changes.
 
 ## Options
 

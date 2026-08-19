@@ -25,8 +25,8 @@ at xenophobe.mra instead.
 
 Controls
 * Fire: B
-* Jump (right button): X
-* Action (left button): A
+* Jump (right button): A
+* Action (left button): X
 * Insert coin: Select
 
 Select adds a coin, then Fire starts.

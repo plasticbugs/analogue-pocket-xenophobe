@@ -9,7 +9,7 @@
       "description": "Xenophobe (Bally Midway MCR-68000) arcade core",
       "author": "plasticbugs",
       "url": "https://github.com/plasticbugs/analogue-pocket-xenophobe",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "date_release": "2026-08-18"
     },
     "framework": {

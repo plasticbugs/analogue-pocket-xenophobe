@@ -22,8 +22,8 @@ so existing arcade tooling such as pupdate works with it too.
 | Pocket | Function |
 |---|---|
 | B | Fire (trigger) |
-| X | Jump (right thumb button) |
-| A | Action (left thumb button) |
+| A | Jump (right thumb button) |
+| X | Action (left thumb button) |
 | Select | Insert coin |
 
 There is no start button, exactly as on the cabinet: insert a coin, then pull
