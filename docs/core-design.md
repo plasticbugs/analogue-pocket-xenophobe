@@ -99,6 +99,33 @@ Note the copy's read alignment: `sprram_raddr` is a register, so the word for
 address k appears in `sprram_rq` **two** cycles after the counter holds k, not
 one. Getting this wrong shifts every shadow word by one entry.
 
+### Overlapping fetch with blend
+
+Measured cost per sprite was 39 clocks fetching the row from SDRAM, 32 blending
+it into the line buffer, and 3 reading attributes — about 76 serial clocks, so
+even with the pre-scan a line fit only 16 sprites. Sampling real gameplay in
+MAME (`build/sprload.lua`) found a peak of **17 sprites on one line**, and the
+frozen state captured at that moment (`build/state_busy1370.txt`) reproduced it:
+1270 clocks used, 6 overruns, 0.088% divergence from the reference renderer.
+
+So the blend engine was split from the scan/fetch FSM and given its own copy of
+what it consumes (`bl_row`, `bl_flags`, `bl_x`, `bl_px`). Sprite N+1 is scanned
+and fetched while sprite N blends, making the per-sprite cost `max(39, 32)`
+rather than the sum: ~45 clocks, about 27 sprites per line.
+
+Blends still start one at a time in scan order — `SP_HAND` waits for the
+previous blend before loading the next — so first-wins claim semantics are
+untouched. Two ordering details matter:
+
+- The blend counter lives in the same `always_ff` as the FSM so `bl_active` has
+  a single driver, and a handoff landing on the cycle `bl_px == 31` wins over
+  the auto-clear. That leaves no idle cycle between adjacent sprites.
+- `SP_DRAIN` holds the FSM until the last blend finishes, because that blend
+  outlives the scan and the next line's `SP_CLR` resets the claim bits.
+
+That state also keeps the overrun instrumentation honest: a blend still running
+at `hcnt == 0` really does delay the next line's render.
+
 ## ROM data slot
 
 Single merged file `xenophobe.rom` built by `tools/make_rom.py`:

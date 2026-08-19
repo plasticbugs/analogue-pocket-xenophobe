@@ -301,15 +301,23 @@ module mcr68_video (
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
-                              SP_FETCH, SP_BLEND, SP_COPY} sp_st_e;
+                              SP_FETCH, SP_HAND, SP_DRAIN, SP_COPY} sp_st_e;
     sp_st_e sp_st;
     logic [8:0]  sp_idx;      // sprite entry 0..511 (scanned high->low)
     logic [7:0]  sp_y, sp_flags, sp_code_lo, sp_x;
     logic [8:0]  sp_line;
     logic [2:0]  sp_fetch_cnt;
     logic [15:0] sp_row [0:3][0:1];   // 2 words per bank
-    logic [5:0]  sp_px;
     logic [8:0]  sp_clr_addr;
+
+    // Blend engine registers. The blend runs concurrently with the scan and
+    // fetch of the *next* sprite, so it needs its own copy of everything it
+    // consumes. Blends still start in scan order, one at a time, so the
+    // first-wins claim semantics are unchanged.
+    logic        bl_active;
+    logic [5:0]  bl_px;
+    logic [7:0]  bl_flags, bl_x;
+    logic [15:0] bl_row [0:3][0:1];
 
     wire [10:0] sp_code = {sp_flags[7:6], sp_flags[3], sp_code_lo};
     wire [1:0]  sp_color = ~sp_flags[1:0];
@@ -331,7 +339,7 @@ module mcr68_video (
     // So a rejection must issue {j-2} (two ahead of the entry being tested),
     // and the SP_Y_REQ re-entry cycle issues {idx-1} to establish it.
     task automatic sp_next(input logic from_scan);
-        if (sp_idx == 0) sp_st <= SP_IDLE;
+        if (sp_idx == 0) sp_st <= SP_DRAIN;
         else begin
             sp_idx <= sp_idx - 1'd1;
             shadow_raddr <= from_scan ? {sp_idx - 2'd2, 2'd0}
@@ -342,6 +350,10 @@ module mcr68_video (
 
     always_ff @(posedge clk) begin
         if (ce_pix && hcnt == 10'd0 && vcnt == V_VIS) cp_pend <= 1'b1;
+        if (bl_active) begin
+            bl_px <= bl_px + 1'd1;
+            if (bl_px == 6'd31) bl_active <= 1'b0;
+        end
         case (sp_st)
             // Start a full line ahead of the beam (hcnt==0 of the previous
             // line) so clear+scan+blend complete before the line displays.
@@ -427,14 +439,25 @@ module mcr68_video (
                             sp_row[b][w] <= {spr_fetch_data[(b*2+w)*16 +: 8],
                                              spr_fetch_data[(b*2+w)*16+8 +: 8]};
                     sp_fetch_cnt <= 3'd0;
-                    sp_px <= '0;
-                    sp_st <= SP_BLEND;
+                    sp_st <= SP_HAND;
                 end
             end
-            SP_BLEND: begin
-                sp_px <= sp_px + 1'd1;
-                if (sp_px == 6'd31) sp_next(1'b0);
+            // Hand the fetched row to the blend engine. The previous sprite's
+            // blend (32 cycles) has normally finished during this sprite's
+            // fetch (39), so this rarely waits.
+            SP_HAND: if (!bl_active || bl_px == 6'd31) begin
+                bl_active <= 1'b1;
+                bl_px     <= '0;
+                bl_flags  <= sp_flags;
+                bl_x      <= sp_x;
+                for (int b = 0; b < 4; b++)
+                    for (int w = 0; w < 2; w++)
+                        bl_row[b][w] <= sp_row[b][w];
+                sp_next(1'b0);
             end
+            // The last sprite's blend outlives the scan; it must finish before
+            // the next line's SP_CLR resets the claim bits.
+            SP_DRAIN: if (!bl_active) sp_st <= SP_IDLE;
             default: sp_st <= SP_IDLE;
         endcase
     end
@@ -445,26 +468,74 @@ module mcr68_video (
     logic [3:0]  sp_pen_v;
     always_comb begin
         unique case ({sp_px_src[4], sp_px_src[2:1]})
-            3'b000: sp_row_w = sp_row[0][0];
-            3'b001: sp_row_w = sp_row[1][0];
-            3'b010: sp_row_w = sp_row[2][0];
-            3'b011: sp_row_w = sp_row[3][0];
-            3'b100: sp_row_w = sp_row[0][1];
-            3'b101: sp_row_w = sp_row[1][1];
-            3'b110: sp_row_w = sp_row[2][1];
-            3'b111: sp_row_w = sp_row[3][1];
+            3'b000: sp_row_w = bl_row[0][0];
+            3'b001: sp_row_w = bl_row[1][0];
+            3'b010: sp_row_w = bl_row[2][0];
+            3'b011: sp_row_w = bl_row[3][0];
+            3'b100: sp_row_w = bl_row[0][1];
+            3'b101: sp_row_w = bl_row[1][1];
+            3'b110: sp_row_w = bl_row[2][1];
+            3'b111: sp_row_w = bl_row[3][1];
         endcase
         sp_pen_v = sp_px_src[3] ? (sp_px_src[0] ? sp_row_w[3:0]  : sp_row_w[7:4])
                                 : (sp_px_src[0] ? sp_row_w[11:8] : sp_row_w[15:12]);
     end
 
-    wire [5:0] sp_px_src = sp_flipx ? (6'd31 - sp_px) : sp_px;
+    wire [1:0] bl_color = ~bl_flags[1:0];
+    wire       bl_pri   = bl_flags[2];
+    wire       bl_flipx = bl_flags[4];
+    wire [5:0] sp_px_src = bl_flipx ? (6'd31 - bl_px) : bl_px;
     wire [3:0] sp_pval = sp_pen_v;
     // x = X*2 - 4, allowing wrap off the left edge (x > 0x1F0 -> x - 0x200)
-    wire signed [10:0] sp_x0 = {2'b0, sp_x, 1'b0} - 11'sd4;
+    wire signed [10:0] sp_x0 = {2'b0, bl_x, 1'b0} - 11'sd4;
     wire signed [10:0] sp_x0w = (sp_x0 > 11'sd496) ? (sp_x0 - 11'sd512) : sp_x0;
-    wire signed [10:0] sp_xs = sp_x0w + {5'b0, sp_px};
+    wire signed [10:0] sp_xs = sp_x0w + {5'b0, bl_px};
     wire        sp_xok = (sp_xs >= 0) && (sp_xs < 11'sd512);
+
+`ifdef LINETRACE
+    // Per-line sprite engine timing: cycles consumed, sprites blended, and
+    // whether the engine was still busy when the next line began.
+    integer lt_cyc = 0, lt_spr = 0, lt_maxcyc = 0, lt_maxspr = 0, lt_over = 0;
+    integer lt_busy = 0;
+    always_ff @(posedge clk) begin
+        if (sp_st != SP_IDLE && sp_st != SP_COPY) begin
+            lt_cyc = lt_cyc + 1;
+            if (bl_active && bl_px == 6'd0) lt_spr = lt_spr + 1;
+        end
+        if (ce_pix && hcnt == 10'd0) begin
+            if (sp_st != SP_IDLE && sp_st != SP_COPY) lt_over = lt_over + 1;
+            if (lt_cyc > lt_maxcyc) lt_maxcyc = lt_cyc;
+            if (lt_spr > lt_maxspr) lt_maxspr = lt_spr;
+            lt_cyc = 0; lt_spr = 0;
+        end
+    end
+    integer lt_fetch = 0, lt_fetch_tot = 0, lt_fetch_n = 0, lt_fetch_max = 0;
+    integer lt_blend_tot = 0, lt_attr_tot = 0, lt_scan_tot = 0;
+    always_ff @(posedge clk) begin
+        if (sp_st == SP_FETCH) lt_fetch = lt_fetch + 1;
+        else if (lt_fetch != 0) begin
+            lt_fetch_tot = lt_fetch_tot + lt_fetch;
+            lt_fetch_n   = lt_fetch_n + 1;
+            if (lt_fetch > lt_fetch_max) lt_fetch_max = lt_fetch;
+            lt_fetch = 0;
+        end
+        if (bl_active) lt_blend_tot = lt_blend_tot + 1;
+        if (sp_st == SP_RD_FLAGS || sp_st == SP_RD_CODE || sp_st == SP_RD_X)
+            lt_attr_tot = lt_attr_tot + 1;
+        if (sp_st == SP_Y_REQ || sp_st == SP_Y_TEST || sp_st == SP_CLR)
+            lt_scan_tot = lt_scan_tot + 1;
+        if (ce_pix && hcnt == 10'd0 && vcnt == V_VIS) begin
+            $display("LINETRACE max_cycles=%0d max_sprites=%0d overruns=%0d",
+                     lt_maxcyc, lt_maxspr, lt_over);
+            if (lt_fetch_n != 0)
+                $display("  fetch: n=%0d avg=%0d max=%0d | blend_tot=%0d attr_tot=%0d scan_tot=%0d",
+                         lt_fetch_n, lt_fetch_tot/lt_fetch_n, lt_fetch_max,
+                         lt_blend_tot, lt_attr_tot, lt_scan_tot);
+            lt_fetch_tot = 0; lt_fetch_n = 0; lt_fetch_max = 0;
+            lt_blend_tot = 0; lt_attr_tot = 0; lt_scan_tot = 0;
+        end
+    end
+`endif
 
 `ifdef CPTRACE
     integer cp_runs = 0;
@@ -481,7 +552,7 @@ module mcr68_video (
 
 `ifdef SPTRACE
     always_ff @(posedge clk)
-        if (sp_st == SP_BLEND && sp_px == 0 && sp_line == 9'd250)
+        if (bl_active && bl_px == 6'd0 && sp_line == 9'd250)
             $display("SPTRACE line=%0d idx=%0d code=%03x x=%02x y=%02x fl_col=%0d row=%0d",
                      sp_line, sp_idx, sp_code, sp_x, sp_y, sp_color, sp_rowsel);
 `endif
@@ -491,14 +562,14 @@ module mcr68_video (
     // Pen 8 claims invisibly (claim bit set, no data write -> renders as bg).
     wire [511:0] claim_lo_w = sp_wrbuf ? sp_claim_lo1 : sp_claim_lo0;
     wire [511:0] claim_hi_w = sp_wrbuf ? sp_claim_hi1 : sp_claim_hi0;
-    wire sp_claimed = sp_pri ? claim_hi_w[sp_xs[8:0]] : claim_lo_w[sp_xs[8:0]];
-    wire sp_blend_go = (sp_st == SP_BLEND) && sp_pval != 0 && sp_xok && !sp_claimed;
+    wire sp_claimed = bl_pri ? claim_hi_w[sp_xs[8:0]] : claim_lo_w[sp_xs[8:0]];
+    wire sp_blend_go = bl_active && sp_pval != 0 && sp_xok && !sp_claimed;
     always_ff @(posedge clk) begin
         if (sp_st == SP_CLR) begin
             if (sp_wrbuf) begin sp_claim_lo1 <= '0; sp_claim_hi1 <= '0; end
             else          begin sp_claim_lo0 <= '0; sp_claim_hi0 <= '0; end
         end else if (sp_blend_go) begin
-            if (sp_pri) begin
+            if (bl_pri) begin
                 if (sp_wrbuf) sp_claim_hi1[sp_xs[8:0]] <= 1'b1;
                 else          sp_claim_hi0[sp_xs[8:0]] <= 1'b1;
             end else begin
@@ -509,13 +580,13 @@ module mcr68_video (
     end
     // port A (render write; every claim writes, pen 8 writes state 2)
     wire [9:0] sp_wr_addr = {sp_wrbuf, sp_xs[8:0]};
-    wire [7:0] sp_wr_data = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, sp_color, sp_pval};
+    wire [7:0] sp_wr_data = {(sp_pval == 4'd8) ? 2'd2 : 2'd1, bl_color, sp_pval};
     always_ff @(posedge clk) begin
-        if (sp_blend_go && !sp_pri)
+        if (sp_blend_go && !bl_pri)
             sp_lbuf_lo[sp_wr_addr] <= sp_wr_data;
     end
     always_ff @(posedge clk) begin
-        if (sp_blend_go && sp_pri)
+        if (sp_blend_go && bl_pri)
             sp_lbuf_hi[sp_wr_addr] <= sp_wr_data;
     end
 
