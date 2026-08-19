@@ -104,6 +104,25 @@ module snd_icache
         end
     end
 
+`ifdef ICACHE_STATS
+    // Hit rate matters for more than speed here: a miss costs wait states, so
+    // a varying hit rate means a varying sample period, which is audible as
+    // roughness even when the average rate is correct.
+    integer hits = 0, misses = 0, rep = 0;
+    always_ff @(posedge clk) begin
+        if (st == C_LOOK) begin
+            if (tag_q[TAG_BITS] && tag_q[TAG_BITS-1:0] == fill_tag) hits <= hits + 1;
+            else misses <= misses + 1;
+        end
+        rep <= rep + 1;
+        if (rep == 32000000) begin      // ~0.8 s of 40 MHz clock
+            $display("ICACHE hits=%0d misses=%0d hit_rate=%0d%%",
+                     hits, misses, (hits+misses) ? (100*hits)/(hits+misses) : 0);
+            rep <= 0; hits <= 0; misses <= 0;
+        end
+    end
+`endif
+
 endmodule
 
 `default_nettype wire

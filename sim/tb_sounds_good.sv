@@ -64,6 +64,11 @@ module tb_sounds_good (
     assign cpu_rom_ack = rom_ack;
 `endif
 
+    // the same conditioning the core applies before the Pocket's audio stage,
+    // so captures here are what a player actually hears
+    logic signed [15:0] cond_pcm;
+    audio_cond cond (.clk(clk), .dac(dac), .snd(cond_pcm));
+
     // command transmitter replicating main-board timing (FUN_0000a476):
     // low nibble -> strobe high -> high nibble -> strobe low
     logic [3:0]  cmd_data;
