@@ -39,7 +39,9 @@ SIZE=$(wc -c < "$RBF")
 # Assemble the package: definitions from the tree, bitstream from the run.
 OUT="$STAGE/release/pocket"
 rm -rf "$OUT"; mkdir -p "$OUT"
-tar -cf - --exclude '.DS_Store' -C pkg/pocket . | tar -xf - -C "$OUT"
+# A ROM may sit in pkg/pocket/Assets locally (gitignored); never ship it.
+tar -cf - --exclude '.DS_Store' --exclude '*.rom' --exclude '*.zip' \
+    -C pkg/pocket . | tar -xf - -C "$OUT"
 cp "$RBF" "$OUT/Cores/plasticbugs.xenophobe/bitstream.rbf_r"
 for extra in xenophobe.mra README.md tools/mra_build.py; do
     [ -f "$extra" ] && cp "$extra" "$OUT/$(basename "$extra")"

@@ -22,7 +22,8 @@ reversed_rbf = bytes(REV[b] for b in data)
 
 if os.path.exists(OUT):
     shutil.rmtree(OUT)
-shutil.copytree(PKG, OUT, ignore=shutil.ignore_patterns('.DS_Store'))
+# ROMs may sit in pkg/pocket/Assets locally (gitignored); never package them.
+shutil.copytree(PKG, OUT, ignore=shutil.ignore_patterns('.DS_Store', '*.rom', '*.zip'))
 
 core_dir = os.path.join(OUT, "Cores", "plasticbugs.xenophobe")
 with open(os.path.join(core_dir, "bitstream.rbf_r"), "wb") as f:
