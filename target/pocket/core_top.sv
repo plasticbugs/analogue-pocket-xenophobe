@@ -1251,7 +1251,41 @@ module core_top
         .dac ( xdac    ),
         .snd ( snd_pcm )
     );
-    assign core_snd_l = snd_pcm;
-    assign core_snd_r = snd_pcm;
+
+    //! Hand the samples to the mixer across the clock boundary.
+    //!
+    //! audio_cond runs on clk_sys while the mixer's filter runs on audio_mclk,
+    //! PLL-derived from clk_74b. Passing a 16-bit bus between them unsynchro-
+    //! nised lets the audio side latch a mix of old and new bits, and a torn
+    //! sample is not a small error: one flipped high bit throws it across the
+    //! range, which is heard as clicks and static. Most cores get away with it
+    //! because their audio only changes at the sound chip's sample rate; ours
+    //! is a filtered value that moves every 40 MHz cycle, so the bus is
+    //! effectively never stable.
+    //!
+    //! Sample at ~48 kHz, hold, and hand over with a toggle flag: by the time
+    //! the flag survives two synchroniser stages the data has been still for
+    //! several cycles, so the capture is always of a settled value.
+    logic signed [15:0] snd_hold;
+    logic               snd_tog = 1'b0;
+    logic        [9:0]  snd_div = 10'd0;
+    always_ff @(posedge clk_sys) begin
+        snd_div <= snd_div + 1'd1;
+        if (snd_div == 10'd832) begin          // 40 MHz / 833 = 48.02 kHz
+            snd_div  <= 10'd0;
+            snd_hold <= snd_pcm;
+            snd_tog  <= ~snd_tog;
+        end
+    end
+
+    logic        [2:0]  snd_tog_s = 3'd0;
+    logic signed [15:0] snd_xfer  = 16'sd0;
+    always_ff @(posedge clk_74b) begin
+        snd_tog_s <= {snd_tog_s[1:0], snd_tog};
+        if (snd_tog_s[2] != snd_tog_s[1]) snd_xfer <= snd_hold;
+    end
+
+    assign core_snd_l = snd_xfer;
+    assign core_snd_r = snd_xfer;
 
 endmodule

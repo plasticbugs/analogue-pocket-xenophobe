@@ -23,4 +23,4 @@ verilator --binary -j 4 -O2 --no-assert-case --top-module tb_sounds_good +define
     ../../modules/cpu-fx68k/uaddrPla.sv \
     --exe ../main_sg.cpp -o tb_sg
 
-./obj_dir/tb_sg
+./obj_dir/tb_sg "$@"

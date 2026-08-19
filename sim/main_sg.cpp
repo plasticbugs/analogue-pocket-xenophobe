@@ -74,13 +74,23 @@ int main(int argc, char** argv) {
     }
     printf("boot phase: %d dac changes, %d status changes\n", dac_changes, status_changes);
 
-    // send a few command bytes, capture DAC to WAV (48 kHz, 2s per command)
-    for (uint8_t cmd : {0x01, 0x07, 0x12, 0x23}) {
+    // send a few command bytes, capture DAC to WAV (48 kHz, 2s per command).
+    // With arguments, play a single command for a longer window instead, which
+    // is what sustained music needs -- the four-command sweep cuts each tune
+    // off after two seconds.
+    std::vector<uint8_t> cmds = {0x01, 0x07, 0x12, 0x23};
+    double secs = 2.0;
+    for (int ai = 1; ai < argc; ai++) {
+        if (argv[ai][0] == '-') continue;
+        if (cmds.size() == 4 && ai == 1) { cmds.clear(); cmds.push_back((uint8_t)strtol(argv[ai], 0, 0)); }
+        else secs = atof(argv[ai]);
+    }
+    for (uint8_t cmd : cmds) {
         int before = dac_changes;
         tb->cmd = cmd; tb->cmd_send = 1; tick(); tb->cmd_send = 0;
         while (tb->busy) tick();
 
-        const int64_t WINDOW = 64'000'000;         // 2s
+        const int64_t WINDOW = (int64_t)(32'000'000 * secs);
         const int DECIM = 667;                     // 32MHz -> ~48kHz
         std::vector<int16_t> pcm;
         int64_t acc = 0; int accn = 0;
