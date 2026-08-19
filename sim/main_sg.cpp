@@ -87,10 +87,12 @@ int main(int argc, char** argv) {
         for (int64_t i = 0; i < WINDOW; i++) {
             tick();
             if (tb->dac != last_dac) { last_dac = tb->dac; dac_changes++; }
-            acc += (int16_t)tb->cond; accn++;   // conditioned; cast, it is signed
+            // point-sample, as the Pocket's mixer does. Averaging here would
+            // add smoothing the real path does not have, hiding any aliasing.
+            accn++;
             if (accn == DECIM) {
-                pcm.push_back((int16_t)(acc / DECIM));
-                acc = 0; accn = 0;
+                pcm.push_back((int16_t)tb->cond);
+                accn = 0;
             }
         }
         char name[64];

@@ -46,8 +46,13 @@ module audio_cond (
         lp3    <= lp3 + leak(lp2 - lp3, LPK);
     end
 
-    // Q16 value spans +/-1023; shift by 11 scales that to +/-32736.
-    wire signed [33:0] scaled = lp3 >>> 11;
+    // The AC term spans +/-511 codes, not +/-1023: a 10-bit DAC's swing about
+    // its midpoint is half its range. Shifting by 11 therefore only reached
+    // half of full scale, leaving the core 6 dB quieter than the hardware.
+    // Measured against MAME on the same command over the same window, our peak
+    // was 1577 against its 3255 -- a ratio of 2.06, exactly this error and
+    // nothing else. Shift by 10 so +/-511 codes map to +/-32704.
+    wire signed [33:0] scaled = lp3 >>> 10;
     assign snd = (scaled >  34'sd32767) ? 16'sh7FFF :
                  (scaled < -34'sd32768) ? 16'sh8000 : scaled[15:0];
 
