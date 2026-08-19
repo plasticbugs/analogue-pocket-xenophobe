@@ -133,13 +133,30 @@ module xenophobe_core (
                           dbg_wdt_kick, dbg_irq493, dbg_ptm_irq};
 
     // ---- Sounds Good ----
+    // The sound CPU fetches through a small cache. Its board has no timer, so
+    // its execution rate is the DAC output rate: with the ~10-cycle SDRAM
+    // fetch latency and no cache, the sound bench measures about 20% fewer DAC
+    // updates per second than with an immediate ROM, which is audible as music
+    // running slow. The ROM is read-only, so the cache needs no invalidation.
+    logic [17:1] snd_cpu_addr;
+    logic        snd_cpu_req, snd_cpu_ack;
+    logic [15:0] snd_cpu_q;
+
+    snd_icache snd_cache (
+        .clk(clk), .reset(reset),
+        .cpu_addr(snd_cpu_addr), .cpu_req(snd_cpu_req),
+        .cpu_q(snd_cpu_q),       .cpu_ack(snd_cpu_ack),
+        .rom_addr(snd_rom_addr), .rom_req(snd_rom_req),
+        .rom_q(snd_rom_q),       .rom_done(snd_rom_ack)
+    );
+
     sounds_good snd (
         .clk(clk), .phi1(s_phi1), .phi2(s_phi2),
         .reset(reset | ~control_word[5]),
         .cmd_data(control_word[3:0]), .cmd_strobe(control_word[4]),
         .status(snd_status),
-        .rom_addr(snd_rom_addr), .rom_req(snd_rom_req),
-        .rom_q(snd_rom_q), .rom_ack(snd_rom_ack),
+        .rom_addr(snd_cpu_addr), .rom_req(snd_cpu_req),
+        .rom_q(snd_cpu_q), .rom_ack(snd_cpu_ack),
         .dac(audio_dac)
     );
 

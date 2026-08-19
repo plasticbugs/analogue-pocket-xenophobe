@@ -11,6 +11,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "rom_server.sv"]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "audio_cond.sv"]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "player_route.sv"]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "snd_icache.sv"]
 
 # fx68k CPU (GPLv3, https://github.com/ijor/fx68k)
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "../modules/cpu-fx68k/fx68k.sv"]
