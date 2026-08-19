@@ -28,5 +28,13 @@ core_dir = os.path.join(OUT, "Cores", "plasticbugs.xenophobe")
 with open(os.path.join(core_dir, "bitstream.rbf_r"), "wb") as f:
     f.write(reversed_rbf)
 
+# Ship the ROM recipe and its builder alongside the core, so a downloaded
+# release contains everything needed to produce xenophobe.rom.
+for extra in ("xenophobe.mra", "README.md", os.path.join("tools", "mra_build.py")):
+    src = os.path.join(ROOT, extra)
+    if os.path.exists(src):
+        shutil.copy(src, os.path.join(OUT, os.path.basename(extra)))
+
 print(f"packaged -> {OUT}")
-print("copy the contents of that folder onto the Pocket SD card root")
+print("copy Cores/, Platforms/ and Assets/ from that folder onto the SD card root")
+print("build the ROM with:  python3 mra_build.py xenophobe.mra xenophob.zip")

@@ -1,0 +1,59 @@
+<!--
+    Xenophobe (Bally/Midway, 1987) - Analogue Pocket core ROM description.
+
+    Builds Assets/xenophobe/common/xenophobe.rom from the MAME "xenophob"
+    romset. Works with the standard MRA tooling (pupdate, mra) and with
+    tools/mra_build.py in this repo, which needs nothing but Python 3.
+
+    Layout must match rtl/rom_loader:
+      0x00000 +256K  main 68000 program   (3c/3b then 2c/2b, even bytes first)
+      0x40000 +256K  sound 68000 program  (u7/u17 then u8/u18, even bytes first)
+      0x80000  +64K  background tiles     (raw; the loader inverts, per
+                                           MAME's ROMREGION_INVERT)
+      0x90000 +256K  sprites              (raw; the loader permutes into
+                                           row-contiguous order in SDRAM)
+
+    The md5 below is the image this core was verified against, so a mismatch
+    means a bad or wrong romset rather than a silently broken build.
+-->
+<misterromdescription>
+    <name>Xenophobe</name>
+    <setname>xenophob</setname>
+    <year>1987</year>
+    <manufacturer>Bally/Midway</manufacturer>
+    <category>Arcade</category>
+    <platform>xenophobe</platform>
+    <rbf>xenophobe</rbf>
+
+    <rom index="0" zip="xenophob.zip" md5="281547af7d6d369adf65dc5452bb2803">
+        <!-- main 68000 program, 0x00000 -->
+        <interleave output="16">
+            <part name="xeno_pro.3c" crc="f44c2e60" map="10"/>
+            <part name="xeno_pro.3b" crc="01609a3b" map="01"/>
+        </interleave>
+        <interleave output="16">
+            <part name="xeno_pro.2c" crc="e45bf669" map="10"/>
+            <part name="xeno_pro.2b" crc="da5d39d5" map="01"/>
+        </interleave>
+
+        <!-- Sounds Good 68000 program, 0x40000 -->
+        <interleave output="16">
+            <part name="xeno_snd.u7"  crc="77561d15" map="10"/>
+            <part name="xeno_snd.u17" crc="837a1a71" map="01"/>
+        </interleave>
+        <interleave output="16">
+            <part name="xeno_snd.u8"  crc="6e2915c7" map="10"/>
+            <part name="xeno_snd.u18" crc="12492145" map="01"/>
+        </interleave>
+
+        <!-- background tiles, 0x80000 -->
+        <part name="xeno_bg.11d" crc="3d2cf284"/>
+        <part name="xeno_bg.12d" crc="c32288b1"/>
+
+        <!-- sprites, 0x90000 -->
+        <part name="xeno_fg.7j"  crc="b12eddb2"/>
+        <part name="xeno_fg.8j"  crc="20e682f5"/>
+        <part name="xeno_fg.9j"  crc="82fb3e09"/>
+        <part name="xeno_fg.10j" crc="6a7a3516"/>
+    </rom>
+</misterromdescription>
