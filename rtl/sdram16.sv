@@ -72,7 +72,10 @@ module sdram16
     localparam MODE                 = {3'b000, NO_WRITE_BURST, OP_MODE, CAS_LATENCY, ACCESS_TYPE, BURST_LENGTH};
 
     localparam sdram_startup_cycles = 14'd12100;// 100us, plus a little more, @ 100MHz
-    localparam cycles_per_refresh   = 14'd335;  // (64ms @ 42.95MHz)/8192
+    localparam cycles_per_refresh   = 14'd312;  // (64ms/8192) @ 40.0MHz = 7.80us
+                                                // (was 335, inherited from a
+                                                // 42.95MHz core: 7% out of spec
+                                                // here, so rows lose charge)
     localparam startup_refresh_max  = 14'b11111111111111;
 
     // SDRAM commands

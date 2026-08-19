@@ -1097,9 +1097,13 @@ module core_top
     //! as we go. A few spot checks cannot catch a controller that mishandles
     //! particular rows or banks; this exercises all of them.
     localparam [31:0] ROM_SUM_EXPECT = 32'h546a99ab;
+    //! Two passes: if both reads agree but differ from expected, the data in
+    //! SDRAM is wrong (write side). If the two passes disagree, reads are
+    //! unreliable (refresh/read side). That distinction decides where to look.
     reg [17:1] ver_addr;
-    reg [31:0] ver_sum;
-    reg        ver_busy, ver_done, ver_ok, ver_req, ver_started, dl_q;
+    reg [31:0] ver_sum, ver_sum1;
+    reg        ver_busy, ver_done, ver_ok, ver_stable, ver_req, ver_started;
+    reg        ver_pass, dl_q;
 
     always @(posedge clk_sys) begin
         if (~pll_core_locked_s) begin
@@ -1110,6 +1114,7 @@ module core_top
             if (dl_q && !ioctl_download && !ver_started) begin
                 ver_started <= 1'b1;
                 ver_busy    <= 1'b1;
+                ver_pass    <= 1'b0;
                 ver_addr    <= '0;
                 ver_sum     <= '0;
                 ver_req     <= 1'b1;
@@ -1119,9 +1124,18 @@ module core_top
                     ver_req <= 1'b0;
                 end else if (!ver_req && !main_rom_done) begin
                     if (&ver_addr) begin
-                        ver_busy <= 1'b0;
-                        ver_done <= 1'b1;
-                        ver_ok   <= (ver_sum == ROM_SUM_EXPECT);
+                        if (ver_pass == 1'b0) begin
+                            ver_sum1 <= ver_sum;      // first pass complete
+                            ver_pass <= 1'b1;
+                            ver_addr <= '0;
+                            ver_sum  <= '0;
+                            ver_req  <= 1'b1;
+                        end else begin
+                            ver_busy   <= 1'b0;
+                            ver_done   <= 1'b1;
+                            ver_ok     <= (ver_sum1 == ROM_SUM_EXPECT);
+                            ver_stable <= (ver_sum == ver_sum1);
+                        end
                     end else begin
                         ver_addr <= ver_addr + 1'd1;
                         ver_req  <= 1'b1;
@@ -1146,8 +1160,8 @@ module core_top
 
     wire [7:0] dbg_stat2 = {
         ver_done,                   // 0 whole-ROM verify finished
-        ver_ok,                     // 1 WHOLE ROM READS BACK CORRECT
-        rv_hi_ok,                   // 2 spot check at 0xA154
+        ver_ok,                     // 1 ROM matches expected checksum
+        ver_stable,                 // 2 both read passes agree
         |c_pal,                     // 3 palette ever written
         c_wdt[3],                   // 4 watchdog kick activity
         ~wdt_expired,               // 5 green = watchdog healthy

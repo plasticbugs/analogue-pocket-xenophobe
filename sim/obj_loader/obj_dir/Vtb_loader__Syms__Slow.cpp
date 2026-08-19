@@ -11,7 +11,7 @@ Vtb_loader__Syms::Vtb_loader__Syms(VerilatedContext* contextp, const char* namep
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(300);
+    Verilated::stackCheck(322);
     // Setup sub module instances
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-9);

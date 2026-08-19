@@ -65,22 +65,53 @@ module rom_server (
     wire [24:0] a_main = {7'b0, rd0_addr, 1'b0};            // 0x00000..0x3FFFE
     wire [24:0] a_snd  = {6'b0, 1'b1, rd1_addr, 1'b0};      // 0x40000..0x7FFFE
 
+    // Download writes arrive on a fixed cadence with no back-pressure, while
+    // the controller's service time varies (a refresh can delay it). Passing
+    // them straight through lets a pending write be overwritten in flight and
+    // silently lost, so buffer them and issue only when the controller is
+    // ready. 64 entries covers the worst refresh stall at the APF byte rate.
+    logic [32:0] wfifo [0:63];
+    logic [6:0]  wf_wp, wf_rp;
+    wire         wf_empty = (wf_wp == wf_rp);
+    logic        dlwr_q;
+    logic        dl_st;
+    logic [3:0]  dl_cnt;
+
     always_ff @(posedge clk) begin
         if (reset) begin
             st <= IDLE; sd_we <= 1'b0; sd_rd <= 1'b0; sd_brd <= 1'b0;
             rd0_done <= 1'b0; rd1_done <= 1'b0; spr_done <= 1'b0;
+            wf_wp <= '0; wf_rp <= '0; dl_st <= 1'b0;
         end else begin
             if (!rd0_req) rd0_done <= 1'b0;
             if (!rd1_req) rd1_done <= 1'b0;
             if (!spr_req) spr_done <= 1'b0;
 
-            if (dl_active) begin
-                // loader owns the port: pass byte writes straight through
-                sd_addr <= dl_addr;
-                sd_din  <= dl_data;
-                sd_we   <= dl_wr;
-                sd_rd   <= 1'b0;
-                st      <= IDLE;
+            dlwr_q <= dl_wr;
+            if (dl_wr && !dlwr_q) begin
+                wfifo[wf_wp[5:0]] <= {dl_addr, dl_data};
+                wf_wp <= wf_wp + 1'd1;
+            end
+
+            if (dl_active || !wf_empty) begin
+                // drain buffered download writes at the controller's pace
+                sd_rd <= 1'b0;
+                st    <= IDLE;
+                if (dl_st == 1'b0) begin
+                    sd_we <= 1'b0;
+                    if (!wf_empty && sd_ready) begin
+                        sd_addr <= wfifo[wf_rp[5:0]][32:8];
+                        sd_din  <= wfifo[wf_rp[5:0]][7:0];
+                        sd_we   <= 1'b1;
+                        wf_rp   <= wf_rp + 1'd1;
+                        dl_cnt  <= '0;
+                        dl_st   <= 1'b1;
+                    end
+                end else begin
+                    sd_we  <= 1'b0;
+                    dl_cnt <= dl_cnt + 1'd1;
+                    if (dl_cnt >= 4'd2 && sd_ready) dl_st <= 1'b0;
+                end
             end else begin
                 case (st)
                     IDLE: begin

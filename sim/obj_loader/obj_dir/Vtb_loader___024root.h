@@ -34,6 +34,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_loader___024root final {
         CData/*0:0*/ tb_loader__DOT__sd_bready;
         CData/*1:0*/ tb_loader__DOT__srv__DOT__st;
         CData/*0:0*/ tb_loader__DOT__srv__DOT__cur;
+        CData/*6:0*/ tb_loader__DOT__srv__DOT__wf_wp;
+        CData/*6:0*/ tb_loader__DOT__srv__DOT__wf_rp;
+        CData/*0:0*/ tb_loader__DOT__srv__DOT__wf_empty;
+        CData/*0:0*/ tb_loader__DOT__srv__DOT__dlwr_q;
+        CData/*0:0*/ tb_loader__DOT__srv__DOT__dl_st;
+        CData/*3:0*/ tb_loader__DOT__srv__DOT__dl_cnt;
         CData/*0:0*/ tb_loader__DOT__chip__DOT__row_active;
         CData/*0:0*/ tb_loader__DOT__chip__DOT__pipe_v1;
         CData/*0:0*/ tb_loader__DOT__chip__DOT__dq_oe;
@@ -74,14 +80,15 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_loader___024root final {
         IData/*24:0*/ tb_loader__DOT__sd_addr;
         IData/*20:0*/ tb_loader__DOT__sd_baddr;
         VlWide<4>/*127:0*/ tb_loader__DOT__sd_bdata;
+    };
+    struct {
         IData/*21:0*/ tb_loader__DOT__chip__DOT__widx;
         IData/*24:0*/ tb_loader__DOT__sdram16__DOT__save_addr;
         IData/*24:0*/ tb_loader__DOT__sdram16__DOT__unnamedblk1__DOT__new_waddr;
         IData/*31:0*/ tb_loader__DOT__sdram16__DOT__unnamedblk1__DOT__state;
         IData/*31:0*/ __VactIterCount;
+        VlUnpacked<QData/*32:0*/, 64> tb_loader__DOT__srv__DOT__wfifo;
         VlUnpacked<SData/*15:0*/, 2097152> tb_loader__DOT__chip__DOT__mem;
-    };
-    struct {
         VlUnpacked<QData/*63:0*/, 1> __VstlTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VactTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VnbaTriggered;

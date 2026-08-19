@@ -129,6 +129,9 @@ VL_ATTR_COLD bool Vtb_loader___024root___eval_phase__stl(Vtb_loader___024root* v
                         = ((0x001ffe00U & ((IData)(vlSelfRef.tb_loader__DOT__chip__DOT__row_open) 
                                            << 9U)) 
                            | (0x000001ffU & (IData)(vlSelfRef.tb_loader__DOT__a)));
+                    vlSelfRef.tb_loader__DOT__srv__DOT__wf_empty 
+                        = ((IData)(vlSelfRef.tb_loader__DOT__srv__DOT__wf_wp) 
+                           == (IData)(vlSelfRef.tb_loader__DOT__srv__DOT__wf_rp));
                     vlSelfRef.tb_loader__DOT__dq = 
                         ((IData)(vlSelfRef.tb_loader__DOT__sdram16__DOT__SDRAM_DQ__out__strong__out1) 
                          | ((IData)(vlSelfRef.tb_loader__DOT__chip__DOT__dq_out) 
@@ -192,6 +195,15 @@ VL_ATTR_COLD void Vtb_loader___024root___ctor_var_reset(Vtb_loader___024root* vl
     vlSelf->tb_loader__DOT__srv__DOT__st = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 10014543013631246417ull);
     vlSelf->tb_loader__DOT__srv__DOT__cur = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4381836364152132772ull);
     vlSelf->tb_loader__DOT__srv__DOT__wcnt = VL_SCOPED_RAND_RESET_I(9, __VscopeHash, 3265089020836940606ull);
+    for (int __Vi0 = 0; __Vi0 < 64; ++__Vi0) {
+        vlSelf->tb_loader__DOT__srv__DOT__wfifo[__Vi0] = VL_SCOPED_RAND_RESET_Q(33, __VscopeHash, 140026200676102650ull);
+    }
+    vlSelf->tb_loader__DOT__srv__DOT__wf_wp = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 8345878770909501523ull);
+    vlSelf->tb_loader__DOT__srv__DOT__wf_rp = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 9588787598815436382ull);
+    vlSelf->tb_loader__DOT__srv__DOT__wf_empty = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 111183810074506565ull);
+    vlSelf->tb_loader__DOT__srv__DOT__dlwr_q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14365572895513239058ull);
+    vlSelf->tb_loader__DOT__srv__DOT__dl_st = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3305080412555617106ull);
+    vlSelf->tb_loader__DOT__srv__DOT__dl_cnt = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 7638006696412831357ull);
     for (int __Vi0 = 0; __Vi0 < 2097152; ++__Vi0) {
         vlSelf->tb_loader__DOT__chip__DOT__mem[__Vi0] = VL_SCOPED_RAND_RESET_I(16, __VscopeHash, 5243306592898766234ull);
     }
