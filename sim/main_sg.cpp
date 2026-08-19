@@ -87,9 +87,9 @@ int main(int argc, char** argv) {
         for (int64_t i = 0; i < WINDOW; i++) {
             tick();
             if (tb->dac != last_dac) { last_dac = tb->dac; dac_changes++; }
-            acc += tb->dac; accn++;
+            acc += (int16_t)tb->cond; accn++;   // conditioned; cast, it is signed
             if (accn == DECIM) {
-                pcm.push_back((int16_t)(((acc / DECIM) - 512) * 64));
+                pcm.push_back((int16_t)(acc / DECIM));
                 acc = 0; accn = 0;
             }
         }

@@ -9,6 +9,7 @@ module tb_sounds_good (
     input  logic [7:0] cmd,       // command byte to send
     input  logic cmd_send,        // pulse: transmit cmd via nibble protocol
     output logic [9:0] dac,
+    output logic signed [15:0] cond,
     output logic status,
     output logic busy,
     output logic [23:0] dbg_addr,
@@ -66,8 +67,7 @@ module tb_sounds_good (
 
     // the same conditioning the core applies before the Pocket's audio stage,
     // so captures here are what a player actually hears
-    logic signed [15:0] cond_pcm;
-    audio_cond cond (.clk(clk), .dac(dac), .snd(cond_pcm));
+    audio_cond conditioner (.clk(clk), .dac(dac), .snd(cond));
 
     // command transmitter replicating main-board timing (FUN_0000a476):
     // low nibble -> strobe high -> high nibble -> strobe low

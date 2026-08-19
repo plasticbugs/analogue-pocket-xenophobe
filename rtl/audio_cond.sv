@@ -9,6 +9,16 @@
 //
 // Arithmetic is Q16 in 34-bit signed accumulators, so the DC shift has
 // plenty of fractional headroom.
+//
+// Every leak term truncates toward zero rather than using a plain >>>. An
+// arithmetic shift rounds toward negative infinity, so a positive difference
+// smaller than the shift truncates to zero while a negative one of the same
+// size still moves by one. In the DC blocker that asymmetry is a one-way drift
+// of about 600 DAC codes per second at 40 MHz: the tracked level walks away
+// from the real mean, the AC term grows without bound, and the output rails.
+// Measured against MAME on the same sound command, that put 33% of our output
+// energy above 13 kHz with the peak pinned at 32720, versus all of MAME's
+// energy below 2 kHz at a peak of 19073.
 
 module audio_cond (
     input  logic               clk,
@@ -24,11 +34,16 @@ module audio_cond (
     wire signed [33:0] dac_q = $signed({8'd0, dac, 16'd0});   // Q16
     wire signed [33:0] ac    = dac_q - dc_acc;
 
+    // truncate toward zero, so small differences of either sign behave alike
+    function automatic signed [33:0] leak(input signed [33:0] d, input int k);
+        leak = (d >= 0) ? (d >>> k) : -((-d) >>> k);
+    endfunction
+
     always_ff @(posedge clk) begin
-        dc_acc <= dc_acc + ((dac_q - dc_acc) >>> DCK);
-        lp1    <= lp1 + ((ac  - lp1) >>> LPK);
-        lp2    <= lp2 + ((lp1 - lp2) >>> LPK);
-        lp3    <= lp3 + ((lp2 - lp3) >>> LPK);
+        dc_acc <= dc_acc + leak(dac_q - dc_acc, DCK);
+        lp1    <= lp1 + leak(ac  - lp1, LPK);
+        lp2    <= lp2 + leak(lp1 - lp2, LPK);
+        lp3    <= lp3 + leak(lp2 - lp3, LPK);
     end
 
     // Q16 value spans +/-1023; shift by 11 scales that to +/-32736.
