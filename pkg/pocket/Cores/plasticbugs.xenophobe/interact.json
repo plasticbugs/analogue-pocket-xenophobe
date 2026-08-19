@@ -11,6 +11,30 @@
         "value": 1
       },
       {
+        "name": "Player Position",
+        "id": 15,
+        "type": "list",
+        "enabled": true,
+        "persist": true,
+        "address": "0xF1000000",
+        "defaultval": 0,
+        "mask": "0xFFFFF3FF",
+        "options": [
+          {
+            "name": "Left / Top",
+            "value": "0x000"
+          },
+          {
+            "name": "Center / Middle",
+            "value": "0x400"
+          },
+          {
+            "name": "Right / Bottom",
+            "value": "0x800"
+          }
+        ]
+      },
+      {
         "name": "Free Play",
         "id": 10,
         "type": "check",

@@ -942,27 +942,42 @@ module core_top
         .rd1_done  ( snd_rom_done   )
     );
 
-    //! Inputs (active low). IN0: coins/service + P1; IN1: P2 (P3 idle).
-    //! Xenophobe: 8-way stick + BTN1 (fire), BTN2 (jump/action), BTN3.
+    //! Inputs (active low). IN0: coins/service + station 1; IN1: stations 2/3.
+    //! Xenophobe is a three-station cockpit, one per screen row, each with its
+    //! own coin slot. player_route sends pad 1 to the station chosen in the
+    //! Interact menu, and the remaining pads to the other stations in order.
+    //! Bundle order matches in0[14:8]: BTN2, BTN3, BTN1, right, left, down, up.
+    wire [1:0] pos_sel  = dip_sw1[3:2];   // 0 = left/top, 1 = centre, 2 = right/bottom
+    wire [6:0] pad1_ctl = { p1_btn_x, p1_btn_a, p1_btn_b,
+                            p1_right, p1_left, p1_down, p1_up };
+    wire [6:0] pad2_ctl = { p2_btn_x, p2_btn_a, p2_btn_b,
+                            p2_right, p2_left, p2_down, p2_up };
+    wire [6:0] pad3_ctl = 7'b0;           // third pad not wired from the gamepad yet
+
+    wire [6:0] st_l, st_c, st_r;
+    wire       cn_l, cn_c, cn_r;
+    player_route station_mux
+    (
+        .pos_sel ( pos_sel   ),
+        .pad1    ( pad1_ctl  ), .pad2  ( pad2_ctl  ), .pad3  ( pad3_ctl ),
+        .coin1   ( p1_select ), .coin2 ( p2_select ), .coin3 ( 1'b0     ),
+        .st_l    ( st_l      ), .st_c  ( st_c      ), .st_r  ( st_r     ),
+        .cn_l    ( cn_l      ), .cn_c  ( cn_c      ), .cn_r  ( cn_r     )
+    );
+
     wire [15:0] xeno_in0 = ~{ 1'b0,                       // 15 unused
-                              p1_btn_x,                   // 14 BTN2 = left thumb
-                              p1_btn_a,                   // 13 BTN3 = right thumb
-                              p1_btn_b,                   // 12 BTN1 = trigger
-                              p1_right, p1_left, p1_down, p1_up,  // 11..8
+                              st_l,                       // 14..8 station 1
                               1'b0,                       // 7 service mode (off)
                               svc_sw,                     // 6 service credit
                               1'b0,                       // 5 tilt
                               2'b00,                      // 4:3 unused (4 = snd status, overridden in core)
-                              1'b0,                       // 2 coin3
-                              p2_select,                  // 1 coin2
-                              p1_select };                // 0 coin1
-    wire [15:0] xeno_in1 = ~{ 1'b0,
-                              4'b0000, 4'b0000,           // P3 idle (bits 14..8 pattern below)
-                              1'b0,
-                              p2_btn_x,                   // 6 P2 BTN2 = left thumb
-                              p2_btn_a,                   // 5 P2 BTN3 = right thumb
-                              p2_btn_b,                   // 4 P2 BTN1 = trigger
-                              p2_right, p2_left, p2_down, p2_up }; // 3..0
+                              cn_r,                       // 2 coin3
+                              cn_c,                       // 1 coin2
+                              cn_l };                     // 0 coin1
+    wire [15:0] xeno_in1 = ~{ 1'b0,                       // 15 unused
+                              st_r,                       // 14..8 station 3
+                              1'b0,                       // 7 unused
+                              st_c };                     // 6..0  station 2
 
     //! DIPs: interact switches XOR factory defaults (0 = default)
     wire [15:0] xeno_dsw = 16'hFF3F ^ {8'h00, dip_sw0[7:0]};
