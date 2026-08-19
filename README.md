@@ -58,8 +58,8 @@ the game's own switch test calls TRIGGER and BUTTONS LEFT / RIGHT.
 | Pocket | Function |
 |---|---|
 | B | Fire |
-| X | Action (left button) |
-| A | Jump (right button) |
+| X | Jump (right button) |
+| A | Action (left button) |
 | Select | Insert coin |
 
 There is no separate start button — the game starts when you pull the trigger

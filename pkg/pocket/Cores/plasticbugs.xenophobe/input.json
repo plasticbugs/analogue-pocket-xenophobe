@@ -12,12 +12,12 @@
                     },
                     {
                         "id": 5,
-                        "name": "Action (Left Button)",
+                        "name": "Jump (Right Button)",
                         "key": "pad_btn_x"
                     },
                     {
                         "id": 6,
-                        "name": "Jump (Right Button)",
+                        "name": "Action (Left Button)",
                         "key": "pad_btn_a"
                     },
                     {
