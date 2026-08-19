@@ -125,6 +125,25 @@ module mcr68_video (
     end
     always_ff @(posedge clk) sprram_rq <= sprram[{1'b0, sprram_raddr}];
 
+    // Sprite RAM snapshot. The renderer walks sprite RAM as the beam sweeps,
+    // so CPU edits mid-frame tear (MAME effectively snapshots the frame).
+    // Copying it during vblank removes that, and the same pass records the
+    // highest entry actually in use so the per-line scan can stop there
+    // instead of always walking all 512 - which is 40% of a line's budget.
+    // Both are pure functions of sprite RAM contents, so the bench verifies them.
+    logic [15:0] shadow [0:2047];
+    logic [10:0] shadow_raddr;
+    logic [15:0] shadow_rq;
+    logic [11:0] cp_idx;          // runs 0..2049: two extra to drain read latency
+    logic  [8:0] cp_max;
+    logic  [8:0] spr_top = 9'd511;   // pre-snapshot default: scan everything
+    logic  [7:0] cp_flags;
+    logic        cp_pend = 1'b0;
+    // sprram_raddr is a register, so the word for address k lands in
+    // sprram_rq two cycles after cp_idx==k, not one.
+    wire  [10:0] cp_w = cp_idx[10:0] - 11'd2;
+    always_ff @(posedge clk) shadow_rq <= shadow[shadow_raddr];
+
     // palette 64 x 9 - forced to logic: a 64-entry table is cheap as
     // registers+mux, and an inferred M10K here drew a read-during-write
     // feed-through Critical Warning (read port sampled under ce_pix), i.e.
@@ -282,7 +301,7 @@ module mcr68_video (
 
     typedef enum logic [3:0] {SP_IDLE, SP_CLR, SP_Y_REQ, SP_Y_TEST,
                               SP_RD_FLAGS, SP_RD_CODE, SP_RD_X,
-                              SP_FETCH, SP_BLEND} sp_st_e;
+                              SP_FETCH, SP_BLEND, SP_COPY} sp_st_e;
     sp_st_e sp_st;
     logic [8:0]  sp_idx;      // sprite entry 0..511 (scanned high->low)
     logic [7:0]  sp_y, sp_flags, sp_code_lo, sp_x;
@@ -303,7 +322,7 @@ module mcr68_video (
     wire [4:0]  sp_rowsel = sp_flipy ? ~sp_row_idx10[4:0] : sp_row_idx10[4:0];
 
     // Y-in-range test evaluated on the freshly read Y byte (sprram_rq)
-    wire [9:0]  yt_y0  = (10'd241 - {2'b0, sprram_rq[7:0]}) << 1;
+    wire [9:0]  yt_y0  = (10'd241 - {2'b0, shadow_rq[7:0]}) << 1;
     wire [9:0]  yt_row = {1'b0, sp_line} - yt_y0;
     wire        yt_hit = yt_row < 10'd32;
 
@@ -315,17 +334,38 @@ module mcr68_video (
         if (sp_idx == 0) sp_st <= SP_IDLE;
         else begin
             sp_idx <= sp_idx - 1'd1;
-            sprram_raddr <= from_scan ? {sp_idx - 2'd2, 2'd0}
+            shadow_raddr <= from_scan ? {sp_idx - 2'd2, 2'd0}
                                       : {sp_idx - 1'd1, 2'd0};
             sp_st <= from_scan ? SP_Y_TEST : SP_Y_REQ;
         end
     endtask
 
     always_ff @(posedge clk) begin
+        if (ce_pix && hcnt == 10'd0 && vcnt == V_VIS) cp_pend <= 1'b1;
         case (sp_st)
             // Start a full line ahead of the beam (hcnt==0 of the previous
             // line) so clear+scan+blend complete before the line displays.
-            SP_IDLE: if (ce_pix && hcnt == 10'd0
+            SP_COPY: begin
+                sprram_raddr <= cp_idx[10:0];
+                if (cp_idx >= 12'd2) begin
+                    shadow[cp_w] <= sprram_rq;
+                    if (cp_w[1:0] == 2'd1) cp_flags <= sprram_rq[7:0];
+                    if (cp_w[1:0] == 2'd2 && {cp_flags[3], sprram_rq[7:0]} != 9'd0)
+                        cp_max <= cp_w[10:2];
+                end
+                if (cp_idx == 12'd2049) begin
+                    spr_top <= cp_max;
+                    sp_st   <= SP_IDLE;
+                end
+                cp_idx <= cp_idx + 1'd1;
+            end
+
+            SP_IDLE: if (cp_pend) begin
+                cp_pend <= 1'b0;
+                cp_idx  <= '0;
+                cp_max  <= '0;
+                sp_st   <= SP_COPY;
+            end else if (ce_pix && hcnt == 10'd0
                          && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
                 sp_line <= (vcnt == V_TOTAL-1) ? 9'd0 : vcnt[8:0] + 9'd1;
                 sp_clr_addr <= '0;
@@ -335,40 +375,40 @@ module mcr68_video (
             SP_CLR: begin
                 // claim regs reset (in the claim block); data self-clears
                 // at the display port
-                sp_idx <= 9'd511;          // highest offs first = drawn first
-                sprram_raddr <= {9'd511, 2'd0};
+                sp_idx <= spr_top;         // highest offs first = drawn first
+                shadow_raddr <= {spr_top, 2'd0};
                 sp_st <= SP_Y_REQ;
             end
             SP_Y_REQ: begin                  // rq valid next cycle
-                sprram_raddr <= {sp_idx - 1'd1, 2'd0};   // prefetch next entry
+                shadow_raddr <= {sp_idx - 1'd1, 2'd0};   // prefetch next entry
                 sp_st <= SP_Y_TEST;
             end
             SP_Y_TEST: begin
                 // rq now holds word0 (Y) of sp_idx
                 if (yt_hit) begin
-                    sp_y <= sprram_rq[7:0];
-                    sprram_raddr <= {sp_idx, 2'd1};
+                    sp_y <= shadow_rq[7:0];
+                    shadow_raddr <= {sp_idx, 2'd1};
                     sp_st <= SP_RD_FLAGS;
                 end else
                     sp_next(1'b1);           // 1 cycle per rejected entry
             end
             SP_RD_FLAGS: begin
-                sprram_raddr <= {sp_idx, 2'd2};
+                shadow_raddr <= {sp_idx, 2'd2};
                 sp_st <= SP_RD_CODE;
             end
             SP_RD_CODE: begin
-                sp_flags <= sprram_rq[7:0];  // rq = word1
-                sprram_raddr <= {sp_idx, 2'd3};
+                sp_flags <= shadow_rq[7:0];  // rq = word1
+                shadow_raddr <= {sp_idx, 2'd3};
                 sp_st <= SP_RD_X;
             end
             SP_RD_X: begin
-                sp_code_lo <= sprram_rq[7:0]; // rq = word2
+                sp_code_lo <= shadow_rq[7:0]; // rq = word2
                 sp_st <= SP_FETCH;
                 sp_fetch_cnt <= '0;
             end
             SP_FETCH: begin
                 if (sp_fetch_cnt == 3'd0) begin
-                    sp_x <= sprram_rq[7:0];                 // rq = word3
+                    sp_x <= shadow_rq[7:0];                 // rq = word3
                     if (sp_code[8:0] == 0) sp_next(1'b0);
                     else begin
                         spr_fetch_addr <= {sp_code[8:0], sp_rowsel};
@@ -425,6 +465,19 @@ module mcr68_video (
     wire signed [10:0] sp_x0w = (sp_x0 > 11'sd496) ? (sp_x0 - 11'sd512) : sp_x0;
     wire signed [10:0] sp_xs = sp_x0w + {5'b0, sp_px};
     wire        sp_xok = (sp_xs >= 0) && (sp_xs < 11'sd512);
+
+`ifdef CPTRACE
+    integer cp_runs = 0;
+    always_ff @(posedge clk) begin
+        if (sp_st == SP_COPY && cp_idx == 12'd2049) begin
+            cp_runs = cp_runs + 1;
+            $display("CPTRACE copy#%0d done cp_max=%0d (spr_top will be %0d)",
+                     cp_runs, cp_max, cp_max);
+        end
+        if (cp_pend && sp_st != SP_IDLE)
+            $display("CPTRACE pend set while busy st=%0d", sp_st);
+    end
+`endif
 
 `ifdef SPTRACE
     always_ff @(posedge clk)

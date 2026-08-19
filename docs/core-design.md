@@ -16,7 +16,7 @@ core_top.sv (APF adapter, from msx2 scaffold)
     │   └── ram 16KB (BRAM)
     ├── mcr68_video.sv
     │   ├── vram 4KB dual-port BRAM (CPU port + render port)
-    │   ├── spriteram 2KB dual-port BRAM
+    │   ├── spriteram 2KB dual-port BRAM (+ 2KB vblank snapshot, see below)
     │   ├── palette 64×9bit (xRBG_333: [8:6]=R, [5:3]=B, [2:0]=G)
     │   ├── bg_tiles 64KB BRAM (loaded from data slot)
     │   ├── tilemap renderer       — 32×32 map of 16×16 (8×8 art, 2×2 dot-doubled)
@@ -72,6 +72,32 @@ sprites use full y resolution.
    final pixel = bg (opaque base) → low-pri sprites → bg tiles w/ category-1 (data
    bit15) → high-pri sprites, with the pen-8 mask semantics from mcr68.cpp.
 3. Palette lookup 9-bit → 8:8:8 (3→8 bit expansion) → APF RGB.
+
+### Sprite RAM snapshot and pre-scan
+
+The renderer walks sprite RAM as the beam sweeps down, so a CPU edit partway
+through a frame would be seen by lines below it but not above — visible as
+tearing. On-hardware instrumentation confirmed the game does write sprite RAM
+during visible scanlines. MAME (and therefore `tools/render_model.py`, the
+verified spec) renders a frame from one consistent state, so the renderer copies
+sprite RAM into a shadow BRAM at the start of vblank and renders from that.
+
+The copy runs at `vcnt == V_VIS` and line 0 renders at `vcnt == V_TOTAL-1`, both
+inside the same vblank, so this adds no frame of latency.
+
+The same pass records the highest entry with a non-zero 9-bit code, and the
+per-line scan starts there instead of always walking all 512 entries. That
+matters because the scan is not free: a line is 1270 clocks, a full scan costs
+512 of them, and each accepted sprite costs ~75 (38 fetch + 32 blend + ~5 entry
+read). Before the pre-scan the engine could finish ~10 sprites per line; frozen
+gameplay states contain lines needing up to 14, so the engine ran past the end
+of the line, skipped starting the next one, and rendered sprites on alternating
+lines — the "interlaced" flicker. With the pre-scan (top entry ~29 in practice)
+capacity is ~16 per line.
+
+Note the copy's read alignment: `sprram_raddr` is a register, so the word for
+address k appears in `sprram_rq` **two** cycles after the counter holds k, not
+one. Getting this wrong shifts every shadow word by one entry.
 
 ## ROM data slot
 
