@@ -105,10 +105,10 @@ module sdram16
 
     always @(posedge clk) begin
         reg old_we, old_rd, old_brd, new_brd;
-        reg [3:0] bcol;
-        reg [2:0] bcap;
+        reg [2:0] bcol;
+        reg       bphase;
+        reg [2:0] bdelay;
         reg [CAS_LATENCY:0] data_ready_delay;
-        reg [CAS_LATENCY:0] bready_delay;
 
         reg  [7:0] new_data;
         reg        new_we;
@@ -172,42 +172,43 @@ module sdram16
             end
 
             STATE_BOPEN: begin
-                bcol  <= 0;
-                bcap  <= 0;
-                state <= STATE_BREAD;
+                bcol   <= '0;
+                bphase <= 1'b0;
+                state  <= STATE_BREAD;
             end
 
             STATE_BREAD: begin
-                // pipelined reads at consecutive columns; auto-precharge on
-                // the last one. Data arrives CL2 later; capture via delay.
-                if (bcol <= 4'd7) begin
+                // One read at a time inside the already-open row, using the
+                // same CL2 capture timing as the proven single-read path.
+                // Crucially the capture index IS the column index: the old
+                // version ran separate issue/capture counters, and if those
+                // drift by a cycle on real silicon every word lands in the
+                // wrong slot (which is what mirrored sprites looked like).
+                if (!bphase) begin
                     command <= CMD_READ;
-                    // A10 (bit 10) = auto-precharge, asserted on the LAST
-                    // read of the burst so the row closes behind us
-                    SDRAM_A <= {2'b00, (bcol == 4'd7), 1'b0, baddr[9:4], bcol[2:0]};
-                end
-                if (bcol <= 4'd8) bcol <= bcol + 1'd1;
-                bready_delay <= {(bcol <= 4'd7), bready_delay[CAS_LATENCY:1]};
-                if (bready_delay[0]) begin
-                    // explicit decode rather than a variable part-select:
-                    // Quartus has mis-synthesised indexed writes in this
-                    // design before, and a scrambled word order here shows
-                    // up as mirrored sprites
-                    case (bcap)
-                        3'd0: bdata[ 15:  0] <= SDRAM_DQ;
-                        3'd1: bdata[ 31: 16] <= SDRAM_DQ;
-                        3'd2: bdata[ 47: 32] <= SDRAM_DQ;
-                        3'd3: bdata[ 63: 48] <= SDRAM_DQ;
-                        3'd4: bdata[ 79: 64] <= SDRAM_DQ;
-                        3'd5: bdata[ 95: 80] <= SDRAM_DQ;
-                        3'd6: bdata[111: 96] <= SDRAM_DQ;
-                        3'd7: bdata[127:112] <= SDRAM_DQ;
-                    endcase
-                    bcap <= bcap + 1'd1;
-                    if (bcap == 3'd7) begin
-                        bready <= 1'b1;
-                        bready_delay <= 0;
-                        state <= STATE_IDLE_2;   // tRP after auto-precharge
+                    SDRAM_A <= {2'b00, (bcol == 3'd7), 1'b0, baddr[9:4], bcol};
+                    bdelay  <= 3'b100;
+                    bphase  <= 1'b1;
+                end else begin
+                    bdelay <= {1'b0, bdelay[2:1]};
+                    if (bdelay[0]) begin
+                        case (bcol)
+                            3'd0: bdata[ 15:  0] <= SDRAM_DQ;
+                            3'd1: bdata[ 31: 16] <= SDRAM_DQ;
+                            3'd2: bdata[ 47: 32] <= SDRAM_DQ;
+                            3'd3: bdata[ 63: 48] <= SDRAM_DQ;
+                            3'd4: bdata[ 79: 64] <= SDRAM_DQ;
+                            3'd5: bdata[ 95: 80] <= SDRAM_DQ;
+                            3'd6: bdata[111: 96] <= SDRAM_DQ;
+                            3'd7: bdata[127:112] <= SDRAM_DQ;
+                        endcase
+                        if (bcol == 3'd7) begin
+                            bready <= 1'b1;
+                            state  <= STATE_IDLE_2;   // tRP after auto-precharge
+                        end else begin
+                            bcol   <= bcol + 1'd1;
+                            bphase <= 1'b0;
+                        end
                     end
                 end
             end
@@ -221,7 +222,6 @@ module sdram16
                     SDRAM_A  <= baddr[22:10];
                     SDRAM_BA <= baddr[24:23];
                     command  <= CMD_ACTIVE;
-                    bready_delay <= 0;
                     state    <= STATE_BOPEN;
                 end
                 else if(new_rd | new_we) begin

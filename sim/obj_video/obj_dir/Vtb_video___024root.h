@@ -63,9 +63,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*5:0*/ tb_video__DOT__video__DOT__unnamedblk3__DOT__idx;
         CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk3__DOT__lo;
         CData/*7:0*/ tb_video__DOT__video__DOT__unnamedblk3__DOT__hi;
-        CData/*2:0*/ tb_video__DOT__rom_server__DOT__st;
-        CData/*0:0*/ tb_video__DOT__rom_server__DOT__ready_q;
-        CData/*0:0*/ tb_video__DOT__rom_server__DOT__bready_q;
+        CData/*0:0*/ tb_video__DOT__rom_server__DOT__spr_single;
+        CData/*1:0*/ tb_video__DOT__rom_server__DOT__st;
+        CData/*2:0*/ tb_video__DOT__rom_server__DOT__sw_idx;
+        CData/*6:0*/ tb_video__DOT__rom_server__DOT__wf_wp;
+        CData/*6:0*/ tb_video__DOT__rom_server__DOT__wf_rp;
+        CData/*0:0*/ tb_video__DOT__rom_server__DOT__wf_empty;
+        CData/*0:0*/ tb_video__DOT__rom_server__DOT__dl_st;
+        CData/*3:0*/ tb_video__DOT__rom_server__DOT__dl_cnt;
         CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__row_active;
         CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__pipe_v1;
         CData/*0:0*/ tb_video__DOT__sdram_chip__DOT__dq_oe;
@@ -74,14 +79,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__old_rd;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__old_brd;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_brd;
-        CData/*3:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
-        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap;
-        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay;
-        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
-        CData/*7:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
-        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
+        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
     };
     struct {
+        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase;
+        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay;
+        CData/*2:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay;
+        CData/*7:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_data;
+        CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd;
         CData/*0:0*/ tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
         CData/*4:0*/ __VdfgRegularize_hebeb780c_0_0;
@@ -113,10 +118,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         SData/*9:0*/ tb_video__DOT__video__DOT__sp_wr_addr;
         SData/*15:0*/ tb_video__DOT__video__DOT__sp_lbuf_bq;
         SData/*8:0*/ tb_video__DOT__video__DOT__rgb9;
+        SData/*8:0*/ tb_video__DOT__rom_server__DOT__wcnt;
         SData/*12:0*/ tb_video__DOT__sdram_chip__DOT__row_open;
         SData/*15:0*/ tb_video__DOT__sdram_chip__DOT__pipe_q1;
         SData/*15:0*/ tb_video__DOT__sdram_chip__DOT__dq_out;
         SData/*13:0*/ tb_video__DOT__sdram16__DOT__refresh_count;
+        SData/*15:0*/ tb_video__DOT__sdram16__DOT__data;
         SData/*15:0*/ tb_video__DOT__sdram16__DOT__SDRAM_DQ__out__strong__out1;
         IData/*20:0*/ tb_video__DOT__sd_baddr;
         VlWide<4>/*127:0*/ tb_video__DOT__sd_bdata;
@@ -139,6 +146,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_video___024root final {
         VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_lo;
         VlUnpacked<CData/*7:0*/, 1024> tb_video__DOT__video__DOT__sp_lbuf_hi;
         VlUnpacked<VlUnpacked<SData/*15:0*/, 2>, 4> tb_video__DOT__video__DOT__sp_row;
+    };
+    struct {
+        VlUnpacked<QData/*32:0*/, 64> tb_video__DOT__rom_server__DOT__wfifo;
         VlUnpacked<SData/*15:0*/, 2097152> tb_video__DOT__sdram_chip__DOT__mem;
         VlUnpacked<QData/*63:0*/, 1> __VstlTriggered;
         VlUnpacked<QData/*63:0*/, 1> __VactTriggered;

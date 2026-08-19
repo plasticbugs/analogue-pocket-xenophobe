@@ -106,7 +106,7 @@
                 ]
             },
             {
-                "name": "Debug: Disable Sprite Fetch",
+                "name": "Debug: Sprite Single-Read",
                 "id": 20,
                 "type": "check",
                 "enabled": true,
@@ -115,6 +115,17 @@
                 "defaultval": 0,
                 "mask": "0xFFFFFEFF",
                 "value": "0x00000100"
+            },
+            {
+                "name": "Debug: Hide Overlay",
+                "id": 21,
+                "type": "check",
+                "enabled": true,
+                "persist": false,
+                "address": "0xF1000000",
+                "defaultval": 0,
+                "mask": "0xFFFFFDFF",
+                "value": "0x00000200"
             }
         ],
         "messages": []

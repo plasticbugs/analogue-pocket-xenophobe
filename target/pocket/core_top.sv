@@ -1181,11 +1181,14 @@ module core_top
     wire       bit2 = dbg_stat2[3'd7 - dbg_idx];
     wire       bit3 = dbg_stat3[3'd7 - dbg_idx];
     wire       bit4 = dbg_stat4[3'd7 - dbg_idx];
-    wire       in_row1 = (dbg_y < 10'd16);
-    wire       in_row2 = (dbg_y >= 10'd16 && dbg_y < 10'd32);
-    wire       in_row3 = (dbg_y >= 10'd32 && dbg_y < 10'd48);
-    wire       in_row4 = (dbg_y >= 10'd48 && dbg_y < 10'd64);
-    wire       in_grad = (dbg_y >= 10'd64 && dbg_y < 10'd80);
+    // Overlay lives on the last 32 scanlines so it stays clear of the play
+    // field, and can be hidden entirely from the Interact menu.
+    wire       dbg_hide = dip_sw1[1];
+    wire       in_row1 = !dbg_hide && (dbg_y >= 10'd448 && dbg_y < 10'd456);
+    wire       in_row2 = !dbg_hide && (dbg_y >= 10'd456 && dbg_y < 10'd464);
+    wire       in_row3 = !dbg_hide && (dbg_y >= 10'd464 && dbg_y < 10'd472);
+    wire       in_row4 = !dbg_hide && (dbg_y >= 10'd472 && dbg_y < 10'd480);
+    wire       in_grad = 1'b0;
     wire       in_bits = in_row1 || in_row2 || in_row3 || in_row4;
     wire       cur_bit = in_row1 ? bit1 : in_row2 ? bit2 : in_row3 ? bit3 : bit4;
 

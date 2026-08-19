@@ -74,10 +74,16 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     __Vdly__tb_video__DOT__video__DOT__lbuf_sel = 0;
     CData/*0:0*/ __Vdly__tb_video__DOT__spr_fetch_done;
     __Vdly__tb_video__DOT__spr_fetch_done = 0;
-    CData/*2:0*/ __Vdly__tb_video__DOT__rom_server__DOT__st;
-    __Vdly__tb_video__DOT__rom_server__DOT__st = 0;
+    SData/*8:0*/ __Vdly__tb_video__DOT__rom_server__DOT__wcnt;
+    __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0;
     VlWide<4>/*127:0*/ __Vdly__tb_video__DOT__spr_fetch_data;
     VL_ZERO_W(128, __Vdly__tb_video__DOT__spr_fetch_data);
+    CData/*1:0*/ __Vdly__tb_video__DOT__rom_server__DOT__st;
+    __Vdly__tb_video__DOT__rom_server__DOT__st = 0;
+    CData/*2:0*/ __Vdly__tb_video__DOT__rom_server__DOT__sw_idx;
+    __Vdly__tb_video__DOT__rom_server__DOT__sw_idx = 0;
+    CData/*3:0*/ __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt;
+    __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt = 0;
     CData/*0:0*/ __Vdly__tb_video__DOT__sdram_chip__DOT__row_active;
     __Vdly__tb_video__DOT__sdram_chip__DOT__row_active = 0;
     SData/*13:0*/ __Vdly__tb_video__DOT__sdram16__DOT__refresh_count;
@@ -86,14 +92,16 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay = 0;
     CData/*0:0*/ __Vdly__tb_video__DOT__sd_ready;
     __Vdly__tb_video__DOT__sd_ready = 0;
+    SData/*15:0*/ __Vdly__tb_video__DOT__sdram16__DOT__data;
+    __Vdly__tb_video__DOT__sdram16__DOT__data = 0;
     IData/*31:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 0;
-    CData/*3:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
+    CData/*2:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol = 0;
-    CData/*2:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap;
-    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap = 0;
-    CData/*2:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
-    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay = 0;
+    CData/*0:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase;
+    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase = 0;
+    CData/*2:0*/ __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay;
+    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay = 0;
     VlWide<4>/*127:0*/ __Vdly__tb_video__DOT__sd_bdata;
     VL_ZERO_W(128, __Vdly__tb_video__DOT__sd_bdata);
     CData/*0:0*/ __Vdly__tb_video__DOT__sd_bready;
@@ -176,24 +184,30 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     __Vdly__tb_video__DOT__video__DOT__sp_px = vlSelfRef.tb_video__DOT__video__DOT__sp_px;
     __VdlySet__tb_video__DOT__video__DOT__bg_lbuf__v0 = 0U;
     __Vdly__tb_video__DOT__spr_fetch_done = vlSelfRef.tb_video__DOT__spr_fetch_done;
-    __Vdly__tb_video__DOT__rom_server__DOT__st = vlSelfRef.tb_video__DOT__rom_server__DOT__st;
+    __Vdly__tb_video__DOT__rom_server__DOT__wcnt = vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt;
     __Vdly__tb_video__DOT__spr_fetch_data[0U] = vlSelfRef.tb_video__DOT__spr_fetch_data[0U];
     __Vdly__tb_video__DOT__spr_fetch_data[1U] = vlSelfRef.tb_video__DOT__spr_fetch_data[1U];
     __Vdly__tb_video__DOT__spr_fetch_data[2U] = vlSelfRef.tb_video__DOT__spr_fetch_data[2U];
     __Vdly__tb_video__DOT__spr_fetch_data[3U] = vlSelfRef.tb_video__DOT__spr_fetch_data[3U];
+    __Vdly__tb_video__DOT__rom_server__DOT__st = vlSelfRef.tb_video__DOT__rom_server__DOT__st;
+    __Vdly__tb_video__DOT__rom_server__DOT__sw_idx 
+        = vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx;
+    __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt 
+        = vlSelfRef.tb_video__DOT__rom_server__DOT__dl_cnt;
     __Vdly__tb_video__DOT__sdram16__DOT__refresh_count 
         = vlSelfRef.tb_video__DOT__sdram16__DOT__refresh_count;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay 
         = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay;
     __Vdly__tb_video__DOT__sd_ready = vlSelfRef.tb_video__DOT__sd_ready;
+    __Vdly__tb_video__DOT__sdram16__DOT__data = vlSelfRef.tb_video__DOT__sdram16__DOT__data;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state 
         = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state;
     __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol 
         = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
-    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap 
-        = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap;
-    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay 
-        = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
+    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase 
+        = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase;
+    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay 
+        = vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay;
     __Vdly__tb_video__DOT__sd_bdata[0U] = vlSelfRef.tb_video__DOT__sd_bdata[0U];
     __Vdly__tb_video__DOT__sd_bdata[1U] = vlSelfRef.tb_video__DOT__sd_bdata[1U];
     __Vdly__tb_video__DOT__sd_bdata[2U] = vlSelfRef.tb_video__DOT__sd_bdata[2U];
@@ -551,6 +565,7 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
                  >> 1U));
     if ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__data_ready_delay))) {
         __Vdly__tb_video__DOT__sd_ready = 1U;
+        __Vdly__tb_video__DOT__sdram16__DOT__data = vlSelfRef.tb_video__DOT__sd_dq;
     }
     if (((((((((0U == vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state) 
                | (0x0000000aU == vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state)) 
@@ -596,7 +611,7 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
             __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 4U;
         } else {
             __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 3U;
-            if ((0x014fU < (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__refresh_count))) {
+            if ((0x0138U < (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__refresh_count))) {
                 __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 0x0000000aU;
                 vlSelfRef.tb_video__DOT__sdram16__DOT__command = 1U;
                 __Vdly__tb_video__DOT__sdram16__DOT__refresh_count = 0U;
@@ -604,41 +619,71 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
         }
     } else if ((0x0000000bU == vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state)) {
         __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol = 0U;
-        __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap = 0U;
+        __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase = 0U;
         __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 0x0000000cU;
     } else if ((0x0000000cU == vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state)) {
-        if ((7U >= (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
+        if (vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase) {
+            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay 
+                = (3U & ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay) 
+                         >> 1U));
+            if ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay))) {
+                if ((4U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
+                    if ((2U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
+                        __Vdly__tb_video__DOT__sd_bdata[3U] 
+                            = ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))
+                                ? ((0x0000ffffU & __Vdly__tb_video__DOT__sd_bdata[3U]) 
+                                   | ((IData)(vlSelfRef.tb_video__DOT__sd_dq) 
+                                      << 0x00000010U))
+                                : ((0xffff0000U & __Vdly__tb_video__DOT__sd_bdata[3U]) 
+                                   | (IData)(vlSelfRef.tb_video__DOT__sd_dq)));
+                    } else {
+                        __Vdly__tb_video__DOT__sd_bdata[2U] 
+                            = ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))
+                                ? ((0x0000ffffU & __Vdly__tb_video__DOT__sd_bdata[2U]) 
+                                   | ((IData)(vlSelfRef.tb_video__DOT__sd_dq) 
+                                      << 0x00000010U))
+                                : ((0xffff0000U & __Vdly__tb_video__DOT__sd_bdata[2U]) 
+                                   | (IData)(vlSelfRef.tb_video__DOT__sd_dq)));
+                    }
+                } else if ((2U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
+                    __Vdly__tb_video__DOT__sd_bdata[1U] 
+                        = ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))
+                            ? ((0x0000ffffU & __Vdly__tb_video__DOT__sd_bdata[1U]) 
+                               | ((IData)(vlSelfRef.tb_video__DOT__sd_dq) 
+                                  << 0x00000010U)) : 
+                           ((0xffff0000U & __Vdly__tb_video__DOT__sd_bdata[1U]) 
+                            | (IData)(vlSelfRef.tb_video__DOT__sd_dq)));
+                } else {
+                    __Vdly__tb_video__DOT__sd_bdata[0U] 
+                        = ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))
+                            ? ((0x0000ffffU & __Vdly__tb_video__DOT__sd_bdata[0U]) 
+                               | ((IData)(vlSelfRef.tb_video__DOT__sd_dq) 
+                                  << 0x00000010U)) : 
+                           ((0xffff0000U & __Vdly__tb_video__DOT__sd_bdata[0U]) 
+                            | (IData)(vlSelfRef.tb_video__DOT__sd_dq)));
+                }
+                if ((7U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
+                    __Vdly__tb_video__DOT__sd_bready = 1U;
+                    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 5U;
+                } else {
+                    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol 
+                        = (7U & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol)));
+                    __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase = 0U;
+                }
+            }
+        } else {
             vlSelfRef.tb_video__DOT__sdram16__DOT__command = 5U;
             vlSelfRef.tb_video__DOT__sd_a = (((7U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol)) 
-                                              << 9U) 
+                                              << 0x0000000aU) 
                                              | ((0x000001f8U 
                                                  & (vlSelfRef.tb_video__DOT__sd_baddr 
                                                     << 3U)) 
-                                                | (7U 
-                                                   & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))));
-        }
-        if ((8U >= (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol))) {
-            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol 
-                = (0x0000000fU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol)));
-        }
-        __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay 
-            = (((7U >= (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol)) 
-                << 2U) | (3U & ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay) 
-                                >> 1U)));
-        if ((1U & (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay))) {
-            VL_ASSIGNSEL_WI(128, 16, (0x0000007fU & 
-                                      ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap) 
-                                       << 4U)), __Vdly__tb_video__DOT__sd_bdata, vlSelfRef.tb_video__DOT__sd_dq);
-            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap 
-                = (7U & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap)));
-            if ((7U == (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap))) {
-                __Vdly__tb_video__DOT__sd_bready = 1U;
-                __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay = 0U;
-                __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 5U;
-            }
+                                                | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol)));
+            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay = 4U;
+            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase = 1U;
         }
     } else if ((3U == vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state)) {
-        if ((0x029eU < (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__refresh_count))) {
+        if ((0x0270U < (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__refresh_count))) {
             __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 4U;
         } else if (vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_brd) {
             vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_brd = 0U;
@@ -646,7 +691,6 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
                                              & (vlSelfRef.tb_video__DOT__sd_baddr 
                                                 >> 6U));
             vlSelfRef.tb_video__DOT__sdram16__DOT__command = 3U;
-            __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay = 0U;
             __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state = 0x0000000bU;
         } else if (((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_rd) 
                     | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__new_we))) {
@@ -735,10 +779,10 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
         = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__state;
     vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol 
         = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcol;
-    vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap 
-        = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bcap;
-    vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay 
-        = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bready_delay;
+    vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase 
+        = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bphase;
+    vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay 
+        = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__bdelay;
     vlSelfRef.tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we 
         = __Vdly__tb_video__DOT__sdram16__DOT__unnamedblk1__DOT__save_we;
     vlSelfRef.tb_video__DOT__sdram16__DOT__save_addr 
@@ -844,60 +888,186 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     if ((1U & (~ (IData)(vlSelfRef.tb_video__DOT__spr_fetch_req)))) {
         __Vdly__tb_video__DOT__spr_fetch_done = 0U;
     }
-    if ((0U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
-        vlSelfRef.tb_video__DOT__sd_we = 0U;
-        if (((IData)(vlSelfRef.tb_video__DOT__spr_fetch_req) 
-             & (~ (IData)(vlSelfRef.tb_video__DOT__spr_fetch_done)))) {
-            vlSelfRef.tb_video__DOT__sd_baddr = (0x001fffffU 
-                                                 & ((IData)(0x00009000U) 
-                                                    + (IData)(vlSelfRef.tb_video__DOT__spr_fetch_addr)));
-            vlSelfRef.tb_video__DOT__sd_brd = 1U;
-            __Vdly__tb_video__DOT__rom_server__DOT__st = 3U;
-        }
-    } else if ((1U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
-        if ((1U & (~ (IData)(vlSelfRef.tb_video__DOT__sd_ready)))) {
+    if (vlSelfRef.tb_video__DOT__rom_server__DOT__wf_empty) {
+        if ((2U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
+            if ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
+                vlSelfRef.tb_video__DOT__sd_rd = 0U;
+                __Vdly__tb_video__DOT__rom_server__DOT__wcnt 
+                    = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)));
+                if (((2U <= (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)) 
+                     & (IData)(vlSelfRef.tb_video__DOT__sd_ready))) {
+                    if ((4U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))) {
+                        if ((2U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))) {
+                            __Vdly__tb_video__DOT__spr_fetch_data[3U] 
+                                = ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))
+                                    ? ((0x0000ffffU 
+                                        & __Vdly__tb_video__DOT__spr_fetch_data[3U]) 
+                                       | ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data) 
+                                          << 0x00000010U))
+                                    : ((0xffff0000U 
+                                        & __Vdly__tb_video__DOT__spr_fetch_data[3U]) 
+                                       | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data)));
+                        } else {
+                            __Vdly__tb_video__DOT__spr_fetch_data[2U] 
+                                = ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))
+                                    ? ((0x0000ffffU 
+                                        & __Vdly__tb_video__DOT__spr_fetch_data[2U]) 
+                                       | ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data) 
+                                          << 0x00000010U))
+                                    : ((0xffff0000U 
+                                        & __Vdly__tb_video__DOT__spr_fetch_data[2U]) 
+                                       | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data)));
+                        }
+                    } else if ((2U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))) {
+                        __Vdly__tb_video__DOT__spr_fetch_data[1U] 
+                            = ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))
+                                ? ((0x0000ffffU & __Vdly__tb_video__DOT__spr_fetch_data[1U]) 
+                                   | ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data) 
+                                      << 0x00000010U))
+                                : ((0xffff0000U & __Vdly__tb_video__DOT__spr_fetch_data[1U]) 
+                                   | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data)));
+                    } else {
+                        __Vdly__tb_video__DOT__spr_fetch_data[0U] 
+                            = ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))
+                                ? ((0x0000ffffU & __Vdly__tb_video__DOT__spr_fetch_data[0U]) 
+                                   | ((IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data) 
+                                      << 0x00000010U))
+                                : ((0xffff0000U & __Vdly__tb_video__DOT__spr_fetch_data[0U]) 
+                                   | (IData)(vlSelfRef.tb_video__DOT__sdram16__DOT__data)));
+                    }
+                    if ((7U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx))) {
+                        __Vdly__tb_video__DOT__spr_fetch_done = 1U;
+                        __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
+                    } else {
+                        __Vdly__tb_video__DOT__rom_server__DOT__sw_idx 
+                            = (7U & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx)));
+                        vlSelfRef.tb_video__DOT__sd_addr 
+                            = (0x01ffffffU & ((0x01fffff0U 
+                                               & (((IData)(0x00009000U) 
+                                                   + (IData)(vlSelfRef.tb_video__DOT__spr_fetch_addr)) 
+                                                  << 4U)) 
+                                              + (0x0000000eU 
+                                                 & (((IData)(1U) 
+                                                     + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx)) 
+                                                    << 1U))));
+                        vlSelfRef.tb_video__DOT__sd_rd = 1U;
+                        __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0U;
+                    }
+                } else if ((0x0190U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt))) {
+                    vlSelfRef.tb_video__DOT__sd_rd = 1U;
+                    __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0U;
+                }
+            } else {
+                vlSelfRef.tb_video__DOT__sd_brd = 0U;
+                __Vdly__tb_video__DOT__rom_server__DOT__wcnt 
+                    = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)));
+                if (((2U <= (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)) 
+                     & (IData)(vlSelfRef.tb_video__DOT__sd_bready))) {
+                    __Vdly__tb_video__DOT__spr_fetch_data[0U] 
+                        = vlSelfRef.tb_video__DOT__sd_bdata[0U];
+                    __Vdly__tb_video__DOT__spr_fetch_data[1U] 
+                        = vlSelfRef.tb_video__DOT__sd_bdata[1U];
+                    __Vdly__tb_video__DOT__spr_fetch_data[2U] 
+                        = vlSelfRef.tb_video__DOT__sd_bdata[2U];
+                    __Vdly__tb_video__DOT__spr_fetch_data[3U] 
+                        = vlSelfRef.tb_video__DOT__sd_bdata[3U];
+                    __Vdly__tb_video__DOT__spr_fetch_done = 1U;
+                    __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
+                } else if ((0x0190U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt))) {
+                    vlSelfRef.tb_video__DOT__sd_brd = 1U;
+                    __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0U;
+                }
+            }
+        } else if ((1U & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
             vlSelfRef.tb_video__DOT__sd_rd = 0U;
-            __Vdly__tb_video__DOT__rom_server__DOT__st = 2U;
-        }
-    } else if ((3U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
-        if ((1U & (~ (IData)(vlSelfRef.tb_video__DOT__sd_bready)))) {
+            __Vdly__tb_video__DOT__rom_server__DOT__wcnt 
+                = (0x000001ffU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)));
+            if (((2U <= (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt)) 
+                 & (IData)(vlSelfRef.tb_video__DOT__sd_ready))) {
+                __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
+            } else if ((0x0190U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt))) {
+                vlSelfRef.tb_video__DOT__sd_rd = 1U;
+                __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0U;
+            }
+        } else {
+            vlSelfRef.tb_video__DOT__sd_we = 0U;
+            vlSelfRef.tb_video__DOT__sd_rd = 0U;
+            __Vdly__tb_video__DOT__rom_server__DOT__wcnt = 0U;
             vlSelfRef.tb_video__DOT__sd_brd = 0U;
-            __Vdly__tb_video__DOT__rom_server__DOT__st = 4U;
+            if ((((IData)(vlSelfRef.tb_video__DOT__spr_fetch_req) 
+                  & (~ (IData)(vlSelfRef.tb_video__DOT__spr_fetch_done))) 
+                 & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__spr_single))) {
+                __Vdly__tb_video__DOT__rom_server__DOT__sw_idx = 0U;
+                vlSelfRef.tb_video__DOT__sd_addr = 
+                    (0x01fffff0U & (((IData)(0x00009000U) 
+                                     + (IData)(vlSelfRef.tb_video__DOT__spr_fetch_addr)) 
+                                    << 4U));
+                vlSelfRef.tb_video__DOT__sd_rd = 1U;
+                __Vdly__tb_video__DOT__rom_server__DOT__st = 3U;
+            } else if (((IData)(vlSelfRef.tb_video__DOT__spr_fetch_req) 
+                        & (~ (IData)(vlSelfRef.tb_video__DOT__spr_fetch_done)))) {
+                vlSelfRef.tb_video__DOT__sd_baddr = 
+                    (0x001fffffU & ((IData)(0x00009000U) 
+                                    + (IData)(vlSelfRef.tb_video__DOT__spr_fetch_addr)));
+                vlSelfRef.tb_video__DOT__sd_brd = 1U;
+                __Vdly__tb_video__DOT__rom_server__DOT__st = 2U;
+            }
         }
-    } else if ((4U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
-        if (((IData)(vlSelfRef.tb_video__DOT__sd_bready) 
-             & (~ (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__bready_q)))) {
-            __Vdly__tb_video__DOT__spr_fetch_data[0U] 
-                = vlSelfRef.tb_video__DOT__sd_bdata[0U];
-            __Vdly__tb_video__DOT__spr_fetch_data[1U] 
-                = vlSelfRef.tb_video__DOT__sd_bdata[1U];
-            __Vdly__tb_video__DOT__spr_fetch_data[2U] 
-                = vlSelfRef.tb_video__DOT__sd_bdata[2U];
-            __Vdly__tb_video__DOT__spr_fetch_data[3U] 
-                = vlSelfRef.tb_video__DOT__sd_bdata[3U];
-            __Vdly__tb_video__DOT__spr_fetch_done = 1U;
-            __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
-        }
-    } else if ((2U == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__st))) {
-        if (((IData)(vlSelfRef.tb_video__DOT__sd_ready) 
-             & (~ (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__ready_q)))) {
-            __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
+    } else {
+        vlSelfRef.tb_video__DOT__sd_rd = 0U;
+        __Vdly__tb_video__DOT__rom_server__DOT__st = 0U;
+        if (vlSelfRef.tb_video__DOT__rom_server__DOT__dl_st) {
+            __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt 
+                = (0x0000000fU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__dl_cnt)));
+            vlSelfRef.tb_video__DOT__sd_we = 0U;
+            if (((2U <= (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__dl_cnt)) 
+                 & (IData)(vlSelfRef.tb_video__DOT__sd_ready))) {
+                vlSelfRef.tb_video__DOT__rom_server__DOT__dl_st = 0U;
+            }
+        } else {
+            vlSelfRef.tb_video__DOT__sd_we = 0U;
+            if (((~ (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_empty)) 
+                 & (IData)(vlSelfRef.tb_video__DOT__sd_ready))) {
+                vlSelfRef.tb_video__DOT__sd_addr = 
+                    (0x01ffffffU & (IData)((vlSelfRef.tb_video__DOT__rom_server__DOT__wfifo
+                                            [(0x0000003fU 
+                                              & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_rp))] 
+                                            >> 8U)));
+                vlSelfRef.tb_video__DOT__sd_we = 1U;
+                __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt = 0U;
+                vlSelfRef.tb_video__DOT__rom_server__DOT__dl_st = 1U;
+                vlSelfRef.tb_video__DOT__sd_din = (0x000000ffU 
+                                                   & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wfifo
+                                                             [
+                                                             (0x0000003fU 
+                                                              & (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_rp))]));
+                vlSelfRef.tb_video__DOT__rom_server__DOT__wf_rp 
+                    = (0x0000007fU & ((IData)(1U) + (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_rp)));
+            }
         }
     }
     vlSelfRef.tb_video__DOT__video__DOT__bg_px = __Vdly__tb_video__DOT__video__DOT__bg_px;
     vlSelfRef.tb_video__DOT__video__DOT__bg_cell = __Vdly__tb_video__DOT__video__DOT__bg_cell;
     vlSelfRef.tb_video__DOT__video__DOT__bg_st = __Vdly__tb_video__DOT__video__DOT__bg_st;
+    vlSelfRef.tb_video__DOT__sdram16__DOT__data = __Vdly__tb_video__DOT__sdram16__DOT__data;
+    vlSelfRef.tb_video__DOT__sd_bready = __Vdly__tb_video__DOT__sd_bready;
     vlSelfRef.tb_video__DOT__sd_bdata[0U] = __Vdly__tb_video__DOT__sd_bdata[0U];
     vlSelfRef.tb_video__DOT__sd_bdata[1U] = __Vdly__tb_video__DOT__sd_bdata[1U];
     vlSelfRef.tb_video__DOT__sd_bdata[2U] = __Vdly__tb_video__DOT__sd_bdata[2U];
     vlSelfRef.tb_video__DOT__sd_bdata[3U] = __Vdly__tb_video__DOT__sd_bdata[3U];
+    vlSelfRef.tb_video__DOT__rom_server__DOT__wcnt 
+        = __Vdly__tb_video__DOT__rom_server__DOT__wcnt;
+    vlSelfRef.tb_video__DOT__sd_ready = __Vdly__tb_video__DOT__sd_ready;
     vlSelfRef.tb_video__DOT__rom_server__DOT__st = __Vdly__tb_video__DOT__rom_server__DOT__st;
+    vlSelfRef.tb_video__DOT__rom_server__DOT__sw_idx 
+        = __Vdly__tb_video__DOT__rom_server__DOT__sw_idx;
+    vlSelfRef.tb_video__DOT__rom_server__DOT__dl_cnt 
+        = __Vdly__tb_video__DOT__rom_server__DOT__dl_cnt;
     vlSelfRef.tb_video__DOT__video__DOT__vram_rq = vlSelfRef.tb_video__DOT__video__DOT__vram
         [vlSelfRef.tb_video__DOT__video__DOT__vram_raddr];
-    vlSelfRef.tb_video__DOT__rom_server__DOT__bready_q 
-        = vlSelfRef.tb_video__DOT__sd_bready;
-    vlSelfRef.tb_video__DOT__rom_server__DOT__ready_q 
-        = vlSelfRef.tb_video__DOT__sd_ready;
+    vlSelfRef.tb_video__DOT__rom_server__DOT__wf_empty 
+        = ((IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_wp) 
+           == (IData)(vlSelfRef.tb_video__DOT__rom_server__DOT__wf_rp));
     if ((8U & (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_st))) {
         if ((4U & (IData)(vlSelfRef.tb_video__DOT__video__DOT__sp_st))) {
             __Vdly__tb_video__DOT__video__DOT__sp_st = 0U;
@@ -1095,8 +1265,6 @@ void Vtb_video___024root___nba_sequent__TOP__0(Vtb_video___024root* vlSelf) {
     }
     vlSelfRef.tb_video__DOT__video__DOT__vram_raddr 
         = __Vdly__tb_video__DOT__video__DOT__vram_raddr;
-    vlSelfRef.tb_video__DOT__sd_bready = __Vdly__tb_video__DOT__sd_bready;
-    vlSelfRef.tb_video__DOT__sd_ready = __Vdly__tb_video__DOT__sd_ready;
     vlSelfRef.tb_video__DOT__spr_fetch_data[0U] = __Vdly__tb_video__DOT__spr_fetch_data[0U];
     vlSelfRef.tb_video__DOT__spr_fetch_data[1U] = __Vdly__tb_video__DOT__spr_fetch_data[1U];
     vlSelfRef.tb_video__DOT__spr_fetch_data[2U] = __Vdly__tb_video__DOT__spr_fetch_data[2U];
