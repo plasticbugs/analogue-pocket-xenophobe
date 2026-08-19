@@ -1189,8 +1189,10 @@ module core_top
     wire       bit3 = dbg_stat3[3'd7 - dbg_idx];
     wire       bit4 = dbg_stat4[3'd7 - dbg_idx];
     // Overlay lives on the last 32 scanlines so it stays clear of the play
-    // field, and can be hidden entirely from the Interact menu.
-    wire       dbg_hide = dip_sw1[1];
+    // field. Off unless switched on from the Interact menu: it costs nothing
+    // when hidden and is the only way to diagnose faults that appear on
+    // hardware but not in simulation.
+    wire       dbg_hide = ~dip_sw1[1];
     wire       in_row1 = !dbg_hide && (dbg_y >= 10'd448 && dbg_y < 10'd456);
     wire       in_row2 = !dbg_hide && (dbg_y >= 10'd456 && dbg_y < 10'd464);
     wire       in_row3 = !dbg_hide && (dbg_y >= 10'd464 && dbg_y < 10'd472);

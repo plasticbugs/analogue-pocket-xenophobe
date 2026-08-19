@@ -613,7 +613,10 @@ module mcr68_video (
     // renderer reads sprite RAM live, so mid-frame edits tear, where MAME
     // effectively snapshots the whole frame at once.
     always_ff @(posedge clk) begin
-        if (ce_pix && hcnt == 10'd0) begin
+        // Only a line that should have started rendering counts as an overrun.
+        // The vblank sprite RAM snapshot legitimately holds the FSM busy at
+        // hcnt==0, and counting that would peg the diagnostic every frame.
+        if (ce_pix && hcnt == 10'd0 && (vcnt < V_VIS-1 || vcnt == V_TOTAL-1)) begin
             if (sp_st != SP_IDLE) begin
                 if (!dbg_spr_overrun) begin
                     dbg_spr_overrun      <= 1'b1;
