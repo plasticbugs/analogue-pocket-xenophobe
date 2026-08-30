@@ -160,4 +160,5 @@ board, and MAME is the reference the video regression in `tools/regress_video.sh
 compares against pixel for pixel.
 
 The core links GPL-3.0 sources (fx68k, the SDRAM controller, parts of the
-platform layer), so the gateware as distributed is GPL-3.0.
+platform layer), so the gateware as distributed is GPL-3.0 — see
+[LICENSE](LICENSE).
