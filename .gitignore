@@ -61,6 +61,9 @@ cr_ie_info.json
 *.sw?
 # Pocket directories and files
 !info.txt
+# The ROM folder ships empty, so its placeholder note is the only thing
+# keeping the directory in the release -- git drops empty directories.
+!/pkg/pocket/Assets/**/*.txt
 # ROMS Checklist
 !checklist.sha1
 !checklist.md5
