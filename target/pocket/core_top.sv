@@ -947,6 +947,10 @@ module core_top
     //! own coin slot. player_route sends pad 1 to the station chosen in the
     //! Interact menu, and the remaining pads to the other stations in order.
     //! Bundle order matches in0[14:8]: BTN2, BTN3, BTN1, right, left, down, up.
+    //! MAME's button numbers are not the cabinet's: BTN1 (bit 12) is the
+    //! trigger, BTN2 (bit 14) is the LEFT thumb button and BTN3 (bit 13) the
+    //! right one -- confirmed on hardware. input.json's labels follow this, so
+    //! "Jump (Right Button)" declares pad_btn_a and lands on BTN3.
     wire [1:0] pos_sel  = dip_sw1[3:2];   // 0 = left/top, 1 = centre, 2 = right/bottom
     wire [6:0] pad1_ctl = { p1_btn_x, p1_btn_a, p1_btn_b,
                             p1_right, p1_left, p1_down, p1_up };

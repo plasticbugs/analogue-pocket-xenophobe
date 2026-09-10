@@ -73,16 +73,25 @@ what the field names suggest. **List position picks the physical button, in the
 order B, A, X** (Game Boy convention, not A first); an entry whose key is
 `pad_btn_select` goes to Select. The `key` field does *not* choose the physical
 button — it names the `cont1_key` bit the core reads when that button is
-pressed. So position 2 declaring `pad_btn_x` is correct and deliberate: A sits
-in position 2 and asserts the bit `core_top` routes to the jump switch. Swapping
-two entries changes which pad does what; changing a key changes which game
-switch it fires.
+pressed. So position 2 declaring `pad_btn_a` is correct and deliberate: A sits
+in position 2, and `pad_btn_a` is the bit `core_top` routes to the jump switch.
+Swapping two entries changes which pad does what; changing a key changes which
+game switch it fires.
+
+The two thumb buttons are the easy thing to get backwards, because MAME's button
+numbers are not the cabinet's: `IN0` bit 14 is BUTTON2 and fires the **left**
+thumb button, bit 13 is BUTTON3 and fires the **right** one. Releases up to
+v1.1.2 had the two `key` fields the wrong way round, so remapping "Jump (Right
+Button)" moved the left button and vice versa. The gateware was right
+throughout; only the two labels were attached to the wrong keys.
 
 The Pocket also persists a per-id remap in
 `/Settings/<core>/Input/_core/input_persist.json`, binding entry **ids** to
 physical buttons. If you reuse an id whose meaning changed, that saved file
 silently overrides the default and the buttons rotate. Give entries fresh ids
-whenever the layout changes.
+whenever the layout changes — the thumb-button fix above moved them to 20-23 for
+exactly this reason, so a pad remapped around the old behaviour comes back to
+the defaults.
 
 ## Options
 

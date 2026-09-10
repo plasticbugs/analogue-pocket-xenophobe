@@ -6,22 +6,22 @@
                 "type": "default",
                 "mappings": [
                     {
-                        "id": 16,
+                        "id": 20,
                         "name": "Fire",
                         "key": "pad_btn_b"
                     },
                     {
-                        "id": 17,
+                        "id": 21,
                         "name": "Jump (Right Button)",
-                        "key": "pad_btn_x"
-                    },
-                    {
-                        "id": 18,
-                        "name": "Action (Left Button)",
                         "key": "pad_btn_a"
                     },
                     {
-                        "id": 19,
+                        "id": 22,
+                        "name": "Action (Left Button)",
+                        "key": "pad_btn_x"
+                    },
+                    {
+                        "id": 23,
                         "name": "Coin",
                         "key": "pad_btn_select"
                     }
