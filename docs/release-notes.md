@@ -17,6 +17,16 @@ wrong or corrupted romset is reported rather than silently built into a core
 that mysteriously fails to boot. `xenophobe.mra` is a standard MRA description,
 so existing arcade tooling such as pupdate works with it too.
 
+**Fixed in 1.1.3: the two thumb buttons were labelled the wrong way round.**
+In the Pocket's Controls menu, remapping "Jump (Right Button)" moved the left
+thumb button and remapping "Action (Left Button)" moved the right one. The
+gateware was never wrong -- it follows MAME bit for bit -- but MAME's button
+numbers are not the cabinet's, and the two menu entries were attached to the
+opposite switches. The default layout is unchanged (B fire, A jump, X action).
+The entries carry new ids, so if you remapped your pad to work around this, the
+core comes back to its defaults once. The gateware in this release is the same,
+hardware-verified build that shipped in 1.1.2.
+
 **Choose your station.** The cabinet is a three-station cockpit and the stations
 are the three rows on screen, each with its own coin slot. The new **Player
 Position** option (Left/Top, Center/Middle, Right/Bottom) sends your stick,
