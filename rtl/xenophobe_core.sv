@@ -39,6 +39,8 @@ module xenophobe_core (
     // video out (512x480 @ 60 Hz progressive, 20 MHz dot via ce_pix)
     output logic [7:0]  r, g, b,
     output logic        hs, vs, de,
+    output logic        hb, vb,        // blanks aligned with de, for the Analogizer
+    output logic        pix_ce,        // the dot enable r..vb change on
 
     // audio out: unsigned 10-bit DAC stream at system clock rate
     output logic [9:0]  audio_dac,
@@ -63,6 +65,7 @@ module xenophobe_core (
     logic ce_div = 0;
     always_ff @(posedge clk) ce_div <= ~ce_div;
     wire ce_pix = ce_div;
+    assign pix_ce = ce_pix;
 
     // ---- CPU clock enables (fractional accumulators, K = 2*f/40MHz * 2^16) ----
     logic [16:0] acc_m = 0;
@@ -101,7 +104,7 @@ module xenophobe_core (
         .gfx_load_addr(gfx_load_addr), .gfx_load_data(gfx_load_data), .gfx_load_we(gfx_load_we),
         .spr_fetch_addr(spr_fetch_addr), .spr_fetch_req(spr_fetch_req),
         .spr_fetch_data(spr_fetch_data), .spr_fetch_done(spr_fetch_done),
-        .r(r), .g(g), .b(b), .hs(hs), .vs(vs), .de(de),
+        .r(r), .g(g), .b(b), .hs(hs), .vs(vs), .de(de), .hb(hb), .vb(vb),
         .vsync30(vsync30), .hsync_pulse(hsync_pulse), .vblank(vblank),
         .field_o(vid_field),
         .dbg_spr_overrun(dbg_spr_overrun),

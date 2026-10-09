@@ -115,6 +115,22 @@ deviation of 0.2 from the rest level. It stays at its hardware default.
 - **Debug: Sprite Single-Read** — off by default. Forces one SDRAM read at a
   time for sprite data. A diagnostic fallback, not needed in normal use.
 
+## Analogizer
+
+The core supports RndMnkIII's [Analogizer](https://github.com/RndMnkIII/Analogizer)
+cartridge-slot adapter: analog video out of its VGA port and SNAC controllers
+in, set up in the core's own menu (Analogizer, Analogizer Video, SNAC Adapter,
+SNAC Assignment, and H and V Position to centre the picture). With
+"Analogizer" off, the default, the core is unchanged. The Pocket powers the
+cartridge slot for this core: take any game cartridge out first.
+
+**The picture is 31 kHz.** The core draws Xenophobe's 512x480 as a
+progressive 31.5 kHz / 60 Hz frame, not the cabinet's 15 kHz interlace, and
+the Analogizer sends that: it needs a VGA or multisync CRT (RGBS or RGsB) or
+a 480p component input (YPbPr). A 15 kHz TV or arcade monitor will not sync
+to it, and the Y/C and scandoubler modes give nothing useful.
+`docs/analogizer.md` has the details. Not yet tried on hardware.
+
 ## Building
 
 CI compiles the core with Quartus 18.1 on every push (`.github/workflows`).
@@ -133,6 +149,12 @@ documents how the core implements it.
 
 The new work here is the arcade hardware in `rtl/` and the tooling in `tools/`.
 Almost everything underneath it belongs to other people.
+
+**RndMnkIII** — the [Analogizer](https://github.com/RndMnkIII/Analogizer)
+adapter and its openFPGA module in `target/pocket/analogizer/`, vendored
+verbatim, with the authors it carries: Mike Simone (Y/C encoder), Sorgelig
+and Ludvig Strigeus (MiSTer's scandoubler and HQ2x), and the SNAC
+controller code it credits.
 
 **Marcus Andrade — [@boogermann](https://github.com/boogermann),
 [OpenGateware](https://github.com/opengateware) /

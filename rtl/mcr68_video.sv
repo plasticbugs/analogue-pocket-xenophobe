@@ -57,6 +57,7 @@ module mcr68_video (
     // video out
     output logic [7:0]  r, g, b,
     output logic        hs, vs, de,
+    output logic        hb, vb,       // the blanks, aligned with de (for the Analogizer)
 
     // game-side timing (30 Hz cadence)
     output logic        vsync30,      // one-clk pulse at start of game vblank
@@ -631,7 +632,7 @@ module mcr68_video (
 
     // ---------------- compositor ----------------
     logic [8:0] rgb9;
-    logic       de_d, hs_d, vs_d;
+    logic       de_d, hs_d, vs_d, hb_d, vb_d;
     always_ff @(posedge clk) if (ce_pix) begin
         if (hcnt == H_TOTAL-1 && vcnt == V_TOTAL-1) lbuf_sel <= ~lbuf_sel;
         else if (hcnt == H_TOTAL-1 && vcnt < V_VIS) lbuf_sel <= ~lbuf_sel;
@@ -643,9 +644,13 @@ module mcr68_video (
         de_d <= (hcnt < H_VIS) && (vcnt < V_VIS);
         hs_d <= (hcnt >= HS_START && hcnt < HS_END);
         vs_d <= (vcnt >= VS_START && vcnt < VS_END);
+        hb_d <= (hcnt >= H_VIS);
+        vb_d <= (vcnt >= V_VIS);
         de <= de_d;
         hs <= hs_d;
         vs <= vs_d;
+        hb <= hb_d;
+        vb <= vb_d;
 
         begin
             logic [5:0] idx;

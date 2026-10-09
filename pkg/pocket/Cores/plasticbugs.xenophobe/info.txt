@@ -30,3 +30,11 @@ Controls
 * Insert coin: Select
 
 Select adds a coin, then Fire starts.
+
+Analogizer: video and SNAC pads, set
+in this core's menu (Analogizer: On).
+The picture is 512x480 at 31 kHz
+(VGA rate): it needs a 31 kHz or
+multisync monitor, not a 15 kHz TV.
+The slot is powered: remove any
+cartridge first.
