@@ -3,9 +3,10 @@
 # the reference renderer (tools/render_model.py), which is validated pixel-exact
 # against MAME. Any non-zero diff is a regression.
 #
-# States are ROM-derived so they are not committed. Regenerate them with:
-#   cd build && mame xenophob -rompath mame_roms -autoboot_script ../tools/busystate.lua \
-#       -autoboot_delay 0 -video none -sound none -nothrottle -skip_gameinfo
+# States are ROM-derived so they are not committed. Regenerate them, headless
+# (tools/mame.sh: never let MAME take over the display), with:
+#   cd build && ../tools/mame.sh -autoboot_script ../tools/busystate.lua \
+#       -autoboot_delay 0 -seconds_to_run 40
 # state_busy1370 is the heavy case: 17 sprites on one line, the measured peak
 # across sampled gameplay (see tools/sprload.lua).
 set -e
