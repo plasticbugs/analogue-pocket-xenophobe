@@ -27,24 +27,28 @@
 
 module tb_analogizer;
     // ------------------------------------------- the core's raster: SET THESE
-    // to the core's (its video module, and core_top's pocket_analogizer
-    // parameters).  Xenophobe: rtl/mcr68_video.sv, 512x480 progressive at
-    // 20 MHz dots (ce_pix every other 40 MHz clock), 31.5 kHz lines, 60 Hz.
-    // The dot is too fast for the toggle hand-over at 48 MHz, so the
-    // Analogizer runs on the core's own 40 MHz clock (SAME_CLK).
-    localparam int DIV    = 2;            // system clocks a dot
-    localparam int HTOTAL = 635, VTOTAL = 525;
+    // Xenophobe: rtl/mcr68_video.sv makes 512x480 progressive at 20 MHz dots
+    // (a dot every other 40 MHz clock), 635 x 525, 31.5 kHz, 60 Hz.  The
+    // Analogizer gets it through target/pocket/ana_15k.sv as 240p: 636 x 262
+    // dots at 10 MHz (four clocks a dot, 222 lines a frame with a fifth clock
+    // on their last dot), 15.72 kHz, frame-locked to the core.  The checks
+    // below describe that 15 kHz raster; the source below makes the core's.
+    // The adapter runs on the core's own 40 MHz clock (SAME_CLK).
+    localparam int S_HTOTAL = 635, S_VTOTAL = 525, S_W = 512, S_H = 480;
+    localparam int HTOTAL = 636, VTOTAL = 262;
     localparam int X0 = 0,   X1 = 511;    // visible dots, inclusive
-    // Lines are counted from the start of vblank (the core's line 480), so a
-    // frame here starts in blanking, as the checks below expect: the core's
-    // lines 0-479 are 45-524 here, its vsync 490-492 is 10-12.
-    localparam int Y0 = 45,  Y1 = 524;    // visible lines, inclusive
-    localparam int HS0 = 544, HS1 = 592;  // hsync [HS0, HS1)
-    localparam int VS0 = 10,  VS1 = 13;   // vsync [VS0, VS1)
+    localparam int Y0 = 0,   Y1 = 239;    // visible lines, inclusive
+    localparam int HS0 = 527, HS1 = 574;  // hsync [HS0, HS1)
+    localparam int VS0 = 243, VS1 = 246;  // vsync [VS0, VS1)
     localparam int CLK_HZ = 40_000_000;   // the Analogizer's clock: clk_sys itself
     localparam int W = X1 - X0 + 1, H = Y1 - Y0 + 1;
-    localparam int APD = DIV;             // Analogizer clocks a dot (same clock)
-    localparam int FRAME = HTOTAL * VTOTAL * APD;
+    localparam int APD = 4;               // Analogizer clocks a dot (one dot in a
+                                          // long line's back porch has five)
+    localparam int FRAME = S_HTOTAL * S_VTOTAL * 2;   // = the core's frame, 666,750
+    // the end of the Y/C colour burst after hsync ends, in Analogizer clocks
+    // (pocket_analogizer's CB_NTSC; NTSC's is the later)
+    localparam int CB_END = (2 * (CLK_HZ * 3256.0 / 3150000000.0) + 1) / 2
+                          + (2 * (CLK_HZ * 792.0 / 315000000.0) + 1) / 2;
 
     // ------------------------------------------------------------- clocks
     logic clk_src = 1'b0, clk = 1'b0, clk_74a = 1'b0;
@@ -53,33 +57,44 @@ module tb_analogizer;
     always #6734 clk_74a = ~clk_74a;      // 74.25 MHz, unrelated
 
     // ------------------------------------------------- the core's raster
-    int         div = 0;
+    logic       s_ce = 1'b0;
     logic [9:0] hpos = 10'd0, vpos = 10'd0;
-    logic       pix_ce = 1'b0;
-    logic       hs, vs, hb, vb;
-    logic [23:0] rgb;
+    logic       s_hb = 1'b1, s_vb = 1'b1;
+    logic [23:0] s_rgb = 24'h0;
     always_ff @(posedge clk_src) begin
-        div    <= (div == DIV - 1) ? 0 : div + 1;
-        pix_ce <= (div == DIV - 1);
-        if (pix_ce) begin
-            if (hpos == 10'(HTOTAL - 1)) begin
+        s_ce <= ~s_ce;
+        if (s_ce) begin
+            if (hpos == 10'(S_HTOTAL - 1)) begin
                 hpos <= 10'd0;
-                vpos <= (vpos == 10'(VTOTAL - 1)) ? 10'd0 : vpos + 10'd1;
+                vpos <= (vpos == 10'(S_VTOTAL - 1)) ? 10'd0 : vpos + 10'd1;
             end else hpos <= hpos + 10'd1;
+            s_hb  <= !(hpos < 10'(S_W));
+            s_vb  <= !(vpos < 10'(S_H));
+            s_rgb <= (hpos < 10'(S_W) && vpos < 10'(S_H)) ? colour(hpos, vpos) : 24'h0;
         end
     end
-    wire vis_x = (hpos >= 10'(X0)) && (hpos <= 10'(X1));
-    wire vis_y = (vpos >= 10'(Y0)) && (vpos <= 10'(Y1));
     // a colour every dot can be told apart by: x in red and blue, y in green
     function automatic [23:0] colour(input [9:0] x, input [9:0] y);
         colour = {x[7:0], y[7:0], ~x[7:0] ^ {y[1:0], 6'd0}};
     endfunction
-    always_ff @(posedge clk_src) if (pix_ce) begin
-        hb  <= !vis_x;  vb <= !vis_y;
-        hs  <= (hpos >= 10'(HS0)) && (hpos < 10'(HS1));
-        vs  <= (vpos >= 10'(VS0)) && (vpos < 10'(VS1));
-        rgb <= (vis_x && vis_y) ? colour(hpos, vpos) : 24'h0;
-    end
+    // what output line j shows: the pair's two lines averaged (Blend)
+    function automatic [23:0] out_colour(input [9:0] x, input [9:0] j);
+        logic [23:0] a, b;
+        a = colour(x, 10'(2 * j));
+        b = colour(x, 10'(2 * j + 1));
+        out_colour = {8'((9'(a[23:16]) + 9'(b[23:16])) >> 1), 8'((9'(a[15:8]) + 9'(b[15:8])) >> 1),
+                      8'((9'(a[7:0]) + 9'(b[7:0])) >> 1)};
+    endfunction
+
+    // the converter, as core_top has it
+    logic        sharp = 1'b0;
+    wire         pix_ce, hs, vs, hb, vb;
+    wire  [23:0] rgb;
+    ana_15k u15 (
+        .clk(clk_src), .sharp(sharp),
+        .src_ce(s_ce), .src_rgb(s_rgb), .src_hb(s_hb), .src_vb(s_vb),
+        .o_ce(pix_ce), .o_rgb(rgb), .o_hs(hs), .o_vs(vs), .o_hb(hb), .o_vb(vb)
+    );
 
     // ------------------------------------------------------------- bridge
     logic [31:0] bridge_addr = 32'h0, bridge_wr_data = 32'h0;
@@ -188,8 +203,10 @@ module tb_analogizer;
     endtask
 
     // wait for the start of a frame as the core makes it
+    // (the converter's output line 250, inside vblank after the vsync, so
+    // a frame's worth from here holds the whole picture)
     task automatic frame_start();
-        @(posedge clk_src iff (pix_ce && hpos == 10'(HTOTAL - 1) && vpos == 10'(VTOTAL - 1)));
+        @(posedge clk_src iff (pix_ce && u15.ol == 9'd250 && u15.od == 10'd0));
     endtask
 
     // ------------------------------------------------------------- checks
@@ -204,7 +221,7 @@ module tb_analogizer;
         logic [17:0] exp_q[$];
         for (y = Y0; y <= Y1; y++)
             for (x = X0; x <= X1; x++) begin
-                logic [23:0] c = colour(10'(x), 10'(y));
+                logic [23:0] c = out_colour(10'(x), 10'(y));
                 exp_q.push_back({c[23:18], c[15:10], c[7:2]});
             end
         frame_start();
@@ -353,7 +370,9 @@ module tb_analogizer;
         end
         $display("SVGA: %0d hsync pulses in a frame of %0d clocks, line period %0d clocks", hs_n, t, period);
         if (hs_n != 2 * VTOTAL) fail("SVGA: not twice the core's lines");
-        if (period * 2 != HTOTAL * APD) fail("SVGA: line period is not half the core's");
+        // (a 2545-clock line, one of ana_15k's long ones, doubles as 1272 + 1273)
+        if (period * 2 < HTOTAL * APD || period * 2 > HTOTAL * APD + 2)
+            fail("SVGA: line period is not half the core's");
         if (t != FRAME) fail("SVGA: frame period is not the core's");
     endtask
 
@@ -467,6 +486,11 @@ module tb_analogizer;
                 if (gh - gh0 != hs[i] * APD) fail("position: the picture did not move by the dots asked");
                 if (gv - gv0 != vs_[i]) fail("position: the picture did not move by the lines asked");
                 if (e != 0) fail("position: a sync moved into the picture");
+                if (gh - (HS1 - HS0) * APD < CB_END) begin
+                    $display("  %0d clocks from hsync's end to the picture, the colour burst needs %0d",
+                             gh - (HS1 - HS0) * APD, CB_END);
+                    fail("position: the picture starts inside the Y/C colour burst");
+                end
                 write_settings(settings(1'b1, 5'h00, 4'd0, 4'h5, 1'b0));
                 check_svga();
                 write_settings(settings(1'b1, 5'h00, 4'd0, 4'h0, 1'b0));
@@ -475,6 +499,10 @@ module tb_analogizer;
                                         : POS_V_MAX - (VS1 - VS0) - 1);
             check_jump(1'b0, POS_H_MAX, (POS_H_MAX - (HS1 - HS0) - 1 < POS_H_MIN) ? POS_H_MIN
                                         : POS_H_MAX - (HS1 - HS0) - 1);
+            // and back to 0 from a vsync's (an hsync's) width plus one away
+            // (template fa3f726: V +4 to 0 inverted Time Pilot's csync)
+            check_jump(1'b1, (VS1 - VS0 + 1 <= POS_V_MAX) ? VS1 - VS0 + 1 : POS_V_MAX, 0);
+            check_jump(1'b0, (HS1 - HS0 + 1 <= POS_H_MAX) ? HS1 - HS0 + 1 : POS_H_MAX, 0);
             set_position(0, 0);
             measure_position(gh, gv, e);
             if (gh != gh0 || gv != gv0) fail("position: 0,0 is not where it started");

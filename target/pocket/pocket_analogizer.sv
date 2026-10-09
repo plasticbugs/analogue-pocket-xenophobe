@@ -226,8 +226,19 @@ module pocket_analogizer #(
             end
             else if (o_vcnt != 20'd0) o_vcnt <= o_vcnt - 20'd1;
             else o_vs <= 1'b0;
-            if (dh == 8'sd0) o_hs <= a_hs;
-            if (dv == 8'sd0) o_vs <= a_vs;
+            // At 0 each sync is the source's, under the same off-time rule:
+            // a large slider step to 0 would otherwise put the source's
+            // vsync a line after the last re-made one (found on Time Pilot,
+            // whose vsync is 3 lines and whose large step is 4; template
+            // fa3f726)
+            if (dh == 8'sd0) begin
+                if (h_rise) o_hs <= o_hs || (o_hgap > hs_len);
+                else if (!a_hs) o_hs <= 1'b0;
+            end
+            if (dv == 8'sd0) begin
+                if (v_rise) o_vs <= o_vs || (o_vgap > vs_len);
+                else if (!a_vs) o_vs <= 1'b0;
+            end
         end
     end
     wire [7:0] b_r = b_pix[27:20], b_g = b_pix[19:12], b_b = b_pix[11:4];

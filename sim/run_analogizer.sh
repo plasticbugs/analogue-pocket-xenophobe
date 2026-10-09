@@ -40,7 +40,8 @@ PY
 verilator --binary --timing -j "${JOBS:-8}" -O2 -Wno-fatal -Wno-lint -Wno-style \
     -Wno-PROCASSWIRE -Wno-MULTIDRIVEN -Wno-TIMESCALEMOD \
     --top-module tb_analogizer -Mdir obj_analogizer -Iobj_analogizer \
-    ../target/pocket/pocket_analogizer.sv ../platform/pocket/helpers/synch_3.sv \
+    ../target/pocket/pocket_analogizer.sv ../target/pocket/ana_15k.sv \
+    ../platform/pocket/helpers/synch_3.sv \
     $A/*.v $A/*.sv ps2_keyboard_stub.v tb_analogizer.sv > obj_analogizer.log 2>&1 \
     || { tail -40 obj_analogizer.log; exit 1; }
 ./obj_analogizer/Vtb_analogizer | tee obj_analogizer/run.log

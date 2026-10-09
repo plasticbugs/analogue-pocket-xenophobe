@@ -117,6 +117,20 @@
         ]
       },
       {
+        "name": "Analogizer Lines",
+        "id": 76,
+        "type": "list",
+        "enabled": true,
+        "persist": true,
+        "address": "0xF2000000",
+        "defaultval": 0,
+        "mask": "0xFFFFFFFE",
+        "options": [
+          {"name": "Blend", "value": "0x0"},
+          {"name": "Sharp", "value": "0x1"}
+        ]
+      },
+      {
         "name": "SNAC Adapter",
         "id": 72,
         "type": "list",
@@ -167,7 +181,7 @@
         "persist": true,
         "address": "0xF7000004",
         "defaultval": 0,
-        "graphical": {"signed": true, "min": -43, "max": 32, "adjust_small": 1, "adjust_large": 4}
+        "graphical": {"signed": true, "min": -26, "max": 15, "adjust_small": 1, "adjust_large": 4}
       },
       {
         "name": "Analogizer V Position",
@@ -177,7 +191,7 @@
         "persist": true,
         "address": "0xF7000008",
         "defaultval": 0,
-        "graphical": {"signed": true, "min": -32, "max": 10, "adjust_small": 1, "adjust_large": 4}
+        "graphical": {"signed": true, "min": -16, "max": 3, "adjust_small": 1, "adjust_large": 4}
       }
     ],
     "messages": []

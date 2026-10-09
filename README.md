@@ -120,16 +120,20 @@ deviation of 0.2 from the rest level. It stays at its hardware default.
 The core supports RndMnkIII's [Analogizer](https://github.com/RndMnkIII/Analogizer)
 cartridge-slot adapter: analog video out of its VGA port and SNAC controllers
 in, set up in the core's own menu (Analogizer, Analogizer Video, SNAC Adapter,
-SNAC Assignment, and H and V Position to centre the picture). With
+SNAC Assignment, Analogizer Lines, and H and V Position to centre the
+picture). With
 "Analogizer" off, the default, the core is unchanged. The Pocket powers the
 cartridge slot for this core: take any game cartridge out first.
 
-**The picture is 31 kHz.** The core draws Xenophobe's 512x480 as a
-progressive 31.5 kHz / 60 Hz frame, not the cabinet's 15 kHz interlace, and
-the Analogizer sends that: it needs a VGA or multisync CRT (RGBS or RGsB) or
-a 480p component input (YPbPr). A 15 kHz TV or arcade monitor will not sync
-to it, and the Y/C and scandoubler modes give nothing useful.
-`docs/analogizer.md` has the details. Not yet tried on hardware.
+**The CRT gets 15 kHz 240p.** The core draws Xenophobe's 512x480 as a
+progressive 31.5 kHz frame for the Pocket's screen; for the Analogizer a
+converter makes that a progressive 240p picture at 15.72 kHz / 60 Hz,
+frame-locked, for a PVM, arcade monitor or SCART TV. Each CRT line is a pair
+of the game's lines, averaged (**Analogizer Lines: Blend**, the default) or
+the even one (**Sharp**). No interlace. The scandoubler modes give 31 kHz
+for a VGA monitor. `docs/analogizer.md` has the details. The converter has
+not been tried on hardware yet; the 31 kHz build before it showed two
+copies side by side on a 15 kHz PVM, which is what it fixes.
 
 ## Building
 

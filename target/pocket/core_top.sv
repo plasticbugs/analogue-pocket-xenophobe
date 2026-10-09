@@ -1271,24 +1271,32 @@ module core_top
     //! ------------------------------------------------------------------------
     //! The Analogizer (target/pocket/pocket_analogizer.sv, docs/analogizer.md).
     //! It takes the same picture the Pocket gets -- debug overlay included --
-    //! as the core makes it: 512x480 progressive, 20 MHz dots, 635 dots a
-    //! line, 31.5 kHz / 60 Hz.  That is a VGA-rate signal, not the board's own
-    //! 15 kHz interlace (docs/analogizer.md).  A dot is two 40 MHz clocks,
-    //! too fast for the wrapper's toggle hand-over at 48 MHz, so the adapter
-    //! runs on clk_sys itself (SAME_CLK) and takes each pixel one clock after
-    //! its enable, when every output of mcr68_video has settled.  Held idle
+    //! but not at the core's rate: the core makes 512x480 progressive at
+    //! 31.5 kHz, and ana_15k turns that into 240p at 15.72 kHz / 60 Hz for a
+    //! 15 kHz monitor (636 x 262 dots at 10 MHz, frame-locked), each line one
+    //! of the game's line pairs, blended or (menu "Analogizer Lines: Sharp",
+    //! mod_sw0[0]) the even line.  The Pocket's own picture is untouched.  A
+    //! 10 MHz dot is four clk_sys clocks, so the adapter runs on clk_sys itself
+    //! (SAME_CLK) and takes each pixel one clock after its enable.  Held idle
     //! while the game loads.  Set from the core's menu (interact.json,
     //! 0xF7000000-0xF7000008); with "Analogizer" off, the default, the
     //! cartridge port stays as an unused one and key1..key4 are cont1..4_key.
     //! ------------------------------------------------------------------------
+    wire        c15_ce, c15_hs, c15_vs, c15_hb, c15_vb;
+    wire [23:0] c15_rgb;
+    ana_15k analogizer_15k (
+        .clk(clk_sys), .sharp(mod_sw0[0]),
+        .src_ce(x_pix_ce), .src_rgb({ovl_r, ovl_g, ovl_b}), .src_hb(xhb), .src_vb(xvb),
+        .o_ce(c15_ce), .o_rgb(c15_rgb), .o_hs(c15_hs), .o_vs(c15_vs), .o_hb(c15_hb), .o_vb(c15_vb)
+    );
     generate
         if(USE_ANALOGIZER == 1) begin : analogizer
-            pocket_analogizer #(.CLK_HZ(40_000_000), .LINE_LEN(635), .PIX_LAG(1),
+            pocket_analogizer #(.CLK_HZ(40_000_000), .LINE_LEN(636), .PIX_LAG(1),
                                 .SAME_CLK(1'b1)) u_analogizer (
                 .clk_74a(clk_74a), .clk(clk_sys), .rst(xeno_reset),
-                .clk_src(clk_sys), .src_pix_ce(x_pix_ce),
-                .src_rgb({ovl_r, ovl_g, ovl_b}),
-                .src_hs(xhs), .src_vs(xvs), .src_hb(xhb), .src_vb(xvb),
+                .clk_src(clk_sys), .src_pix_ce(c15_ce),
+                .src_rgb(c15_rgb),
+                .src_hs(c15_hs), .src_vs(c15_vs), .src_hb(c15_hb), .src_vb(c15_vb),
                 .bridge_addr(bridge_addr),
                 .bridge_rd(bridge_rd), .bridge_rd_data(ana_bridge_rd_data),
                 .bridge_wr(bridge_wr), .bridge_wr_data(bridge_wr_data),
