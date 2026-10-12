@@ -84,3 +84,7 @@ _tmp
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Verilator build output and bench dumps (sdram_init.hex is converted ROM data)
+sim/obj_*/
+sim/obj_*.log

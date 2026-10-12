@@ -198,8 +198,8 @@ module pocket_analogizer #(
     wire [11:0] vd_now = (v_rise || vd_wrap) ? 12'd0 : vd + 12'd1;
     wire [10:0] vl_now = v_rise ? 11'd0 : vl + 11'(vd_wrap);
     wire [19:0] fc_now = v_rise ? 20'd0 : fc + 20'd1;
-    wire [11:0] h_at = (dh > 0) ? line_len - 12'(dh) : 12'(-dh);
-    wire [10:0] v_at = (dv > 0) ? frame_lines - 11'(dv) : 11'(-dv);
+    wire [11:0] h_at = (dh > 0) ? line_len - 12'(dh) : 12'd0 - 12'(dh);
+    wire [10:0] v_at = (dv > 0) ? frame_lines - 11'(dv) : 11'd0 - 11'(dv);
 
     always @(posedge clk) begin     // not always_ff, which may not share the initial block
         b_ce  <= a_ce;

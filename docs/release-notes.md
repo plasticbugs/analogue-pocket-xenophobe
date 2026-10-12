@@ -1,3 +1,41 @@
+# 1.2.0
+
+**Analogizer support, at 15 kHz.** Xenophobe now works with RndMnkIII's
+[Analogizer](https://github.com/RndMnkIII/Analogizer) adapter on a 15 kHz
+CRT or PVM. Confirmed on a Pocket with an Analogizer and a PVM.
+
+### What's new
+
+- The core draws 512×480. For the CRT it is converted to **15 kHz
+  progressive 240p** (15.72 kHz, 59.99 Hz), rock steady, no interlace
+  flicker. **Analogizer Lines** chooses how each CRT line shows the game's
+  two: **Blend** (the default: their average, so nothing thin vanishes) or
+  **Sharp** (every other line).
+- **Video modes**: RGBS, RGsB, YPbPr, Y/C (NTSC or PAL), or scandoubled for
+  a VGA monitor.
+- **Set up from the core's menu**: **Analogizer** (Off, On, or "On, Pocket
+  off"), **Analogizer Video**, **SNAC Adapter**, **SNAC Assignment**.
+- **H / V Position** centre the picture (26 pixels left to 15 right, 16
+  lines up to 3 down).
+
+### Before you install
+
+**With this core the Pocket powers the cartridge slot.** Take any game
+cartridge out first. Set the adapter up as its
+[How to use it](https://github.com/RndMnkIII/Analogizer/wiki/How-to-use-it%3F)
+page says (SNAC switch on A, 5 V into its USB-C port, the audio cable into
+the Pocket's headphone socket). Settings are in the core's own menu; no
+`analogizer.bin` file is needed, and with "Analogizer" off (the default)
+the core plays as before.
+
+### Installing
+
+Unzip onto the SD card root, overwriting previous files. ROMs are not
+included: build them with the included `mra_build.py` from your own MAME
+romset, as the README describes.
+
+---
+
 Arcade Xenophobe (Bally/Midway, 1987) on the Analogue Pocket, reimplementing the
 Midway MCR-68000 board and the Sounds Good audio board.
 

@@ -104,7 +104,7 @@ has no pad (it never had one on the Pocket either), so the "P3,P4" and
 so the Pocket powers the slot whether or not an Analogizer is in it. Do not
 leave a game cartridge in the slot while this core runs.
 
-**Not tried on hardware yet**, with any monitor. What the bench proves is
+**Confirmed on a Pocket with an Analogizer and a 15 kHz PVM** (1.2.0). What the bench proves is
 listed under *What was measured* below. Send problems with the adapter itself
 to the Analogizer project.
 

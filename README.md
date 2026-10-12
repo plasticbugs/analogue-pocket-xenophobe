@@ -131,9 +131,9 @@ converter makes that a progressive 240p picture at 15.72 kHz / 60 Hz,
 frame-locked, for a PVM, arcade monitor or SCART TV. Each CRT line is a pair
 of the game's lines, averaged (**Analogizer Lines: Blend**, the default) or
 the even one (**Sharp**). No interlace. The scandoubler modes give 31 kHz
-for a VGA monitor. `docs/analogizer.md` has the details. The converter has
-not been tried on hardware yet; the 31 kHz build before it showed two
-copies side by side on a 15 kHz PVM, which is what it fixes.
+for a VGA monitor. `docs/analogizer.md` has the details. Confirmed on a
+Pocket with an Analogizer and a 15 kHz PVM (1.2.0); the 31 kHz build before it
+showed two copies side by side there, which is what the converter fixes.
 
 ## Building
 
